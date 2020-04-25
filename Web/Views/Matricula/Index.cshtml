@@ -1,0 +1,70 @@
+﻿@model List<DA.Matricula>
+
+<style>
+    .collapsible-header {
+        background-color: #E0EAF4;
+        font-weight: bold;
+    }
+</style>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <div class="card-content">
+            <ul class="collapsible">
+                <li class="active">
+                    <div class="collapsible-header"><i class="material-icons">account_balance</i>MATRICULAS</div>
+                    <div class="collapsible-body">
+                        <div class="card-title">
+                            <div class="row">
+                                <div class="col s4 m6 l2">
+                                    <a class="btn-small blue right" href="@Url.Action("Registrar","Matricula", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 m12">
+                                <table class="bordered" id="tblMatricula">
+                                    <thead>
+                                        <tr>
+                                            <th>Periodo</th>
+                                            <th>Fecha</th>
+                                            <th>Alumno</th>
+                                            <th>Condicion Estudio</th>
+                                            <th>Monto</th>
+                                            <th>Observacion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+
+                                                <td style="padding:0">@item.Periodo.Denominacion</td>
+                                                <td style="padding:0">@item.Fecha</td>
+                                                <td style="padding:0">@item.Alumno.Paterno  @item.Alumno.Materno @item.Alumno.Nombres</td>
+                                                <td style="padding:0">@item.CondicionEstudio.Denominacion</td>
+                                                <td style="padding:0">@item.Monto</td>
+                                                <td style="padding:0">@item.Observacion</td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
+    </script>
+}
+
+

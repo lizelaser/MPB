@@ -1,0 +1,70 @@
+﻿@model DA.Periodo
+
+<div class="row">
+    <div class="col s12">
+        <div id="validations" class="card card-tabs">
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col s8 m6 l10">
+                            <h4 class="card-title">
+                                <a href="@Url.Action("Index","Periodo")"><i class="material-icons left">keyboard_backspace</i></a>
+                                @if (Model.Id == 0)
+                                {
+                                    <text>Nuevo Periodo Académico</text>
+                                }
+                                else
+                                {
+                                    <text>Editar Periodo Académico</text>
+                                }
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Periodo")">
+                    <div class="row">
+                        <input name="Id" type="hidden" value="@Model.Id">
+                        <div class="input-field col s12 m2">
+                            <label for="cdenominacion">Denominacion*</label>
+                            <input id="cdenominacion" name="Denominacion" type="text" required value="@Model.Denominacion" autofocus>
+                        </div>
+
+                        <div class="input-field col s12 m3">
+                            <label for="cinicio">Fecha Inicio*</label>
+                            <input id="cinicio" name="Inicio" type="text" required value="@Model.FechaInicio">
+                        </div>
+                        <div class="input-field col s12 m3">
+                            <label for="cFin">Fecha Fin*</label>
+                            <input id="cfin" name="Fin" type="text" required value="@Model.FechaFin">
+                        </div>
+                        
+                        <div class="col s12 m4">
+                            <label for="tnc_select">Estado </label>
+                            <p>
+                                <label>
+                                    <input type="checkbox" name="activo" @if (Model.Estado) { <text> checked </text> } />                                 <span>Activo</span>
+                                </label>
+                            </p>
+                        </div>
+
+                        <div class="input-field col s12">
+                            <button data-ajax="true" class="btn right blue" type="submit">
+                                Guardar
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section   scripts{
+    <script>
+
+    </script>
+}

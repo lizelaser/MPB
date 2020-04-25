@@ -1,0 +1,75 @@
+﻿@model DA.Usuario
+
+    <div class="row">
+        <div class="col s12">
+            <div id="validations" class="card card-tabs">
+                <div class="card-content">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class="col s8 m6 l10">
+                                <h4 class="card-title">
+                                    <a href="@Url.Action("Index","Usuario")"><i class="material-icons left">keyboard_backspace</i></a>
+                                    @if (Model.Id == 0)
+                                    {
+                                        <text>Nuevo Usuario</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Editar Usuario</text>
+                                    }
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Usuario")">
+                        <div class="row">
+                            <input name="Id" type="hidden" value="@Model.Id">
+                            <div class="input-field col s12 m6">
+                                <label for="cnombre">Nombre*</label>
+                                <input id="cnombre" type="text" name="Nombre" required value="@Model.Nombre">
+                            </div>
+                            <div class="input-field col s12 m6">
+                                <label for="cemail">Correo Electronico*</label>
+                                <input id="cemail" type="email" name="Correo" required value="@Model.Correo">
+                            </div>
+                            <div class="input-field col s12 m4">
+
+                                @Html.DropDownListFor(x => x.PersonalId, (IEnumerable<SelectListItem>)ViewBag.PersonalId)
+                            </div>
+                            <div class="input-field col s12 m4">
+
+                                @Html.DropDownListFor(x => x.RolId, (IEnumerable<SelectListItem>)ViewBag.RolId)
+                            </div>
+
+                            <div class="col s12 m4">
+                                <label for="tnc_select">Estado </label>
+                                <p>
+                                    <label>
+                                        <input type="checkbox" name="activo" @if (Model.Activo) { <text> checked </text> } />                                 <span>Activo</span>
+                                    </label>
+                                </p>
+                            </div>
+
+
+
+                            <div class="input-field col s12">
+                                <button data-ajax="true" class="btn right blue" type="submit">
+                                    Guardar
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+@section   scripts{
+
+    @*<script src="~/app-assets/js/scripts/form-validation.js" type="text/javascript"></script>*@
+
+}

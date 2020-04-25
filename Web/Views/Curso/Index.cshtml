@@ -1,0 +1,153 @@
+﻿@model List<DA.Curso>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <div id="bordered-table" class="card card card-default scrollspy">
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col s8 m6 l10">
+                            <h4 class="card-title">GESTIONAR CURSOS</h4>
+                        </div>
+                        <div class="col s4 m6 l2">
+                            <a class="btn-small blue right" href="@Url.Action("Mantener","Curso", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <input type="text" name="denominacion" id="denominacion" />
+                    <button value="Buscar" class="btn btn-success blue left">Buscar</button>
+                </div>
+
+                @*
+                    @using (Html.BeginForm(null, null, FormMethod.Get))
+                    {
+
+                        <button @Url.Action("ListarTodo", "Curso") class="btn btn-success blue left" style="margin-left:5px">Listar Todo</button>
+                    }*@
+
+                <div class="row">
+                    <div class="col s12">
+                    </div>
+                    <div class="col s12">
+                        <table class="bordered">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Denominacion</th>
+                                    <th>Creditos</th>
+                                    <th>Matricula</th>
+                                    <th>Mensualidad</th>
+                                    <th>Cuotas</th>
+                                    <th>Especialidad</th>
+                                    <th>Acciones</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="tbd_Cursos">
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td style="padding:0">@item.Codigo</td>
+                                        <td style="padding:0">@item.Denominacion</td>
+                                        <td style="padding:0">@item.Credito</td>
+                                        <td style="padding:0">@item.Matricula</td>
+                                        <td style="padding:0">@item.Mensualidad</td>
+                                        <td style="padding:0">@item.Cuotas</td>
+                                        <td style="padding:0">@item.Especialidad.Denominacion</td>
+                                        <td style="padding:0">
+                                            <a href="@Url.Action("Mantener","Curso",new { id = item.Id })"><i class="material-icons">edit</i></a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <div id="bordered-table" class="card card card-default scrollspy">
+            <div class="col-md-12 center text-center">
+
+                <div class="row" id="NoEncontrado">
+                    <span>&nbsp;|&nbsp;</span>
+                    <span>No hay resultados de la búsqueda</span>
+                    <span>&nbsp;|&nbsp;</span>
+                </div>
+
+                <div>
+                    <button class="btn btn-small blue" id="inicio"><<</button>
+                    <span></span>
+                    <button class="btn btn-small blue" id="anterior">Anterior</button>
+
+                    <button class="btn btn-small blue" id="siguiente">Siguiente</button>
+                    <span></span>
+                    <button class="btn btn-small blue" id="ultimo">>></button>
+                </div>
+
+                @*
+                    @if (Model.PaginaActual > 1)
+                    {
+                        @Html.ActionLink("<<", "Index", new { pagina = 1 },
+                                        new { @class = "btn btn-sm btn-default" })
+                        <span></span>
+                        @Html.ActionLink("Anterior", "Index", new { pagina = Model.PaginaActual - 1 },
+                                        new { @class = "btn btn-sm btn-default" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("<<", "Index", new { pagina = 1 },
+                                        new { @class = "btn btn-sm btn-default disabled" })
+                        <span></span>
+                        @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
+                                        new { @class = "btn btn-sm btn-default disabled" })
+                    }
+                    <span></span>
+                    @if (Model.PaginaActual < Model.TotalPaginas)
+                    {
+                        @Html.ActionLink("Siguiente", "Index", new { pagina = Model.PaginaActual + 1 },
+                                        new { @class = "btn btn-sm btn-default" })
+                        <span></span>
+                        @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
+                                        new { @class = "btn btn-sm btn-default" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Siguiente", "Index", new { pagina = Model.TotalPaginas - 1 },
+                                        new { @class = "btn btn-sm btn-default disabled" })
+                        <span></span>
+                        @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
+                                        new { @class = "btn btn-sm btn-default disabled" })
+                    }*@
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            var envio = {
+                denominacion: $("#denominacion").val()
+            }
+            console.log(envio);
+            $.ajax({
+                url: '@Url.Action("Tabla","Curso")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                dataType: 'json',
+                success: function (rm) {
+                    console.log(rm.result);
+                }
+            });
+        })
+
+    </script>
+}

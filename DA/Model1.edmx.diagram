@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a2e8ab34b49049c2b0f5201bd3e1c1e4" Name="Diagram1">
+        <EntityTypeShape EntityType="ACADEMICOModel.Alumno" Width="1.5" PointX="0.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Alumno_Especialidad" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Aula" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Boveda" Width="1.5" PointX="7.125" PointY="29.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CajaDiario" Width="1.5" PointX="5" PointY="24" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CondicionEstudio" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Curso" Width="1.5" PointX="3" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Especialidad" Width="1.5" PointX="0.75" PointY="17.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Estado" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Horario" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Menu" Width="1.5" PointX="4.5" PointY="38.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Menu_Rol" Width="1.5" PointX="6.75" PointY="34.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Notas" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Operacion" Width="1.5" PointX="3.75" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Periodo" Width="1.5" PointX="0.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Personal" Width="1.5" PointX="1.5" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Personal_Tipo" Width="1.5" PointX="4.625" PointY="30.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Rol" Width="1.5" PointX="1.5" PointY="34.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.TipoPersonal" Width="1.5" PointX="4.875" PointY="33.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ACADEMICOModel.ValorTabla" Width="1.5" PointX="7.75" PointY="1.25" IsExpanded="true" />
+        <AssociationConnector Association="ACADEMICOModel.FK_AE_Alumno" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Notas_Alumno" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_AE_Especialidad" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Aula" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Curso_Especialidad" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Curso" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Notas_Curso" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Periodo" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_MR_Menu" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_MR_Rol" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Notas_Periodo" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_PT_Personal" ManuallyRouted="false" />
+        <AssociationConnector Association="ACADEMICOModel.FK_PT_TipoPersonal" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ACADEMICOModel.ConceptoPago" Width="1.5" PointX="11.375" PointY="10.625" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CuentasPorCobrar" Width="1.5" PointX="3" PointY="4.25" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CuentasPorCobrarDetalle" Width="1.5" PointX="13.625" PointY="7.125" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Matricula" Width="1.5" PointX="10" PointY="3.5" />
+        <EntityTypeShape EntityType="ACADEMICOModel.MatriculaDetalle" Width="1.5" PointX="14.25" PointY="11" />
+        <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Alumno" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CCDetalle_Concepto" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_CondicionEstudio" />
+        <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A" />
+        <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Matri__2EDAF651" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CCDetalle_CuentasPorCobrar" />
+        <AssociationConnector Association="ACADEMICOModel.FK_MD_Curso" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Estado" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Periodo" />
+        <AssociationConnector Association="ACADEMICOModel.FK_MD_Matricula" />
+        <EntityTypeShape EntityType="ACADEMICOModel.BovedaMovimiento" Width="1.5" PointX="9.375" PointY="25.5" />
+        <AssociationConnector Association="ACADEMICOModel.FK_BM_Boveda" />
+        <AssociationConnector Association="ACADEMICOModel.FK_BM_CajaDiario" />
+        <AssociationConnector Association="ACADEMICOModel.FK_BM_Operacion" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CajaMovimiento" Width="1.5" PointX="8" PointY="17" />
+        <EntityTypeShape EntityType="ACADEMICOModel.CajaMovimientoDetalle" Width="1.5" PointX="13.625" PointY="14.625" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Alumno" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_CajaDiario" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Estado" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Operacion" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Personal" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CMDetalle_CajaMovimiento" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CMDetalle_Concepto" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Caja" Width="1.5" PointX="0.625" PointY="22.375" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaDiario_Caja" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Usuario" Width="1.5" PointX="1" PointY="25.125" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaDiario_Usuario" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Usuario_Personal" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Usuario_Rol" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

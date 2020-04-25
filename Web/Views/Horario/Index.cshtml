@@ -1,0 +1,64 @@
+﻿@model List<DA.Horario>
+<div class="row">
+    <div class="col s12 m12 l12">
+        <div id="bordered-table" class="card card card-default scrollspy">
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col s8 m6 l10">
+                            <h4 class="card-title">GESTIONAR HORARIOS</h4>
+                        </div>
+                        <div class="col s4 m6 l2">
+                            <a class="btn-small blue right" href="@Url.Action("Mantener","Horario", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12">
+                    </div>
+                    <div class="col s12">
+                        <table class="bordered">
+                            <thead>
+                                <tr>
+                                    <th>Periodo</th>
+                                    <th>Curso</th>
+                                    <th>Aula</th>
+                                    <th>Hora</th>
+                                    <th>Cantidad Horas</th>
+                                    <th>Dia</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+
+                                    <td style="padding:0">@item.Periodo.Denominacion</td>
+                                    <td style="padding:0">@item.Curso.Denominacion</td>
+                                    <td style="padding:0">@item.Aula.Denominacion</td>
+                                    <td style="padding:0">@item.Hora</td>
+                                    <td style="padding:0">@item.CantidadHora</td>
+                                    <td style="padding:0">@item.Dia</td>
+                                    <td style="padding:0">
+                                        <a href="@Url.Action("Mantener","Horario",new { id = item.Id })"><i class="material-icons">edit</i></a>
+                                        <a href="@Url.Action("Eliminar", "Horario", new { id = item.Id })"><i class="material-icons">delete</i></a>
+                                    </td>
+                                </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+    </script>
+}
+

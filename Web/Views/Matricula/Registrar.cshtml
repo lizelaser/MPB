@@ -1,0 +1,985 @@
+﻿
+@{
+    List<DA.Periodo> periodoactual = ViewBag.PeriodoActual;
+    List<DA.ConceptoPago> conceptos = ViewBag.ConceptoPago;
+    List<DA.CondicionEstudio> condicionEspecialidad = ViewBag.CondicionEspecialidad;
+    List<DA.CondicionEstudio> condicionCurso = ViewBag.CondicionCurso;
+}
+
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .tabs {
+        border: none;
+        background-color: transparent;
+    }
+
+        .tabs li #tipoestudio {
+            border: 2px solid #ccc;
+        }
+
+        .tabs li {
+            border: 2px solid #ccc;
+            border-bottom: none;
+            background-color: white;
+        }
+
+    #parrafo {
+        color: transparent;
+    }
+
+    .busqueda {
+        border: 1px solid #ccc;
+    }
+
+
+</style>
+
+
+<div class="row" style="margin:20px;" id="principal">
+    <div class="row" id="contenedor">
+        <div class="col s12">
+            <ul class="tabs align-center s12 m12">
+                <li class="tab col s12 m6 disabled" id="tipoestudio"><strong>CONDICIÓN DE ESTUDIOS</strong></li>
+                <li class="tab col s12 m3" style="width: 200px;"><a class="active" href="#test1" id="linkEspecialidad">ESPECIALIDAD</a></li>
+                <li class="tab col s12 m3" style="width:200px;"><a href="#test2" id="linkCurso">CURSO</a></li>
+            </ul>
+            <div class="col s12" style="border: 2px solid #ccc;">
+                <div id="test1">
+                    <div class="col s12 m4">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <h4 class="card-title">
+                                                <a href="@Url.Action("Index", "Matricula")"><i class="material-icons left">keyboard_backspace</i></a>
+                                                @{
+                                                    <text>Nueva Matricula</text>
+                                                }
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 busqueda">
+                                            <input class="filtro" type="text" name="filtro" placeholder="INGRESE DNI DEL ALUMNO">
+                                            <i class="material-icons prefix" style="margin-left:-25px;">search</i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input class="ID" type="text" name="Id" id="Id" hidden />
+                                            <input class="DNI" type="text" name="dni" id="dni" placeholder="DNI*" disabled />
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <input class="DATOS" type="text" name="txtdatos" id="txtdatos" placeholder="APELLIDOS Y NOMBRES*" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m8">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <div>
+                                        @foreach (var condicion in condicionEspecialidad)
+                                        {
+                                            <input type="text" name="CondicionEspecialidad" id="CondicionEspecialidad" value="@condicion.Id" hidden />
+                                        }
+                                    </div>
+                                    <div class="input-field col s12 m6">
+                                        <label for="fecha">Fecha</label>
+                                        <input style="color:black" class="form-control" type="text" name="fecha" id="fecha" readonly value="@DateTime.Now.Year-@DateTime.Now.Month-@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" />
+                                    </div>
+                                    <div class="input-field col s12 m6">
+                                        <label for="fecha">Periodo Académico</label>
+                                        @foreach (var item in periodoactual)
+                                        {
+                                            <input class="form-control" type="text" name="periodo" id="periodo" value="@item.Id" hidden />
+                                            <input style="color:black" class="form-control" type="text" readonly value="@item.Denominacion" />
+                                        }
+                                    </div>
+                                    <div class="input-field col s12 m12">
+                                        <label for="Eobservacion">Observación</label>
+                                        <input type="text" name="Eobservacion" id="Eobservacion" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m8 Especialidad">
+                        <div class="input-field col s12" style="padding-left:0px;">
+
+                            @Html.DropDownList("Especialidades", ViewBag.Especialidades as SelectList, "SELECCIONE ESPECIALIDAD", htmlAttributes: new { @class = "browser-default" })
+
+                        </div>
+                    </div>
+                    <div class="col s12 m8 Asignaturas">
+                        <div id="highlight-table" class="card card card-default scrollspy">
+                            <ul class="collapsible" style="margin-top:0px;margin-bottom:0px;">
+                                <li class="active">
+                                    <div class="collapsible-header"><span style="font-size:medium;">SELECCIONAR CURSOS</span></div>
+                                    <div class="collapsible-body">
+                                        <table class="highlight" id="tbcursos">
+                                            <thead>
+                                                <tr>
+                                                    <th>Codigo</th>
+                                                    <th>Curso</th>
+                                                    <th>Creditos</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m8 Elegidos">
+                        <div id="highlight-table" class="card card card-default scrollspy">
+                            <div class="card-content">
+                                <div class="well well-sm">
+                                    <h4 class="card-title">CURSOS SELECCIONADOS</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                    </div>
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <table class="list-group" id="tbldetalle">
+                                                <thead>
+                                                    <tr class="list-group-item">
+                                                        <th>Codigo</th>
+                                                        <th>Curso</th>
+                                                        <th>Creditos</th>
+                                                    </tr>
+
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="importe">
+                                    <div id="highlight-table" class="card card card-default scrollspy">
+                                        <ul class="collapsible" style="margin-top:0px;margin-bottom:0px;">
+                                            <li>
+                                                <div class="collapsible-header"><i class="large material-icons">add</i>IMPORTE A PAGAR</div>
+                                                <div class="collapsible-body">
+                                                    <table class="highlight" id="tbconceptos">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Concepto</th>
+                                                                <th>Precio</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in conceptos)
+                                                            {
+                                                                // TODO: Realizar un bloque condicional para que el split y join solo se ejecuten si se tiene Concepto con lenght > 1
+                                                                // Variable auxiliar que usaremos para sustituir espacios por subguiones en caso de que Concepto tenga más de 2 palabras.
+                                                                string[] aux = item.Concepto.Split(' ');
+                                                                // ID que será agregado finalmente.
+                                                                string dynamicId = "td" + String.Join("_", aux);
+
+                                                                <tr>
+                                                                    <td hidden>@item.Id</td>
+                                                                    <td hidden>@item.Item</td>
+                                                                    <td>@item.Concepto</td>
+                                                                    <td id="@dynamicId" class="ConceptoPrecio">@item.Precio</td>
+                                                                </tr>
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                    <table>
+                                                        <tr>
+                                                            <td>Total a Pagar:</td>
+                                                            <td><input style="font-size: 20px; font-weight: 700;" class="form-control" name="TotalEspecialidad" id="TotalEspecialidad" type="text" required readonly /></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-left:1px;">
+                            <table>
+                                <tr>
+                                    <td><button class="btn btn-primary btn-block btn-lg" type="submit" id="Generar" name="Generar">Guardar matricula<i class="material-icons right">send</i></button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="test2">
+                    <div class="col s12 m4">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <h4 class="card-title">
+                                                <a href="@Url.Action("Index", "Matricula")"><i class="material-icons left">keyboard_backspace</i></a>
+                                                @{
+                                                    <text>Nueva Matricula</text>
+                                                }
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="input-field col s12 busqueda">
+                                            <input class="busqueda" type="text" name="busqueda" placeholder="INGRESE DNI DEL ALUMNO">
+                                            <i class="material-icons prefix" style="margin-left:-25px;">search</i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input class="ID" type="text" name="IdAlumno" id="IdAlumno" hidden />
+                                            <input class="DNI" type="text" name="dniAlumno" id="dniAlumno" placeholder="DNI*" disabled />
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <input class="DATOS" type="text" name="txtdatosAlumno" id="txtdatosAlumno" placeholder="APELLIDOS Y NOMBRES*" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m8">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <div>
+                                        @foreach (var condicion in condicionCurso)
+                                        {
+                                            <input type="text" name="CondicionCurso" id="CondicionCurso" value="@condicion.Id" hidden />
+                                        }
+                                    </div>
+                                    <div class="input-field col s12 m6">
+                                        <label for="fecha">Fecha</label>
+                                        <input style="color:black" class="form-control" type="text" name="fechaTab" id="fechaTab" readonly value="@DateTime.Now.Year-@DateTime.Now.Month-@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" />
+                                    </div>
+                                    <div class="input-field col s12 m6">
+                                        <label for="fecha">Periodo Académico</label>
+                                        @foreach (var item in periodoactual)
+                                        {
+                                            <input class="form-control" type="number" name="periodoTab" id="periodoTab" hidden value="@item.Id" />
+                                            <input style="color:black" class="form-control" type="text" readonly value="@item.Denominacion" />
+                                        }
+                                    </div>
+                                    <div class="input-field col s12 m12">
+
+                                        <label for="Cobservacion">Observación</label>
+                                        <input type="text" name="Cobservacion" id="Cobservacion" />
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col s12 m8 CursoPorEspecialidad">
+                        <div class="input-field col s12" style="margin-left:-10px;">
+                            @Html.DropDownList("EspecialidadesCurso", ViewBag.EspecialidadesCurso as SelectList, "SELECCIONE ESPECIALIDAD", htmlAttributes: new { @class = "browser-default" })
+                        </div>
+                    </div>
+                    <div class="col s12 m8 AsignaturasCursos">
+                        <div id="highlight-table" class="card card card-default scrollspy">
+                            <ul class="collapsible" style="margin-top:0px;margin-bottom:0px;">
+                                <li class="active">
+                                    <div class="collapsible-header"><i class="material-icons">filter_drama</i>SELECCIONAR CURSOS</div>
+                                    <div class="collapsible-body">
+                                        <table class="highlight" id="tbcursos2">
+                                            <thead>
+                                                <tr>
+                                                    <th>Codigo</th>
+                                                    <th>Curso</th>
+                                                    <th>Creditos</th>
+                                                    <th>Precio</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col s8 push ElegidosCursos">
+                        <div id="highlight-table" class="card card card-default scrollspy">
+                            <div class="card-content">
+                                <div class="well well-sm">
+                                    <h4 class="card-title">CURSOS SELECCIONADOS</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                    </div>
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <table class="list-group" id="tbldetalle2">
+                                                <thead>
+                                                    <tr class="list-group-item">
+                                                        <th>Codigo</th>
+                                                        <th>Curso</th>
+                                                        <th>Creditos</th>
+                                                        <th>Precio</th>
+                                                    </tr>
+
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="importe">
+                                    <div id="highlight-table" class="card card card-default scrollspy">
+                                        <ul class="collapsible" style="margin-top:0px;margin-bottom:0px;">
+                                            <li>
+                                                <div class="collapsible-header"><i class="large material-icons">add</i>IMPORTE A PAGAR</div>
+                                                <div class="collapsible-body">
+                                                    <table class="highlight" id="tbconceptos2">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Concepto</th>
+                                                                <th>Precio</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in conceptos)
+                                                            {
+                                                                string[] aux = item.Concepto.Split(' ');
+                                                                string IdConcepto = "Id" + String.Join("_", aux);
+                                                                <tr>
+                                                                    <td hidden>@item.Id</td>
+                                                                    <td hidden>@item.Item</td>
+                                                                    <td>@item.Concepto</td>
+                                                                    <td class="Concepto" id="@IdConcepto">@item.Precio</td>
+                                                                </tr>
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                    <table>
+                                                        <tr>
+                                                            <td>Total a Pagar:</td>
+                                                            <td><input style="font-size: 20px; font-weight: 700;" class="form-control" name="TotalCurso" id="TotalCurso" type="text" required readonly /></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-left:1px;">
+                            <table>
+                                <tr>
+                                    <td><button class="btn btn-primary btn-block btn-lg" type="submit" id="Guardar">Guardar matricula<i class="material-icons right">send</i></button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <p id="parrafo">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</div>
+
+@section Scripts{
+
+    <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+    <script>
+        $.fn.tabs2 = $.fn.tabs;
+        delete $.fn.tabs;
+        $(document).ready(function () {
+            $('.tabs').tabs2();
+            $('select').formSelect();
+            $('.collapsible').collapsible();
+        });
+    </script>
+    <script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript">
+
+        //SCRIPTS MODO ESPECIALIDAD
+        $(document).ready(function () {
+            fn_ocultar();
+            // Evento que envia los cursos de una especialidad seleccionada : Condicion Especialidad
+            $("#Especialidades").change(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SeleccionarEspecialidad","Matricula")',
+                    data: { id: $("#Especialidades").val() },
+                    success: function (dataEspecialidad) {
+                        console.log(dataEspecialidad);
+                        // ocultar progress bar
+                        // mostrar elemento
+                        $("#tbcursos td").remove();
+                        $("#tbldetalle td").remove();
+                        $('#TotalEspecialidad').val("");
+                        var numero = 0;
+                        $("#tdMATRICULA_REGULAR").html(numero.toFixed(2));
+                        $("#tdPENSIÓN_MENSUAL").html(numero.toFixed(2));
+                        for (var i = 0; i < dataEspecialidad.length; i++) {
+                            var newRow =
+                                "<tr>" +
+                                "<td hidden>" + dataEspecialidad[i].Id + "</td>" +
+                                "<td>" + dataEspecialidad[i].Codigo + "</td>" +
+                                "<td>" + dataEspecialidad[i].Denominacion + "</td>" +
+                                "<td>" + dataEspecialidad[i].Credito + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Matricula + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Mensualidad + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Cuotas + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Duracion + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].TotalHoras + "</td>" +
+                                "<td><a class='envio'><button class='btn-small blue'><i class='material-icons left'>add</i></button></a></td>"
+                            "</tr>";
+                            var matricula = dataEspecialidad[i].MatriculaE;
+                            var mensualidad = dataEspecialidad[i].MensualidadE;
+                            var cuotas = dataEspecialidad[i].CuotasE;
+
+                            var pension = mensualidad * cuotas;
+                            $(newRow).appendTo("#tbcursos tbody");
+
+                        }
+                        fn_agregar(matricula, pension);
+                        fn_mostrar_asignaturas();
+                    }
+                });
+            });
+            $(".filtro").autocomplete({
+                dataType: 'JSON',
+                source: function (request, response) {
+                    jQuery.ajax({
+                        url: '/Matricula/BuscarAlumno',
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            dni: request.term
+                        },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    id: item.Id,
+                                    value: item.Dni,
+                                    dni: item.Dni,
+                                    paterno: item.Paterno,
+                                    materno: item.Materno,
+                                    nombres: item.Nombres
+
+                                }
+
+                            }))
+                        }
+                    })
+
+                },
+                select: function (e, ui) {
+                    $("#Id").val(ui.item.id);
+                    $("#dni").val(ui.item.dni);
+                    $("#txtdatos").val(ui.item.paterno + " " + ui.item.materno + " " + ui.item.nombres);
+                    fn_mostrar();
+                }
+
+            });
+
+        });
+
+        var valor = 0;
+        var valorPension = 0;
+        var valorCurso = 0;
+        var total = 0;
+        var totalPension = 0;
+        var totalCurso = 0;
+
+        //Método para ocultar secciones antes de realizar la búsqueda del alumno
+        function fn_ocultar() {
+            if ($("#Id").val("")) {
+                $(".Especialidad").hide();
+                $(".Asignaturas").hide();
+                $(".Elegidos").hide();
+            }
+            if ($("#IdAlumno").val("")) {
+                $(".CursoPorEspecialidad").hide();
+                $(".AsignaturasCursos").hide();
+                $(".ElegidosCursos").hide();
+            }
+        }
+
+        // Método para mostrar las especialidades al buscar al alumno
+        function fn_mostrar() {
+            if ($("#linkEspecialidad").hasClass('active')) {
+                $(".Especialidad").show();
+            }
+            if ($('#linkCurso').hasClass('active')) {
+                $(".CursoPorEspecialidad").show();
+            }
+        }
+
+        // Método para mostrar las asignaturas al seleccionar la especialidad
+        function fn_mostrar_asignaturas() {
+            if ($("#linkEspecialidad").hasClass('active')) {
+                $(".Asignaturas").show();
+            }
+            if ($('#linkCurso').hasClass('active')) {
+                $(".AsignaturasCursos").show();
+            }
+        }
+
+        // Método para mostrar los cursos elegidos en el detalle al enviar las asignaturas disponibles
+        function fn_mostrar_elegidos() {
+            if ($("#linkEspecialidad").hasClass('active')) {
+                $(".Elegidos").show();
+                $("#Generar").prop('disabled', false);
+            }
+            if ($('#linkCurso').hasClass('active')) {
+                $(".ElegidosCursos").show();
+                $("#Guardar").prop('disabled', false);
+            }
+
+        }
+
+
+        //Metodo para asignar la matrícula y pensión a los conceptos: Condicion Especialidad
+        function fn_pago(matricula, pension) {
+            $(".envio").on("click", function () {
+                $("#tdMATRICULA_REGULAR").html(matricula);
+                $("#tdPENSIÓN_MENSUAL").html(pension);
+            });
+        }
+
+        //Metodo para retirar el pago del total de la especialidad y de los conceptos: Condicion Especialidad
+        function fn_pago_retirar() {
+            var numero = 0;
+            $("#tdMATRICULA_REGULAR").html(numero.toFixed(2));
+            $("#tdPENSIÓN_MENSUAL").html(numero.toFixed(2));
+            $("#TotalEspecialidad").val(numero.toFixed(2));
+        }
+
+        //Método para eliminar los cursos del detalle matrícula: Condicion Especialidad
+        function fn_eliminar() {
+            $("a.elimina").on("click", function () {
+                var filas = $('#tbldetalle').find('tbody tr').length;
+
+                $(this).parents("tr").fadeOut("normal", function () {
+                    $(this).remove();
+                    if (filas == 1) {
+                        fn_pago_retirar();
+                        $("#Generar").prop('disabled', true);
+                    }
+                });
+
+            });
+        }
+
+
+        //Método para calcular el total especialidad a pagar: Condición Especialidad
+        function fn_Total_Especialidad() {
+            console.log("1")
+            var sumTotal = 0;
+            $('.ConceptoPrecio').each(function () {
+                sumTotal += parseFloat($(this)[0].innerHTML);
+                console.log($(this)[0])
+            });
+
+            console.log($('#TotalEspecialidad'))
+            $('#TotalEspecialidad').val(sumTotal);
+        };
+
+
+        //Método para agregar los cursos por especialidad al detalle de la matrícula: Condición Especialidad
+        function fn_agregar(matricula, pension) {
+            $(".envio").on("click", function () {
+                var column1 = $(this).closest('tr').children()[0].textContent;
+                var column2 = $(this).closest('tr').children()[1].textContent;
+                var column3 = $(this).closest('tr').children()[2].textContent;
+                var column4 = $(this).closest('tr').children()[3].textContent;
+                var column5 = $(this).closest('tr').children()[4].textContent;
+                var column6 = $(this).closest('tr').children()[5].textContent;
+                var column7 = $(this).closest('tr').children()[6].textContent;
+                var column8 = $(this).closest('tr').children()[7].textContent;
+                var column9 = $(this).closest('tr').children()[8].textContent;
+
+                if ($("#tbldetalle .copy_" + column1).length == 0) {
+                    $("#tbldetalle").append("<tr class='copy_" + column1 +
+                        "'><td hidden>" + column1 + "</td><td>" + column2 +
+                        "</td><td>" + column3 + "</td><td>" + column4 +
+                        "</td><td hidden>" + column5 +
+                        "</td><td hidden>" + column6 +
+                        "</td><td hidden>" + column7 +
+                        "</td><td hidden>" + column8 +
+                        "</td><td hidden>" + column9 +
+                        "</td><td><a class ='elimina'><button class='btn left red' type='button'><i class='material-icons left'>remove</i></button></a></td></tr>");
+                }
+                $("#tdMATRICULA_REGULAR").html(matricula);
+                $("#tdPENSIÓN_MENSUAL").html(pension);
+
+                fn_Total_Especialidad();
+                fn_mostrar_elegidos();
+                fn_eliminar();
+            });
+        }
+
+    </script>
+
+    <script>
+        //SECCIÓN TIPO DE PAGO CURSO
+        $(document).ready(function () {
+            // Evento Listado de Especialidades: Condición Curso
+            $("#EspecialidadesCurso").change(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SeleccionarCurso","Matricula")',
+                    data: { id: $("#EspecialidadesCurso").val() },
+                    success: function (dataEspecialidad) {
+                        $("#tbcursos2 td").remove();
+                        $("#tbldetalle2 td").remove();
+                        $("#TotalCurso").val("");
+                        var numero = 0;
+                        $("#IdMATRICULA_REGULAR").html(numero.toFixed(2));
+                        $("#IdPENSIÓN_MENSUAL").html(numero.toFixed(2));
+                        for (var i = 0; i < dataEspecialidad.length; i++) {
+                            var precio = dataEspecialidad[i].Matricula + (dataEspecialidad[i].Mensualidad * dataEspecialidad[i].Cuotas);
+                            var newRow =
+                                "<tr>" +
+                                "<td hidden>" + dataEspecialidad[i].Id + "</td>" +
+                                "<td>" + dataEspecialidad[i].Codigo + "</td>" +
+                                "<td>" + dataEspecialidad[i].Denominacion + "</td>" +
+                                "<td>" + dataEspecialidad[i].Credito + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Matricula + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Mensualidad + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Cuotas + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].Duracion + "</td>" +
+                                "<td hidden>" + dataEspecialidad[i].TotalHoras + "</td>" +
+                                "<td>" + precio + "</td>" +
+                                "<td><a class='enviar'><button class='btn-small blue'><i class='material-icons left'>add</i></button></a></td>"
+                            "</tr>";
+
+                            $(newRow).appendTo("#tbcursos2 tbody");
+
+                        }
+                            fn_mostrar_asignaturas();
+                            fn_agregar_curso();
+
+                    }
+                });
+            });
+
+            // Evento búsqueda del alumno por dni y su autocompletado: Condición Curso
+            $(".busqueda").autocomplete({
+                dataType: 'JSON',
+                source: function (request, response) {
+                    jQuery.ajax({
+                        url: '/Matricula/BuscarAlumno',
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            dni: request.term
+                        },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    id: item.Id,
+                                    value: item.Dni,
+                                    dni: item.Dni,
+                                    paterno: item.Paterno,
+                                    materno: item.Materno,
+                                    nombres: item.Nombres
+
+                                }
+
+                            }))
+                        }
+                    })
+
+                },
+                select: function (e, ui) {
+                    $("#IdAlumno").val(ui.item.id);
+                    $("#dniAlumno").val(ui.item.dni);
+                    $("#txtdatosAlumno").val(ui.item.paterno + " " + ui.item.materno + " " + ui.item.nombres);
+                    fn_mostrar();
+                }
+
+            });
+
+        });
+
+        // Método para sumar la matrícula y la pensión de los cursos y agregarlos al concepto matrícula y pensión: Condicion Curso
+        function sumar() {
+            var sumMatricula = 0;
+            var sumPension = 0;
+            $('.matriculaCurso').each(function () {
+                sumMatricula += parseFloat($(this).text());
+            });
+            $('.pensionCurso').each(function () {
+                sumPension += parseFloat($(this).text());
+            });
+
+            $("#IdMATRICULA_REGULAR").html(sumMatricula.toFixed(2));
+            $("#IdPENSIÓN_MENSUAL").html(sumPension.toFixed(2));
+        }
+
+        // Métdo para restar la matrícula de los conceptos: Condición Curso
+        function restarMatricula() {
+            total = total - valor;
+            $("#IdMATRICULA_REGULAR").html(total.toFixed(2));
+        }
+
+        // Método para restar pensión de los conceptos: Condición Curso
+        function restarPension() {
+            totalPension = totalPension - valorPension;
+            $("#IdPENSIÓN_MENSUAL").html(totalPension.toFixed(2));
+        }
+        //Funcion para restar el total de los conceptos: Condicion Curso
+        function restarCurso(totalCurso) {
+
+            $("#TotalCurso").val(totalCurso.toFixed(2));
+        }
+
+        //Método para calcular el total de los cursos a pagar: Condición Curso
+
+        function fn_Total_Curso() {
+            var sumTotal = 0;
+            $('.Concepto').each(function () {
+                sumTotal += parseFloat($(this).text());
+            });
+
+            $('#TotalCurso').val(sumTotal.toFixed(2));
+        };
+
+        //Método para eliminar los cursos del detalle matrícula: Condición Curso
+        function fn_eliminar_curso() {
+            $("a.elimina").click(function () {
+                var filas = $('#tbldetalle2').find('tbody tr').length;
+                total = $("#IdMATRICULA_REGULAR").html();
+                totalPension = $("#IdPENSIÓN_MENSUAL").html();
+                totalCurso = $("#TotalCurso").val();
+                valor = $(this).parents("tr").find("td").eq(4).html();
+                valorPension = $(this).parents("tr").find("td").eq(9).html();
+
+                $(this).parents("tr").fadeOut("normal", function () {
+                    $(this).remove();
+                    restarMatricula();
+                    restarPension();
+                    totalCurso = total + totalPension;
+                    restarCurso(totalCurso);
+                    if (filas == 1) {
+                        $("#Guardar").prop('disabled', true);
+                    }
+                });
+            });
+        };
+        // Método para agregar cursos al detalle matrícula: Condición Curso
+        function fn_agregar_curso() {
+            $(".enviar").on("click", function () {
+                var column1 = $(this).closest('tr').children()[0].textContent;
+                var column2 = $(this).closest('tr').children()[1].textContent;
+                var column3 = $(this).closest('tr').children()[2].textContent;
+                var column4 = $(this).closest('tr').children()[3].textContent;
+                var column5 = $(this).closest('tr').children()[4].textContent;
+                var column6 = $(this).closest('tr').children()[5].textContent;
+                var column7 = $(this).closest('tr').children()[6].textContent;
+                var column8 = $(this).closest('tr').children()[7].textContent;
+                var column9 = $(this).closest('tr').children()[8].textContent;
+                var pension = column6 * column7;
+                var column10 = $(this).closest('tr').children()[9].textContent;
+
+                if ($("#tbldetalle2 .copy_" + column1).length == 0) {
+                    $("#tbldetalle2").append("<tr class='copy_" + column1 +
+                        "'><td hidden>" + column1 + "</td><td>" + column2 +
+                        "</td><td>" + column3 + "</td><td>" + column4 +
+                        "</td><td class='matriculaCurso' hidden>" + column5 +
+                        "</td><td class='mensualidadCurso' hidden>" + column6 +
+                        "</td><td class='cuotaCurso' hidden>" + column7 +
+                        "</td><td hidden>" + column8 +
+                        "</td><td hidden>" + column9 +
+                        "</td><td class='pensionCurso' hidden>" + pension +
+                        "</td><td>" + column10 +
+                        "</td><td><a class ='elimina'><button class='btn left red' type='button'><i class='material-icons left'>remove</i></button></a></td></tr>");
+                }
+                fn_mostrar_elegidos();
+                sumar();
+                fn_Total_Curso();
+                fn_eliminar_curso();
+
+            });
+        }
+    </script>
+}
+
+<script src="https://code.jquery.com/jquery-3.4.1.js" type="text/javascript"></script>
+<script>
+
+    $(document).ready(function () {
+            // Evento para guardar la matrícula: Condición Especialidad
+            $("#Generar").click(function () {
+
+                var _MatriculaDetalle = new Array();
+                $("#tbldetalle tbody tr").each(function (_, value) {
+                    _MatriculaDetalle.push({ CursoId: value.firstChild.innerText })
+                });
+
+                var _CuentasPorCobrarDetalle = new Array();
+                $("#tbconceptos tbody tr").each(function (_, value) {
+                    console.log(value.childNodes)
+                    _CuentasPorCobrarDetalle.push({
+                        ConceptoPagoId: value.childNodes[1].innerText,
+                        ItemId: value.childNodes[3].innerText,
+                        Importe: value.childNodes[7].innerText
+                    })
+                });
+
+
+                var envioObjeto = {
+                    CondicionEstudio: $("#CondicionEspecialidad").val(),
+                    Fecha: $("#fecha").val(),
+                    PeriodoId: $("#periodo").val(),
+                    AlumnoId: $("#Id").val(),
+                    Monto: $("#TotalEspecialidad").val(),
+                    Observacion: $("#Eobservacion").val(),
+                    MatriculaDetalle: _MatriculaDetalle,
+                    CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
+                }
+
+                console.log(envioObjeto)
+
+                $.ajax({
+                    url: '@Url.Action("Registrar","Matricula")',
+                    data: JSON.stringify(envioObjeto),
+                    type: "POST",
+                    async: false,//this makes the ajax-call blocking
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        alert(response);
+                        location.reload($("#test1"));
+                    },
+                    error: function (error) {
+                        alert(error);
+
+                    }
+                });
+            });
+
+            // Evwnto para guardar la matrícula: Condición Curso
+            $("#Guardar").click(function () {
+
+                var _MatriculaDetalle = new Array();
+                $("#tbldetalle2 tbody tr").each(function (_, value) {
+                    _MatriculaDetalle.push({ CursoId: value.firstChild.innerText })
+                });
+
+                var _CuentasPorCobrarDetalle = new Array();
+                $("#tbconceptos2 tbody tr").each(function (_, value) {
+                    console.log(value.childNodes)
+                    _CuentasPorCobrarDetalle.push({
+                        ConceptoPagoId: value.childNodes[1].innerText,
+                        ItemId: value.childNodes[3].innerText,
+                        Importe: value.childNodes[7].innerText
+                    })
+                });
+
+
+                var envioObjeto = {
+                    CondicionEstudio: $("#CondicionCurso").val(),
+                    Fecha: $("#fechaTab").val(),
+                    PeriodoId: $("#periodoTab").val(),
+                    AlumnoId: $("#IdAlumno").val(),
+                    Monto: $("#TotalCurso").val(),
+                    Observacion: $("#Cobservacion").val(),
+                    MatriculaDetalle: _MatriculaDetalle,
+                    CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
+                }
+
+                console.log(envioObjeto)
+
+
+                $.ajax({
+                    url: '@Url.Action("Registrar","Matricula")',
+                    data: JSON.stringify(envioObjeto),
+                    type: "POST",
+                    async: false,//this makes the ajax-call blocking
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        alert(response);
+                        fn_recargar();
+                    },
+                    error: function (error) {
+                        alert(error);
+
+                    }
+                });
+            });
+        });
+
+</script>
+
+<script>
+    //Método para recargar la página desde lado del usuario luego de guardar matrícula
+    function fn_recargar() {
+        //Tab Condicion Especialidad
+        $("#tbcursos td").remove();
+        $("#tbldetalle td").remove();
+        var numero = 0;
+        $("#tdMATRICULA_REGULAR").html(numero.toFixed(2));
+        $("#tdPENSIÓN_MENSUAL").html(numero.toFixed(2));
+        $('#TotalEspecialidad').val(numero.toFixed(2));
+        $(".Especialidad").hide();
+        $(".Asignaturas").hide();
+        $(".Elegidos").hide();
+        //$("#Especialidades").empty();
+        $("#Id").val("");
+        $("#dni").val("");
+        $("#txtdatos").val("");
+        $("#Eobservacion").val("");
+        $(".filtro").val("");
+
+        //Tab Condicion Curso
+        $("#tbcursos2 td").remove();
+        $("#tbldetalle2 td").remove();
+        var numero = 0;
+        $("#IdMATRICULA_REGULAR").html(numero.toFixed(2));
+        $("#IdPENSIÓN_MENSUAL").html(numero.toFixed(2));
+        $('#TotalCurso').val(numero.toFixed(2));
+        $(".CursoPorEspecialidad").hide();
+        $(".AsignaturasCursos").hide();
+        $(".ElegidosCursos").hide();
+        //$("#EspecialidadesCurso").empty();
+        $("#IdAlumno").val("");
+        $("#dniAlumno").val("");
+        $("#txtdatosAlumno").val("");
+        $("#Cobservacion").val("");
+        $(".busqueda").val("");
+    }
+</script>

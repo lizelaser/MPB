@@ -1,0 +1,2485 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ACADEMICOModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Alumno">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Paterno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Materno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nombres" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Dni" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Nacimiento" Type="date" />
+          <Property Name="Direccion" Type="varchar" MaxLength="500" />
+          <Property Name="Celular" Type="varchar" MaxLength="20" />
+          <Property Name="Correo" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="FechaReg" Type="datetime" />
+          <Property Name="FechaMod" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Alumno_Especialidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EspecialidadId" Type="int" Nullable="false" />
+          <Property Name="AlumnoId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Aula">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Boveda">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SaldoInicial" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Entradas" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SaldoFinal" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="FechaInicio" Type="datetime" Nullable="false" />
+          <Property Name="FechaFin" Type="datetime" />
+          <Property Name="IndCierre" Type="bit" Nullable="false" />
+          <Property Name="Salidas" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="BovedaMovimiento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BovedaId" Type="int" Nullable="false" />
+          <Property Name="CajaDiarioId" Type="int" />
+          <Property Name="OperacionId" Type="int" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="Glosa" Type="varchar" MaxLength="100" />
+          <Property Name="Importe" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Caja">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IndUso" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CajaDiario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CajaId" Type="int" Nullable="false" />
+          <Property Name="UsuarioId" Type="int" Nullable="false" />
+          <Property Name="SaldoInicial" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Entradas" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Salidas" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SaldoFinal" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="FechaInicio" Type="datetime" Nullable="false" />
+          <Property Name="FechaFin" Type="datetime" />
+          <Property Name="IndCierre" Type="bit" Nullable="false" />
+          <Property Name="IndBoveda" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CajaMovimiento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CajaDiarioId" Type="int" Nullable="false" />
+          <Property Name="AlumnoId" Type="int" />
+          <Property Name="PersonalId" Type="int" />
+          <Property Name="OperacionId" Type="int" Nullable="false" />
+          <Property Name="EstadoId" Type="int" Nullable="false" />
+          <Property Name="Serie" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Numero" Type="varchar" MaxLength="7" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="IndEntrada" Type="bit" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="CajaMovimientoDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CajaMovimientoId" Type="int" Nullable="false" />
+          <Property Name="ConceptoPagoId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Cantidad" Type="int" Nullable="false" />
+          <Property Name="Descuento" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Importe" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ConceptoPago">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Item" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Item" Type="int" Nullable="false" />
+          <Property Name="Concepto" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Precio" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CondicionEstudio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CuentasPorCobrar">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MatriculaId" Type="int" Nullable="false" />
+          <Property Name="EstadoId" Type="int" Nullable="false" />
+          <Property Name="AlumnoId" Type="int" Nullable="false" />
+          <Property Name="Numero" Type="varchar" MaxLength="7" Nullable="false" />
+          <Property Name="Serie" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="IndEntrada" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CuentasPorCobrarDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CuentasPorCobrarId" Type="int" Nullable="false" />
+          <Property Name="ConceptoPagoId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Cantidad" Type="int" Nullable="false" />
+          <Property Name="Descuento" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Importe" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EspecialidadId" Type="int" Nullable="false" />
+          <Property Name="Codigo" Type="varchar" MaxLength="4" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Credito" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Matricula" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Mensualidad" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Cuotas" Type="int" Nullable="false" />
+          <Property Name="Duracion" Type="varchar" MaxLength="20" />
+          <Property Name="TotalHoras" Type="int" />
+        </EntityType>
+        <EntityType Name="Especialidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Matricula" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Mensualidad" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Cuotas" Type="int" Nullable="false" />
+          <Property Name="Duracion" Type="varchar" MaxLength="20" />
+          <Property Name="TotalHoras" Type="int" />
+        </EntityType>
+        <EntityType Name="Estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Horario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PeriodoId" Type="int" Nullable="false" />
+          <Property Name="CursoId" Type="int" Nullable="false" />
+          <Property Name="AulaId" Type="int" />
+          <Property Name="Hora" Type="int" Nullable="false" />
+          <Property Name="CantidadHora" Type="int" Nullable="false" />
+          <Property Name="Dia" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Matricula">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CondicionEstudioId" Type="int" Nullable="false" />
+          <Property Name="AlumnoId" Type="int" Nullable="false" />
+          <Property Name="PeridoId" Type="int" Nullable="false" />
+          <Property Name="EstadoId" Type="int" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="Monto" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="IndPagoMatricula" Type="bit" Nullable="false" />
+          <Property Name="IndPagoUnico" Type="bit" Nullable="false" />
+          <Property Name="Observacion" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="MatriculaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MatriculaId" Type="int" Nullable="false" />
+          <Property Name="CursoId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Menu_Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RolId" Type="int" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Notas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AlumnoId" Type="int" Nullable="false" />
+          <Property Name="CursoId" Type="int" Nullable="false" />
+          <Property Name="PeriodoId" Type="int" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="Nota" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Observacion" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Operacion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Periodo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="FechaInicio" Type="date" Nullable="false" />
+          <Property Name="FechaFin" Type="date" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Personal">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Paterno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Materno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nombres" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Dni" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Nacimiento" Type="date" />
+          <Property Name="Direccion" Type="varchar" MaxLength="500" />
+          <Property Name="Celular" Type="varchar" MaxLength="20" />
+          <Property Name="Correo" Type="varchar" MaxLength="50" />
+          <Property Name="Honorario" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="FechaReg" Type="datetime" Nullable="false" />
+          <Property Name="FechaMod" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Personal_Tipo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PersonalId" Type="int" Nullable="false" />
+          <Property Name="TipoPersonalId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Codigo" Type="char" MaxLength="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TipoPersonal">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Usuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RolId" Type="int" />
+          <Property Name="PersonalId" Type="int" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Correo" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Clave" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+          <Property Name="IndCambio" Type="bit" Nullable="false" />
+          <Property Name="IndUso" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ValorTabla">
+          <Key>
+            <PropertyRef Name="TablaId" />
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="TablaId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Denominacion" Type="varchar" MaxLength="70" Nullable="false" />
+          <Property Name="DesCorta" Type="varchar" MaxLength="30" />
+          <Property Name="Valor" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK__CuentasPo__Alumn__634EBE90">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1" />
+          <End Role="CuentasPorCobrar" Type="Self.CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CuentasPo__Estad__2FCF1A8A">
+          <End Role="Estado" Type="Self.Estado" Multiplicity="1" />
+          <End Role="CuentasPorCobrar" Type="Self.CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CuentasPo__Matri__2EDAF651">
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="1" />
+          <End Role="CuentasPorCobrar" Type="Self.CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="MatriculaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AE_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Alumno_Especialidad" Type="Self.Alumno_Especialidad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alumno_Especialidad">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AE_Especialidad">
+          <End Role="Especialidad" Type="Self.Especialidad" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Alumno_Especialidad" Type="Self.Alumno_Especialidad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alumno_Especialidad">
+              <PropertyRef Name="EspecialidadId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BM_Boveda">
+          <End Role="Boveda" Type="Self.Boveda" Multiplicity="1" />
+          <End Role="BovedaMovimiento" Type="Self.BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Boveda">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="BovedaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BM_CajaDiario">
+          <End Role="CajaDiario" Type="Self.CajaDiario" Multiplicity="0..1" />
+          <End Role="BovedaMovimiento" Type="Self.BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaDiario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="CajaDiarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BM_Operacion">
+          <End Role="Operacion" Type="Self.Operacion" Multiplicity="1" />
+          <End Role="BovedaMovimiento" Type="Self.BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operacion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="OperacionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaDiario_Caja">
+          <End Role="Caja" Type="Self.Caja" Multiplicity="1" />
+          <End Role="CajaDiario" Type="Self.CajaDiario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Caja">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaDiario">
+              <PropertyRef Name="CajaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaDiario_Usuario">
+          <End Role="Usuario" Type="Self.Usuario" Multiplicity="1" />
+          <End Role="CajaDiario" Type="Self.CajaDiario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaDiario">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="0..1" />
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_CajaDiario">
+          <End Role="CajaDiario" Type="Self.CajaDiario" Multiplicity="1" />
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaDiario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="CajaDiarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Estado">
+          <End Role="Estado" Type="Self.Estado" Multiplicity="1" />
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Operacion">
+          <End Role="Operacion" Type="Self.Operacion" Multiplicity="1" />
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operacion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="OperacionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Personal">
+          <End Role="Personal" Type="Self.Personal" Multiplicity="0..1" />
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CCDetalle_Concepto">
+          <End Role="ConceptoPago" Type="Self.ConceptoPago" Multiplicity="1" />
+          <End Role="CuentasPorCobrarDetalle" Type="Self.CuentasPorCobrarDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConceptoPago">
+              <PropertyRef Name="Id" />
+              <PropertyRef Name="Item" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrarDetalle">
+              <PropertyRef Name="ConceptoPagoId" />
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CCDetalle_CuentasPorCobrar">
+          <End Role="CuentasPorCobrar" Type="Self.CuentasPorCobrar" Multiplicity="1" />
+          <End Role="CuentasPorCobrarDetalle" Type="Self.CuentasPorCobrarDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CuentasPorCobrar">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrarDetalle">
+              <PropertyRef Name="CuentasPorCobrarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CMDetalle_CajaMovimiento">
+          <End Role="CajaMovimiento" Type="Self.CajaMovimiento" Multiplicity="1" />
+          <End Role="CajaMovimientoDetalle" Type="Self.CajaMovimientoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaMovimiento">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimientoDetalle">
+              <PropertyRef Name="CajaMovimientoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CMDetalle_Concepto">
+          <End Role="ConceptoPago" Type="Self.ConceptoPago" Multiplicity="1" />
+          <End Role="CajaMovimientoDetalle" Type="Self.CajaMovimientoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConceptoPago">
+              <PropertyRef Name="Id" />
+              <PropertyRef Name="Item" />
+            </Principal>
+            <Dependent Role="CajaMovimientoDetalle">
+              <PropertyRef Name="ConceptoPagoId" />
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Curso_Especialidad">
+          <End Role="Especialidad" Type="Self.Especialidad" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Curso" Type="Self.Curso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Curso">
+              <PropertyRef Name="EspecialidadId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Aula">
+          <End Role="Aula" Type="Self.Aula" Multiplicity="0..1" />
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Aula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="AulaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Periodo">
+          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="PeriodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_CondicionEstudio">
+          <End Role="CondicionEstudio" Type="Self.CondicionEstudio" Multiplicity="1" />
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CondicionEstudio">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="CondicionEstudioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Estado">
+          <End Role="Estado" Type="Self.Estado" Multiplicity="1" />
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Periodo">
+          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="PeridoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MD_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="MatriculaDetalle" Type="Self.MatriculaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MatriculaDetalle">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MD_Matricula">
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="MatriculaDetalle" Type="Self.MatriculaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MatriculaDetalle">
+              <PropertyRef Name="MatriculaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MR_Menu">
+          <End Role="Menu" Type="Self.Menu" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu_Rol" Type="Self.Menu_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Menu_Rol">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MR_Rol">
+          <End Role="Rol" Type="Self.Rol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu_Rol" Type="Self.Menu_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Menu_Rol">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Periodo">
+          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="PeriodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PT_Personal">
+          <End Role="Personal" Type="Self.Personal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Personal_Tipo" Type="Self.Personal_Tipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Personal_Tipo">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PT_TipoPersonal">
+          <End Role="TipoPersonal" Type="Self.TipoPersonal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Personal_Tipo" Type="Self.Personal_Tipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoPersonal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Personal_Tipo">
+              <PropertyRef Name="TipoPersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Personal">
+          <End Role="Personal" Type="Self.Personal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Usuario" Type="Self.Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Rol">
+          <End Role="Rol" Type="Self.Rol" Multiplicity="0..1" />
+          <End Role="Usuario" Type="Self.Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ACADEMICOModelStoreContainer">
+          <EntitySet Name="Alumno" EntityType="Self.Alumno" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Alumno_Especialidad" EntityType="Self.Alumno_Especialidad" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Aula" EntityType="Self.Aula" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Boveda" EntityType="Self.Boveda" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BovedaMovimiento" EntityType="Self.BovedaMovimiento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Caja" EntityType="Self.Caja" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CajaDiario" EntityType="Self.CajaDiario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CajaMovimiento" EntityType="Self.CajaMovimiento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CajaMovimientoDetalle" EntityType="Self.CajaMovimientoDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConceptoPago" EntityType="Self.ConceptoPago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CondicionEstudio" EntityType="Self.CondicionEstudio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CuentasPorCobrar" EntityType="Self.CuentasPorCobrar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CuentasPorCobrarDetalle" EntityType="Self.CuentasPorCobrarDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Curso" EntityType="Self.Curso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Especialidad" EntityType="Self.Especialidad" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Horario" EntityType="Self.Horario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Matricula" EntityType="Self.Matricula" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MatriculaDetalle" EntityType="Self.MatriculaDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu_Rol" EntityType="Self.Menu_Rol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notas" EntityType="Self.Notas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Operacion" EntityType="Self.Operacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Periodo" EntityType="Self.Periodo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Personal" EntityType="Self.Personal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Personal_Tipo" EntityType="Self.Personal_Tipo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rol" EntityType="Self.Rol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TipoPersonal" EntityType="Self.TipoPersonal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Usuario" EntityType="Self.Usuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ValorTabla" EntityType="Self.ValorTabla" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__CuentasPo__Alumn__634EBE90" Association="Self.FK__CuentasPo__Alumn__634EBE90">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CuentasPo__Estad__2FCF1A8A" Association="Self.FK__CuentasPo__Estad__2FCF1A8A">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CuentasPo__Matri__2EDAF651" Association="Self.FK__CuentasPo__Matri__2EDAF651">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AE_Alumno" Association="Self.FK_AE_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AE_Especialidad" Association="Self.FK_AE_Especialidad">
+            <End Role="Especialidad" EntitySet="Especialidad" />
+            <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BM_Boveda" Association="Self.FK_BM_Boveda">
+            <End Role="Boveda" EntitySet="Boveda" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BM_CajaDiario" Association="Self.FK_BM_CajaDiario">
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BM_Operacion" Association="Self.FK_BM_Operacion">
+            <End Role="Operacion" EntitySet="Operacion" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaDiario_Caja" Association="Self.FK_CajaDiario_Caja">
+            <End Role="Caja" EntitySet="Caja" />
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaDiario_Usuario" Association="Self.FK_CajaDiario_Usuario">
+            <End Role="Usuario" EntitySet="Usuario" />
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Alumno" Association="Self.FK_CajaMovimiento_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_CajaDiario" Association="Self.FK_CajaMovimiento_CajaDiario">
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Estado" Association="Self.FK_CajaMovimiento_Estado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Operacion" Association="Self.FK_CajaMovimiento_Operacion">
+            <End Role="Operacion" EntitySet="Operacion" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Personal" Association="Self.FK_CajaMovimiento_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CCDetalle_Concepto" Association="Self.FK_CCDetalle_Concepto">
+            <End Role="ConceptoPago" EntitySet="ConceptoPago" />
+            <End Role="CuentasPorCobrarDetalle" EntitySet="CuentasPorCobrarDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CCDetalle_CuentasPorCobrar" Association="Self.FK_CCDetalle_CuentasPorCobrar">
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+            <End Role="CuentasPorCobrarDetalle" EntitySet="CuentasPorCobrarDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CMDetalle_CajaMovimiento" Association="Self.FK_CMDetalle_CajaMovimiento">
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+            <End Role="CajaMovimientoDetalle" EntitySet="CajaMovimientoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CMDetalle_Concepto" Association="Self.FK_CMDetalle_Concepto">
+            <End Role="ConceptoPago" EntitySet="ConceptoPago" />
+            <End Role="CajaMovimientoDetalle" EntitySet="CajaMovimientoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Curso_Especialidad" Association="Self.FK_Curso_Especialidad">
+            <End Role="Especialidad" EntitySet="Especialidad" />
+            <End Role="Curso" EntitySet="Curso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Aula" Association="Self.FK_Horario_Aula">
+            <End Role="Aula" EntitySet="Aula" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Curso" Association="Self.FK_Horario_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Periodo" Association="Self.FK_Horario_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Alumno" Association="Self.FK_Matricula_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_CondicionEstudio" Association="Self.FK_Matricula_CondicionEstudio">
+            <End Role="CondicionEstudio" EntitySet="CondicionEstudio" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Estado" Association="Self.FK_Matricula_Estado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Periodo" Association="Self.FK_Matricula_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MD_Curso" Association="Self.FK_MD_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="MatriculaDetalle" EntitySet="MatriculaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MD_Matricula" Association="Self.FK_MD_Matricula">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="MatriculaDetalle" EntitySet="MatriculaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MR_Menu" Association="Self.FK_MR_Menu">
+            <End Role="Menu" EntitySet="Menu" />
+            <End Role="Menu_Rol" EntitySet="Menu_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MR_Rol" Association="Self.FK_MR_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="Menu_Rol" EntitySet="Menu_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Alumno" Association="Self.FK_Notas_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Curso" Association="Self.FK_Notas_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Periodo" Association="Self.FK_Notas_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PT_Personal" Association="Self.FK_PT_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Personal_Tipo" EntitySet="Personal_Tipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PT_TipoPersonal" Association="Self.FK_PT_TipoPersonal">
+            <End Role="TipoPersonal" EntitySet="TipoPersonal" />
+            <End Role="Personal_Tipo" EntitySet="Personal_Tipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Personal" Association="Self.FK_Usuario_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Rol" Association="Self.FK_Usuario_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ACADEMICOModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Alumno">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Paterno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Materno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Nombres" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Dni" Type="String" MaxLength="8" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Nacimiento" Type="DateTime" Precision="0" />
+          <Property Name="Direccion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Celular" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Correo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="FechaReg" Type="DateTime" Precision="3" />
+          <Property Name="FechaMod" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Alumno_Especialidad" Relationship="Self.FK_AE_Alumno" FromRole="Alumno" ToRole="Alumno_Especialidad" />
+          <NavigationProperty Name="Notas" Relationship="Self.FK_Notas_Alumno" FromRole="Alumno" ToRole="Notas" />
+          <NavigationProperty Name="CuentasPorCobrar" Relationship="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90" FromRole="Alumno" ToRole="CuentasPorCobrar" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_Matricula_Alumno" FromRole="Alumno" ToRole="Matricula" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Alumno" FromRole="Alumno" ToRole="CajaMovimiento" />
+        </EntityType>
+        <EntityType Name="Alumno_Especialidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EspecialidadId" Type="Int32" Nullable="false" />
+          <Property Name="AlumnoId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Alumno" Relationship="Self.FK_AE_Alumno" FromRole="Alumno_Especialidad" ToRole="Alumno" />
+          <NavigationProperty Name="Especialidad" Relationship="Self.FK_AE_Especialidad" FromRole="Alumno_Especialidad" ToRole="Especialidad" />
+        </EntityType>
+        <EntityType Name="Aula">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Horario" Relationship="Self.FK_Horario_Aula" FromRole="Aula" ToRole="Horario" />
+        </EntityType>
+        <EntityType Name="Boveda">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SaldoInicial" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Entradas" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SaldoFinal" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="FechaInicio" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FechaFin" Type="DateTime" Precision="3" />
+          <Property Name="IndCierre" Type="Boolean" Nullable="false" />
+          <Property Name="Salidas" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="BovedaMovimiento" Relationship="ACADEMICOModel.FK_BM_Boveda" FromRole="Boveda" ToRole="BovedaMovimiento" />
+        </EntityType>
+        <EntityType Name="CajaDiario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CajaId" Type="Int32" Nullable="false" />
+          <Property Name="UsuarioId" Type="Int32" Nullable="false" />
+          <Property Name="SaldoInicial" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Entradas" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Salidas" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SaldoFinal" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="FechaInicio" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FechaFin" Type="DateTime" Precision="3" />
+          <Property Name="IndCierre" Type="Boolean" Nullable="false" />
+          <Property Name="IndBoveda" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="BovedaMovimiento" Relationship="ACADEMICOModel.FK_BM_CajaDiario" FromRole="CajaDiario" ToRole="BovedaMovimiento" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_CajaDiario" FromRole="CajaDiario" ToRole="CajaMovimiento" />
+          <NavigationProperty Name="Caja" Relationship="ACADEMICOModel.FK_CajaDiario_Caja" FromRole="CajaDiario" ToRole="Caja" />
+          <NavigationProperty Name="Usuario" Relationship="ACADEMICOModel.FK_CajaDiario_Usuario" FromRole="CajaDiario" ToRole="Usuario" />
+        </EntityType>
+        <EntityType Name="CondicionEstudio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_Matricula_CondicionEstudio" FromRole="CondicionEstudio" ToRole="Matricula" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EspecialidadId" Type="Int32" Nullable="false" />
+          <Property Name="Codigo" Type="String" MaxLength="4" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Denominacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Credito" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Matricula" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Mensualidad" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Cuotas" Type="Int32" Nullable="false" />
+          <Property Name="Duracion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TotalHoras" Type="Int32" />
+          <NavigationProperty Name="Especialidad" Relationship="Self.FK_Curso_Especialidad" FromRole="Curso" ToRole="Especialidad" />
+          <NavigationProperty Name="Horario" Relationship="Self.FK_Horario_Curso" FromRole="Curso" ToRole="Horario" />
+          <NavigationProperty Name="Notas" Relationship="Self.FK_Notas_Curso" FromRole="Curso" ToRole="Notas" />
+          <NavigationProperty Name="MatriculaDetalle" Relationship="ACADEMICOModel.FK_MD_Curso" FromRole="Curso" ToRole="MatriculaDetalle" />
+        </EntityType>
+        <EntityType Name="Especialidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Matricula" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Mensualidad" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Cuotas" Type="Int32" Nullable="false" />
+          <Property Name="Duracion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TotalHoras" Type="Int32" />
+          <NavigationProperty Name="Alumno_Especialidad" Relationship="Self.FK_AE_Especialidad" FromRole="Especialidad" ToRole="Alumno_Especialidad" />
+          <NavigationProperty Name="Curso" Relationship="Self.FK_Curso_Especialidad" FromRole="Especialidad" ToRole="Curso" />
+        </EntityType>
+        <EntityType Name="Estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="CuentasPorCobrar" Relationship="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A" FromRole="Estado" ToRole="CuentasPorCobrar" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_Matricula_Estado" FromRole="Estado" ToRole="Matricula" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Estado" FromRole="Estado" ToRole="CajaMovimiento" />
+        </EntityType>
+        <EntityType Name="Horario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PeriodoId" Type="Int32" Nullable="false" />
+          <Property Name="CursoId" Type="Int32" Nullable="false" />
+          <Property Name="AulaId" Type="Int32" />
+          <Property Name="Hora" Type="Int32" Nullable="false" />
+          <Property Name="CantidadHora" Type="Int32" Nullable="false" />
+          <Property Name="Dia" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Aula" Relationship="Self.FK_Horario_Aula" FromRole="Horario" ToRole="Aula" />
+          <NavigationProperty Name="Curso" Relationship="Self.FK_Horario_Curso" FromRole="Horario" ToRole="Curso" />
+          <NavigationProperty Name="Periodo" Relationship="Self.FK_Horario_Periodo" FromRole="Horario" ToRole="Periodo" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Menu_Rol" Relationship="Self.FK_MR_Menu" FromRole="Menu" ToRole="Menu_Rol" />
+        </EntityType>
+        <EntityType Name="Menu_Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RolId" Type="Int32" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Menu" Relationship="Self.FK_MR_Menu" FromRole="Menu_Rol" ToRole="Menu" />
+          <NavigationProperty Name="Rol" Relationship="Self.FK_MR_Rol" FromRole="Menu_Rol" ToRole="Rol" />
+        </EntityType>
+        <EntityType Name="Notas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AlumnoId" Type="Int32" Nullable="false" />
+          <Property Name="CursoId" Type="Int32" Nullable="false" />
+          <Property Name="PeriodoId" Type="Int32" Nullable="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Nota" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Observacion" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Alumno" Relationship="Self.FK_Notas_Alumno" FromRole="Notas" ToRole="Alumno" />
+          <NavigationProperty Name="Curso" Relationship="Self.FK_Notas_Curso" FromRole="Notas" ToRole="Curso" />
+          <NavigationProperty Name="Periodo" Relationship="Self.FK_Notas_Periodo" FromRole="Notas" ToRole="Periodo" />
+        </EntityType>
+        <EntityType Name="Operacion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="BovedaMovimiento" Relationship="ACADEMICOModel.FK_BM_Operacion" FromRole="Operacion" ToRole="BovedaMovimiento" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Operacion" FromRole="Operacion" ToRole="CajaMovimiento" />
+        </EntityType>
+        <EntityType Name="Periodo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FechaInicio" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="FechaFin" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Horario" Relationship="Self.FK_Horario_Periodo" FromRole="Periodo" ToRole="Horario" />
+          <NavigationProperty Name="Notas" Relationship="Self.FK_Notas_Periodo" FromRole="Periodo" ToRole="Notas" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_Matricula_Periodo" FromRole="Periodo" ToRole="Matricula" />
+        </EntityType>
+        <EntityType Name="Personal">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Paterno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Materno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Nombres" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Dni" Type="String" MaxLength="8" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Nacimiento" Type="DateTime" Precision="0" />
+          <Property Name="Direccion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Celular" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Correo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Honorario" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="FechaReg" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FechaMod" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Personal_Tipo" Relationship="Self.FK_PT_Personal" FromRole="Personal" ToRole="Personal_Tipo" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Personal" FromRole="Personal" ToRole="CajaMovimiento" />
+          <NavigationProperty Name="Usuario" Relationship="ACADEMICOModel.FK_Usuario_Personal" FromRole="Personal" ToRole="Usuario" />
+        </EntityType>
+        <EntityType Name="Personal_Tipo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PersonalId" Type="Int32" Nullable="false" />
+          <Property Name="TipoPersonalId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Personal" Relationship="Self.FK_PT_Personal" FromRole="Personal_Tipo" ToRole="Personal" />
+          <NavigationProperty Name="TipoPersonal" Relationship="Self.FK_PT_TipoPersonal" FromRole="Personal_Tipo" ToRole="TipoPersonal" />
+        </EntityType>
+        <EntityType Name="Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Codigo" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Menu_Rol" Relationship="Self.FK_MR_Rol" FromRole="Rol" ToRole="Menu_Rol" />
+          <NavigationProperty Name="Usuario" Relationship="ACADEMICOModel.FK_Usuario_Rol" FromRole="Rol" ToRole="Usuario" />
+        </EntityType>
+        <EntityType Name="TipoPersonal">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Personal_Tipo" Relationship="Self.FK_PT_TipoPersonal" FromRole="TipoPersonal" ToRole="Personal_Tipo" />
+        </EntityType>
+        <EntityType Name="ValorTabla">
+          <Key>
+            <PropertyRef Name="TablaId" />
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="TablaId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Denominacion" Type="String" MaxLength="70" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DesCorta" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_AE_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Alumno_Especialidad" Type="Self.Alumno_Especialidad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alumno_Especialidad">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AE_Especialidad">
+          <End Role="Especialidad" Type="Self.Especialidad" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Alumno_Especialidad" Type="Self.Alumno_Especialidad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alumno_Especialidad">
+              <PropertyRef Name="EspecialidadId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Aula">
+          <End Role="Aula" Type="Self.Aula" Multiplicity="0..1" />
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Aula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="AulaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Curso_Especialidad">
+          <End Role="Especialidad" Type="Self.Especialidad" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Curso" Type="Self.Curso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Especialidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Curso">
+              <PropertyRef Name="EspecialidadId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Periodo">
+          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="PeriodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MR_Menu">
+          <End Role="Menu" Type="Self.Menu" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu_Rol" Type="Self.Menu_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Menu_Rol">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MR_Rol">
+          <End Role="Rol" Type="Self.Rol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu_Rol" Type="Self.Menu_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Menu_Rol">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Periodo">
+          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="PeriodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PT_Personal">
+          <End Role="Personal" Type="Self.Personal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Personal_Tipo" Type="Self.Personal_Tipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Personal_Tipo">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PT_TipoPersonal">
+          <End Role="TipoPersonal" Type="Self.TipoPersonal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Personal_Tipo" Type="Self.Personal_Tipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoPersonal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Personal_Tipo">
+              <PropertyRef Name="TipoPersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DAEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Alumno" EntityType="Self.Alumno" />
+          <EntitySet Name="Alumno_Especialidad" EntityType="Self.Alumno_Especialidad" />
+          <EntitySet Name="Aula" EntityType="Self.Aula" />
+          <EntitySet Name="Boveda" EntityType="Self.Boveda" />
+          <EntitySet Name="CajaDiario" EntityType="Self.CajaDiario" />
+          <EntitySet Name="CondicionEstudio" EntityType="Self.CondicionEstudio" />
+          <EntitySet Name="Curso" EntityType="Self.Curso" />
+          <EntitySet Name="Especialidad" EntityType="Self.Especialidad" />
+          <EntitySet Name="Estado" EntityType="Self.Estado" />
+          <EntitySet Name="Horario" EntityType="Self.Horario" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" />
+          <EntitySet Name="Menu_Rol" EntityType="Self.Menu_Rol" />
+          <EntitySet Name="Notas" EntityType="Self.Notas" />
+          <EntitySet Name="Operacion" EntityType="Self.Operacion" />
+          <EntitySet Name="Periodo" EntityType="Self.Periodo" />
+          <EntitySet Name="Personal" EntityType="Self.Personal" />
+          <EntitySet Name="Personal_Tipo" EntityType="Self.Personal_Tipo" />
+          <EntitySet Name="Rol" EntityType="Self.Rol" />
+          <EntitySet Name="TipoPersonal" EntityType="Self.TipoPersonal" />
+          <EntitySet Name="ValorTabla" EntityType="Self.ValorTabla" />
+          <AssociationSet Name="FK_AE_Alumno" Association="Self.FK_AE_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Alumno" Association="Self.FK_Notas_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AE_Especialidad" Association="Self.FK_AE_Especialidad">
+            <End Role="Especialidad" EntitySet="Especialidad" />
+            <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Aula" Association="Self.FK_Horario_Aula">
+            <End Role="Aula" EntitySet="Aula" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Curso_Especialidad" Association="Self.FK_Curso_Especialidad">
+            <End Role="Especialidad" EntitySet="Especialidad" />
+            <End Role="Curso" EntitySet="Curso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Curso" Association="Self.FK_Horario_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Curso" Association="Self.FK_Notas_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Periodo" Association="Self.FK_Horario_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MR_Menu" Association="Self.FK_MR_Menu">
+            <End Role="Menu" EntitySet="Menu" />
+            <End Role="Menu_Rol" EntitySet="Menu_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MR_Rol" Association="Self.FK_MR_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="Menu_Rol" EntitySet="Menu_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Periodo" Association="Self.FK_Notas_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PT_Personal" Association="Self.FK_PT_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Personal_Tipo" EntitySet="Personal_Tipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PT_TipoPersonal" Association="Self.FK_PT_TipoPersonal">
+            <End Role="TipoPersonal" EntitySet="TipoPersonal" />
+            <End Role="Personal_Tipo" EntitySet="Personal_Tipo" />
+          </AssociationSet>
+          <EntitySet Name="ConceptoPago" EntityType="ACADEMICOModel.ConceptoPago" />
+          <EntitySet Name="CuentasPorCobrar" EntityType="ACADEMICOModel.CuentasPorCobrar" />
+          <EntitySet Name="CuentasPorCobrarDetalle" EntityType="ACADEMICOModel.CuentasPorCobrarDetalle" />
+          <EntitySet Name="Matricula" EntityType="ACADEMICOModel.Matricula" />
+          <EntitySet Name="MatriculaDetalle" EntityType="ACADEMICOModel.MatriculaDetalle" />
+          <AssociationSet Name="FK__CuentasPo__Alumn__634EBE90" Association="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Alumno" Association="ACADEMICOModel.FK_Matricula_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CCDetalle_Concepto" Association="ACADEMICOModel.FK_CCDetalle_Concepto">
+            <End Role="ConceptoPago" EntitySet="ConceptoPago" />
+            <End Role="CuentasPorCobrarDetalle" EntitySet="CuentasPorCobrarDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_CondicionEstudio" Association="ACADEMICOModel.FK_Matricula_CondicionEstudio">
+            <End Role="CondicionEstudio" EntitySet="CondicionEstudio" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CuentasPo__Estad__2FCF1A8A" Association="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CuentasPo__Matri__2EDAF651" Association="ACADEMICOModel.FK__CuentasPo__Matri__2EDAF651">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CCDetalle_CuentasPorCobrar" Association="ACADEMICOModel.FK_CCDetalle_CuentasPorCobrar">
+            <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
+            <End Role="CuentasPorCobrarDetalle" EntitySet="CuentasPorCobrarDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MD_Curso" Association="ACADEMICOModel.FK_MD_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="MatriculaDetalle" EntitySet="MatriculaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Estado" Association="ACADEMICOModel.FK_Matricula_Estado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Periodo" Association="ACADEMICOModel.FK_Matricula_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MD_Matricula" Association="ACADEMICOModel.FK_MD_Matricula">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="MatriculaDetalle" EntitySet="MatriculaDetalle" />
+          </AssociationSet>
+          <EntitySet Name="BovedaMovimiento" EntityType="ACADEMICOModel.BovedaMovimiento" />
+          <AssociationSet Name="FK_BM_Boveda" Association="ACADEMICOModel.FK_BM_Boveda">
+            <End Role="Boveda" EntitySet="Boveda" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BM_CajaDiario" Association="ACADEMICOModel.FK_BM_CajaDiario">
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BM_Operacion" Association="ACADEMICOModel.FK_BM_Operacion">
+            <End Role="Operacion" EntitySet="Operacion" />
+            <End Role="BovedaMovimiento" EntitySet="BovedaMovimiento" />
+          </AssociationSet>
+          <EntitySet Name="CajaMovimiento" EntityType="ACADEMICOModel.CajaMovimiento" />
+          <EntitySet Name="CajaMovimientoDetalle" EntityType="ACADEMICOModel.CajaMovimientoDetalle" />
+          <AssociationSet Name="FK_CajaMovimiento_Alumno" Association="ACADEMICOModel.FK_CajaMovimiento_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_CajaDiario" Association="ACADEMICOModel.FK_CajaMovimiento_CajaDiario">
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Estado" Association="ACADEMICOModel.FK_CajaMovimiento_Estado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Operacion" Association="ACADEMICOModel.FK_CajaMovimiento_Operacion">
+            <End Role="Operacion" EntitySet="Operacion" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CajaMovimiento_Personal" Association="ACADEMICOModel.FK_CajaMovimiento_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CMDetalle_CajaMovimiento" Association="ACADEMICOModel.FK_CMDetalle_CajaMovimiento">
+            <End Role="CajaMovimiento" EntitySet="CajaMovimiento" />
+            <End Role="CajaMovimientoDetalle" EntitySet="CajaMovimientoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CMDetalle_Concepto" Association="ACADEMICOModel.FK_CMDetalle_Concepto">
+            <End Role="ConceptoPago" EntitySet="ConceptoPago" />
+            <End Role="CajaMovimientoDetalle" EntitySet="CajaMovimientoDetalle" />
+          </AssociationSet>
+          <EntitySet Name="Caja" EntityType="ACADEMICOModel.Caja" />
+          <AssociationSet Name="FK_CajaDiario_Caja" Association="ACADEMICOModel.FK_CajaDiario_Caja">
+            <End Role="Caja" EntitySet="Caja" />
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+          </AssociationSet>
+          <EntitySet Name="Usuario" EntityType="ACADEMICOModel.Usuario" />
+          <AssociationSet Name="FK_CajaDiario_Usuario" Association="ACADEMICOModel.FK_CajaDiario_Usuario">
+            <End Role="Usuario" EntitySet="Usuario" />
+            <End Role="CajaDiario" EntitySet="CajaDiario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Personal" Association="ACADEMICOModel.FK_Usuario_Personal">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Rol" Association="ACADEMICOModel.FK_Usuario_Rol">
+            <End Role="Rol" EntitySet="Rol" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="ConceptoPago">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Item" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Item" Type="Int32" Nullable="false" />
+          <Property Name="Concepto" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Precio" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <NavigationProperty Name="CuentasPorCobrarDetalle" Relationship="ACADEMICOModel.FK_CCDetalle_Concepto" FromRole="ConceptoPago" ToRole="CuentasPorCobrarDetalle" />
+          <NavigationProperty Name="CajaMovimientoDetalle" Relationship="ACADEMICOModel.FK_CMDetalle_Concepto" FromRole="ConceptoPago" ToRole="CajaMovimientoDetalle" />
+        </EntityType>
+        <EntityType Name="CuentasPorCobrar">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MatriculaId" Type="Int32" Nullable="false" />
+          <Property Name="EstadoId" Type="Int32" Nullable="false" />
+          <Property Name="AlumnoId" Type="Int32" Nullable="false" />
+          <Property Name="Numero" Type="String" Nullable="false" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="Serie" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Total" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="IndEntrada" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Alumno" Relationship="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90" FromRole="CuentasPorCobrar" ToRole="Alumno" />
+          <NavigationProperty Name="Estado" Relationship="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A" FromRole="CuentasPorCobrar" ToRole="Estado" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK__CuentasPo__Matri__2EDAF651" FromRole="CuentasPorCobrar" ToRole="Matricula" />
+          <NavigationProperty Name="CuentasPorCobrarDetalle" Relationship="ACADEMICOModel.FK_CCDetalle_CuentasPorCobrar" FromRole="CuentasPorCobrar" ToRole="CuentasPorCobrarDetalle" />
+        </EntityType>
+        <EntityType Name="CuentasPorCobrarDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CuentasPorCobrarId" Type="Int32" Nullable="false" />
+          <Property Name="ConceptoPagoId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="Descuento" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Importe" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <NavigationProperty Name="ConceptoPago" Relationship="ACADEMICOModel.FK_CCDetalle_Concepto" FromRole="CuentasPorCobrarDetalle" ToRole="ConceptoPago" />
+          <NavigationProperty Name="CuentasPorCobrar" Relationship="ACADEMICOModel.FK_CCDetalle_CuentasPorCobrar" FromRole="CuentasPorCobrarDetalle" ToRole="CuentasPorCobrar" />
+        </EntityType>
+        <EntityType Name="Matricula">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CondicionEstudioId" Type="Int32" Nullable="false" />
+          <Property Name="AlumnoId" Type="Int32" Nullable="false" />
+          <Property Name="PeridoId" Type="Int32" Nullable="false" />
+          <Property Name="EstadoId" Type="Int32" Nullable="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Monto" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="IndPagoMatricula" Type="Boolean" Nullable="false" />
+          <Property Name="IndPagoUnico" Type="Boolean" Nullable="false" />
+          <Property Name="Observacion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Alumno" Relationship="ACADEMICOModel.FK_Matricula_Alumno" FromRole="Matricula" ToRole="Alumno" />
+          <NavigationProperty Name="CondicionEstudio" Relationship="ACADEMICOModel.FK_Matricula_CondicionEstudio" FromRole="Matricula" ToRole="CondicionEstudio" />
+          <NavigationProperty Name="CuentasPorCobrar" Relationship="ACADEMICOModel.FK__CuentasPo__Matri__2EDAF651" FromRole="Matricula" ToRole="CuentasPorCobrar" />
+          <NavigationProperty Name="Estado" Relationship="ACADEMICOModel.FK_Matricula_Estado" FromRole="Matricula" ToRole="Estado" />
+          <NavigationProperty Name="Periodo" Relationship="ACADEMICOModel.FK_Matricula_Periodo" FromRole="Matricula" ToRole="Periodo" />
+          <NavigationProperty Name="MatriculaDetalle" Relationship="ACADEMICOModel.FK_MD_Matricula" FromRole="Matricula" ToRole="MatriculaDetalle" />
+        </EntityType>
+        <EntityType Name="MatriculaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MatriculaId" Type="Int32" Nullable="false" />
+          <Property Name="CursoId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Curso" Relationship="ACADEMICOModel.FK_MD_Curso" FromRole="MatriculaDetalle" ToRole="Curso" />
+          <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_MD_Matricula" FromRole="MatriculaDetalle" ToRole="Matricula" />
+        </EntityType>
+        <Association Name="FK__CuentasPo__Alumn__634EBE90">
+          <End Type="ACADEMICOModel.Alumno" Role="Alumno" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CuentasPorCobrar" Role="CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Alumno">
+          <End Type="ACADEMICOModel.Alumno" Role="Alumno" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CCDetalle_Concepto">
+          <End Type="ACADEMICOModel.ConceptoPago" Role="ConceptoPago" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CuentasPorCobrarDetalle" Role="CuentasPorCobrarDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConceptoPago">
+              <PropertyRef Name="Id" />
+              <PropertyRef Name="Item" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrarDetalle">
+              <PropertyRef Name="ConceptoPagoId" />
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_CondicionEstudio">
+          <End Type="ACADEMICOModel.CondicionEstudio" Role="CondicionEstudio" Multiplicity="1" />
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CondicionEstudio">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="CondicionEstudioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CuentasPo__Estad__2FCF1A8A">
+          <End Type="ACADEMICOModel.Estado" Role="Estado" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CuentasPorCobrar" Role="CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CuentasPo__Matri__2EDAF651">
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CuentasPorCobrar" Role="CuentasPorCobrar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrar">
+              <PropertyRef Name="MatriculaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CCDetalle_CuentasPorCobrar">
+          <End Type="ACADEMICOModel.CuentasPorCobrar" Role="CuentasPorCobrar" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CuentasPorCobrarDetalle" Role="CuentasPorCobrarDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CuentasPorCobrar">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CuentasPorCobrarDetalle">
+              <PropertyRef Name="CuentasPorCobrarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MD_Curso">
+          <End Type="ACADEMICOModel.Curso" Role="Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ACADEMICOModel.MatriculaDetalle" Role="MatriculaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MatriculaDetalle">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Estado">
+          <End Type="ACADEMICOModel.Estado" Role="Estado" Multiplicity="1" />
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Periodo">
+          <End Type="ACADEMICOModel.Periodo" Role="Periodo" Multiplicity="1" />
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="PeridoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MD_Matricula">
+          <End Type="ACADEMICOModel.Matricula" Role="Matricula" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ACADEMICOModel.MatriculaDetalle" Role="MatriculaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MatriculaDetalle">
+              <PropertyRef Name="MatriculaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="BovedaMovimiento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BovedaId" Type="Int32" Nullable="false" />
+          <Property Name="CajaDiarioId" Type="Int32" />
+          <Property Name="OperacionId" Type="Int32" Nullable="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Glosa" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Importe" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <NavigationProperty Name="Boveda" Relationship="ACADEMICOModel.FK_BM_Boveda" FromRole="BovedaMovimiento" ToRole="Boveda" />
+          <NavigationProperty Name="CajaDiario" Relationship="ACADEMICOModel.FK_BM_CajaDiario" FromRole="BovedaMovimiento" ToRole="CajaDiario" />
+          <NavigationProperty Name="Operacion" Relationship="ACADEMICOModel.FK_BM_Operacion" FromRole="BovedaMovimiento" ToRole="Operacion" />
+        </EntityType>
+        <Association Name="FK_BM_Boveda">
+          <End Type="ACADEMICOModel.Boveda" Role="Boveda" Multiplicity="1" />
+          <End Type="ACADEMICOModel.BovedaMovimiento" Role="BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Boveda">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="BovedaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BM_CajaDiario">
+          <End Type="ACADEMICOModel.CajaDiario" Role="CajaDiario" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.BovedaMovimiento" Role="BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaDiario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="CajaDiarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BM_Operacion">
+          <End Type="ACADEMICOModel.Operacion" Role="Operacion" Multiplicity="1" />
+          <End Type="ACADEMICOModel.BovedaMovimiento" Role="BovedaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operacion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BovedaMovimiento">
+              <PropertyRef Name="OperacionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CajaMovimiento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CajaDiarioId" Type="Int32" Nullable="false" />
+          <Property Name="AlumnoId" Type="Int32" />
+          <Property Name="PersonalId" Type="Int32" />
+          <Property Name="OperacionId" Type="Int32" Nullable="false" />
+          <Property Name="EstadoId" Type="Int32" Nullable="false" />
+          <Property Name="Serie" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Numero" Type="String" Nullable="false" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Total" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="IndEntrada" Type="Boolean" Nullable="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Alumno" Relationship="ACADEMICOModel.FK_CajaMovimiento_Alumno" FromRole="CajaMovimiento" ToRole="Alumno" />
+          <NavigationProperty Name="CajaDiario" Relationship="ACADEMICOModel.FK_CajaMovimiento_CajaDiario" FromRole="CajaMovimiento" ToRole="CajaDiario" />
+          <NavigationProperty Name="Estado" Relationship="ACADEMICOModel.FK_CajaMovimiento_Estado" FromRole="CajaMovimiento" ToRole="Estado" />
+          <NavigationProperty Name="Operacion" Relationship="ACADEMICOModel.FK_CajaMovimiento_Operacion" FromRole="CajaMovimiento" ToRole="Operacion" />
+          <NavigationProperty Name="Personal" Relationship="ACADEMICOModel.FK_CajaMovimiento_Personal" FromRole="CajaMovimiento" ToRole="Personal" />
+          <NavigationProperty Name="CajaMovimientoDetalle" Relationship="ACADEMICOModel.FK_CMDetalle_CajaMovimiento" FromRole="CajaMovimiento" ToRole="CajaMovimientoDetalle" />
+        </EntityType>
+        <EntityType Name="CajaMovimientoDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CajaMovimientoId" Type="Int32" Nullable="false" />
+          <Property Name="ConceptoPagoId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="Descuento" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Importe" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CMDetalle_CajaMovimiento" FromRole="CajaMovimientoDetalle" ToRole="CajaMovimiento" />
+          <NavigationProperty Name="ConceptoPago" Relationship="ACADEMICOModel.FK_CMDetalle_Concepto" FromRole="CajaMovimientoDetalle" ToRole="ConceptoPago" />
+        </EntityType>
+        <Association Name="FK_CajaMovimiento_Alumno">
+          <End Type="ACADEMICOModel.Alumno" Role="Alumno" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="AlumnoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_CajaDiario">
+          <End Type="ACADEMICOModel.CajaDiario" Role="CajaDiario" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaDiario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="CajaDiarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Estado">
+          <End Type="ACADEMICOModel.Estado" Role="Estado" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="EstadoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Operacion">
+          <End Type="ACADEMICOModel.Operacion" Role="Operacion" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operacion">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="OperacionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CajaMovimiento_Personal">
+          <End Type="ACADEMICOModel.Personal" Role="Personal" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimiento">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CMDetalle_CajaMovimiento">
+          <End Type="ACADEMICOModel.CajaMovimiento" Role="CajaMovimiento" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaMovimientoDetalle" Role="CajaMovimientoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CajaMovimiento">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaMovimientoDetalle">
+              <PropertyRef Name="CajaMovimientoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CMDetalle_Concepto">
+          <End Type="ACADEMICOModel.ConceptoPago" Role="ConceptoPago" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaMovimientoDetalle" Role="CajaMovimientoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConceptoPago">
+              <PropertyRef Name="Id" />
+              <PropertyRef Name="Item" />
+            </Principal>
+            <Dependent Role="CajaMovimientoDetalle">
+              <PropertyRef Name="ConceptoPagoId" />
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Caja">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Denominacion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CajaDiario" Relationship="ACADEMICOModel.FK_CajaDiario_Caja" FromRole="Caja" ToRole="CajaDiario" />
+          <Property Name="IndUso" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_CajaDiario_Caja">
+          <End Type="ACADEMICOModel.Caja" Role="Caja" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaDiario" Role="CajaDiario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Caja">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaDiario">
+              <PropertyRef Name="CajaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Usuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RolId" Type="Int32" />
+          <Property Name="PersonalId" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Correo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Clave" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <Property Name="IndCambio" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CajaDiario" Relationship="ACADEMICOModel.FK_CajaDiario_Usuario" FromRole="Usuario" ToRole="CajaDiario" />
+          <NavigationProperty Name="Personal" Relationship="ACADEMICOModel.FK_Usuario_Personal" FromRole="Usuario" ToRole="Personal" />
+          <NavigationProperty Name="Rol" Relationship="ACADEMICOModel.FK_Usuario_Rol" FromRole="Usuario" ToRole="Rol" />
+          <Property Name="IndUso" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_CajaDiario_Usuario">
+          <End Type="ACADEMICOModel.Usuario" Role="Usuario" Multiplicity="1" />
+          <End Type="ACADEMICOModel.CajaDiario" Role="CajaDiario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CajaDiario">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Personal">
+          <End Type="ACADEMICOModel.Personal" Role="Personal" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ACADEMICOModel.Usuario" Role="Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="PersonalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Rol">
+          <End Type="ACADEMICOModel.Rol" Role="Rol" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.Usuario" Role="Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ACADEMICOModelStoreContainer" CdmEntityContainer="DAEntities">
+          <EntitySetMapping Name="Alumno">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Alumno">
+              <MappingFragment StoreEntitySet="Alumno">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Paterno" ColumnName="Paterno" />
+                <ScalarProperty Name="Materno" ColumnName="Materno" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="Dni" ColumnName="Dni" />
+                <ScalarProperty Name="Nacimiento" ColumnName="Nacimiento" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Celular" ColumnName="Celular" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="FechaReg" ColumnName="FechaReg" />
+                <ScalarProperty Name="FechaMod" ColumnName="FechaMod" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Alumno_Especialidad">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Alumno_Especialidad">
+              <MappingFragment StoreEntitySet="Alumno_Especialidad">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EspecialidadId" ColumnName="EspecialidadId" />
+                <ScalarProperty Name="AlumnoId" ColumnName="AlumnoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Aula">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Aula">
+              <MappingFragment StoreEntitySet="Aula">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Boveda">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Boveda">
+              <MappingFragment StoreEntitySet="Boveda">
+                <ScalarProperty Name="Salidas" ColumnName="Salidas" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SaldoInicial" ColumnName="SaldoInicial" />
+                <ScalarProperty Name="Entradas" ColumnName="Entradas" />
+                <ScalarProperty Name="SaldoFinal" ColumnName="SaldoFinal" />
+                <ScalarProperty Name="FechaInicio" ColumnName="FechaInicio" />
+                <ScalarProperty Name="FechaFin" ColumnName="FechaFin" />
+                <ScalarProperty Name="IndCierre" ColumnName="IndCierre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CajaDiario">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CajaDiario">
+              <MappingFragment StoreEntitySet="CajaDiario">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CajaId" ColumnName="CajaId" />
+                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
+                <ScalarProperty Name="SaldoInicial" ColumnName="SaldoInicial" />
+                <ScalarProperty Name="Entradas" ColumnName="Entradas" />
+                <ScalarProperty Name="Salidas" ColumnName="Salidas" />
+                <ScalarProperty Name="SaldoFinal" ColumnName="SaldoFinal" />
+                <ScalarProperty Name="FechaInicio" ColumnName="FechaInicio" />
+                <ScalarProperty Name="FechaFin" ColumnName="FechaFin" />
+                <ScalarProperty Name="IndCierre" ColumnName="IndCierre" />
+                <ScalarProperty Name="IndBoveda" ColumnName="IndBoveda" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CondicionEstudio">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CondicionEstudio">
+              <MappingFragment StoreEntitySet="CondicionEstudio">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Curso">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Curso">
+              <MappingFragment StoreEntitySet="Curso">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EspecialidadId" ColumnName="EspecialidadId" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="Credito" ColumnName="Credito" />
+                <ScalarProperty Name="Matricula" ColumnName="Matricula" />
+                <ScalarProperty Name="Mensualidad" ColumnName="Mensualidad" />
+                <ScalarProperty Name="Cuotas" ColumnName="Cuotas" />
+                <ScalarProperty Name="Duracion" ColumnName="Duracion" />
+                <ScalarProperty Name="TotalHoras" ColumnName="TotalHoras" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Especialidad">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Especialidad">
+              <MappingFragment StoreEntitySet="Especialidad">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="Matricula" ColumnName="Matricula" />
+                <ScalarProperty Name="Mensualidad" ColumnName="Mensualidad" />
+                <ScalarProperty Name="Cuotas" ColumnName="Cuotas" />
+                <ScalarProperty Name="Duracion" ColumnName="Duracion" />
+                <ScalarProperty Name="TotalHoras" ColumnName="TotalHoras" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Estado">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Estado">
+              <MappingFragment StoreEntitySet="Estado">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Horario">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Horario">
+              <MappingFragment StoreEntitySet="Horario">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PeriodoId" ColumnName="PeriodoId" />
+                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
+                <ScalarProperty Name="AulaId" ColumnName="AulaId" />
+                <ScalarProperty Name="Hora" ColumnName="Hora" />
+                <ScalarProperty Name="CantidadHora" ColumnName="CantidadHora" />
+                <ScalarProperty Name="Dia" ColumnName="Dia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Menu">
+              <MappingFragment StoreEntitySet="Menu">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu_Rol">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Menu_Rol">
+              <MappingFragment StoreEntitySet="Menu_Rol">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="RolId" ColumnName="RolId" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notas">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Notas">
+              <MappingFragment StoreEntitySet="Notas">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="AlumnoId" ColumnName="AlumnoId" />
+                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
+                <ScalarProperty Name="PeriodoId" ColumnName="PeriodoId" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Nota" ColumnName="Nota" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Operacion">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Operacion">
+              <MappingFragment StoreEntitySet="Operacion">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Periodo">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Periodo">
+              <MappingFragment StoreEntitySet="Periodo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="FechaInicio" ColumnName="FechaInicio" />
+                <ScalarProperty Name="FechaFin" ColumnName="FechaFin" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Personal">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Personal">
+              <MappingFragment StoreEntitySet="Personal">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Paterno" ColumnName="Paterno" />
+                <ScalarProperty Name="Materno" ColumnName="Materno" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="Dni" ColumnName="Dni" />
+                <ScalarProperty Name="Nacimiento" ColumnName="Nacimiento" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Celular" ColumnName="Celular" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Honorario" ColumnName="Honorario" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="FechaReg" ColumnName="FechaReg" />
+                <ScalarProperty Name="FechaMod" ColumnName="FechaMod" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Personal_Tipo">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Personal_Tipo">
+              <MappingFragment StoreEntitySet="Personal_Tipo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PersonalId" ColumnName="PersonalId" />
+                <ScalarProperty Name="TipoPersonalId" ColumnName="TipoPersonalId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rol">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Rol">
+              <MappingFragment StoreEntitySet="Rol">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TipoPersonal">
+            <EntityTypeMapping TypeName="ACADEMICOModel.TipoPersonal">
+              <MappingFragment StoreEntitySet="TipoPersonal">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ValorTabla">
+            <EntityTypeMapping TypeName="ACADEMICOModel.ValorTabla">
+              <MappingFragment StoreEntitySet="ValorTabla">
+                <ScalarProperty Name="TablaId" ColumnName="TablaId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="DesCorta" ColumnName="DesCorta" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConceptoPago">
+            <EntityTypeMapping TypeName="ACADEMICOModel.ConceptoPago">
+              <MappingFragment StoreEntitySet="ConceptoPago">
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Concepto" ColumnName="Concepto" />
+                <ScalarProperty Name="Item" ColumnName="Item" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CuentasPorCobrar">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CuentasPorCobrar">
+              <MappingFragment StoreEntitySet="CuentasPorCobrar">
+                <ScalarProperty Name="IndEntrada" ColumnName="IndEntrada" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Serie" ColumnName="Serie" />
+                <ScalarProperty Name="Numero" ColumnName="Numero" />
+                <ScalarProperty Name="AlumnoId" ColumnName="AlumnoId" />
+                <ScalarProperty Name="EstadoId" ColumnName="EstadoId" />
+                <ScalarProperty Name="MatriculaId" ColumnName="MatriculaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CuentasPorCobrarDetalle">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CuentasPorCobrarDetalle">
+              <MappingFragment StoreEntitySet="CuentasPorCobrarDetalle">
+                <ScalarProperty Name="Importe" ColumnName="Importe" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ConceptoPagoId" ColumnName="ConceptoPagoId" />
+                <ScalarProperty Name="CuentasPorCobrarId" ColumnName="CuentasPorCobrarId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Matricula">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Matricula">
+              <MappingFragment StoreEntitySet="Matricula">
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="IndPagoUnico" ColumnName="IndPagoUnico" />
+                <ScalarProperty Name="IndPagoMatricula" ColumnName="IndPagoMatricula" />
+                <ScalarProperty Name="Monto" ColumnName="Monto" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="EstadoId" ColumnName="EstadoId" />
+                <ScalarProperty Name="PeridoId" ColumnName="PeridoId" />
+                <ScalarProperty Name="AlumnoId" ColumnName="AlumnoId" />
+                <ScalarProperty Name="CondicionEstudioId" ColumnName="CondicionEstudioId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatriculaDetalle">
+            <EntityTypeMapping TypeName="ACADEMICOModel.MatriculaDetalle">
+              <MappingFragment StoreEntitySet="MatriculaDetalle">
+                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
+                <ScalarProperty Name="MatriculaId" ColumnName="MatriculaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BovedaMovimiento">
+            <EntityTypeMapping TypeName="ACADEMICOModel.BovedaMovimiento">
+              <MappingFragment StoreEntitySet="BovedaMovimiento">
+                <ScalarProperty Name="Importe" ColumnName="Importe" />
+                <ScalarProperty Name="Glosa" ColumnName="Glosa" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="OperacionId" ColumnName="OperacionId" />
+                <ScalarProperty Name="CajaDiarioId" ColumnName="CajaDiarioId" />
+                <ScalarProperty Name="BovedaId" ColumnName="BovedaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CajaMovimiento">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CajaMovimiento">
+              <MappingFragment StoreEntitySet="CajaMovimiento">
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="IndEntrada" ColumnName="IndEntrada" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Numero" ColumnName="Numero" />
+                <ScalarProperty Name="Serie" ColumnName="Serie" />
+                <ScalarProperty Name="EstadoId" ColumnName="EstadoId" />
+                <ScalarProperty Name="OperacionId" ColumnName="OperacionId" />
+                <ScalarProperty Name="PersonalId" ColumnName="PersonalId" />
+                <ScalarProperty Name="AlumnoId" ColumnName="AlumnoId" />
+                <ScalarProperty Name="CajaDiarioId" ColumnName="CajaDiarioId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CajaMovimientoDetalle">
+            <EntityTypeMapping TypeName="ACADEMICOModel.CajaMovimientoDetalle">
+              <MappingFragment StoreEntitySet="CajaMovimientoDetalle">
+                <ScalarProperty Name="Importe" ColumnName="Importe" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ConceptoPagoId" ColumnName="ConceptoPagoId" />
+                <ScalarProperty Name="CajaMovimientoId" ColumnName="CajaMovimientoId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Caja">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Caja">
+              <MappingFragment StoreEntitySet="Caja">
+                <ScalarProperty Name="IndUso" ColumnName="IndUso" />
+                <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuario">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Usuario">
+              <MappingFragment StoreEntitySet="Usuario">
+                <ScalarProperty Name="IndUso" ColumnName="IndUso" />
+                <ScalarProperty Name="IndCambio" ColumnName="IndCambio" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Clave" ColumnName="Clave" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="PersonalId" ColumnName="PersonalId" />
+                <ScalarProperty Name="RolId" ColumnName="RolId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

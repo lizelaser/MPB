@@ -1,0 +1,84 @@
+﻿@model DA.Curso
+
+<div class="row">
+    <div class="col s12">
+        <div id="validations" class="card card-tabs">
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col s8 m6 l10">
+                            <h4 class="card-title">
+                                <a href="@Url.Action("Index","Curso")"><i class="material-icons left">keyboard_backspace</i></a>
+                                @if (Model.Id == 0)
+                                {
+                                    <text>Nuevo Curso</text>
+                                }
+                                else
+                                {
+                                    <text>Editar Curso</text>
+                                }
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Curso")">
+                    <div class="row">
+                        <input name="Id" type="hidden" value="@Model.Id">
+                        <div class="input-field col s12 m4">
+                            <label for="cespecialidad"></label>
+                            @Html.DropDownListFor(x => x.EspecialidadId, (IEnumerable<SelectListItem>)ViewBag.EspecialidadId)
+                        </div>
+                        <div class="input-field col s12 m4">
+                            <label for="ccodigo">Codigo*</label>
+                            <input id="ccodigo" name="Codigo" type="text" required value="@Model.Codigo" autofocus>
+                        </div>
+                        <div class="input-field col s12 m4">
+                            <label for="cdenominacion">Denominacion*</label>
+                            <input id="cdenominacion" name="Denominacion" type="text" required value="@Model.Denominacion" autofocus>
+                        </div>
+                        <div class="input-field col s12 m4">
+                            <label for="ccredito">Creditos*</label>
+                            <input id="ccredito" name="Creditos" type="text" required value="@Model.Credito" autofocus>
+                        </div>
+                        <div class="input-field col s12 m4">
+                            <label for="cmatricula">Matricula*</label>
+                            <input id="cmatricula" name="Matricula" type="text" required value="@Model.Matricula">
+                        </div>
+                        <div class="input-field col s12 m3">
+                            <label for="cmensualidad">Mensualidad*</label>
+                            <input id="cmensualidad" name="Mensualidad" type="text" required value="@Model.Mensualidad">
+                        </div>
+                        <div class="input-field col s12 m3">
+                            <label for="ccuotas">Cuotas*</label>
+                            <input id="ccuotas" name="Cuotas" type="text" required value="@Model.Cuotas">
+                        </div>
+                        <div class="input-field col s12 m3">
+                            <label for="cduracion">Duracion</label>
+                            <input id="cduracion" name="Duracion" type="text" required value="@Model.Duracion">
+                        </div>
+                        <div class="input-field col s12 m3">
+                            <label for="choras">Total de Horas</label>
+                            <input id="choras" name="Horas" type="text" required value="@Model.TotalHoras">
+                        </div>
+
+                        <div class="input-field col s12">
+                            <button data-ajax="true" class="btn right blue" type="submit">
+                                Guardar
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section   scripts{
+    <script>
+
+    </script>
+}

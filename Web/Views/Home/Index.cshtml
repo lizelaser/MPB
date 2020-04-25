@@ -1,0 +1,176 @@
+﻿<main>
+    <div class="row">
+        
+    </div>
+</main>
+
+
+@section scripts{
+    <div>
+        <script>
+        var vapp = new Vue({
+            el: 'main',
+            data: {               
+                active: 1
+            },            
+            methods: {
+                MantenerBloque: function (index) {
+                    var self = this;
+                    var txtprompt = index >= 0 ? self.bloques[index].Denominacion : "";
+                    var id = index >= 0 ? self.tablaSelectId : 0;  
+                    swal.fire({
+                        title: 'Bloques',
+                        input: 'text', 
+                        inputValue: txtprompt,
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        preConfirm: (cambio) => {
+                             var bloque = {
+                                Id: id,
+                                Denominacion: cambio
+                            };
+                            
+                            return $.post('@Url.Action("MantenerBloque", "Home")',
+                                { pBloque: bloque })
+                                .done(function (data) {                                    
+                                    if (data)
+                                        return data;
+                                    else {
+                                        Swal.showValidationMessage(
+                                            `Error: ${data.message}`
+                                        );
+                                    }
+                                });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then(function (result) {                        
+                        if (result.value) {
+                            if (index < 0) {
+                                self.bloques.push(result.value);
+                            }
+                            else {
+                                self.bloques[index].Denominacion = result.value.Denominacion;
+                            }
+                        }
+                    });
+                },
+                MantenerServicio: function (index) {
+                    var self = this;
+                    var servicioid = index >= 0 ? this.servicios[index].Id : 0;
+                    var txtprompt = index >= 0 ? self.servicios[index].Denominacion : "";
+                    var chkServicio = index >= 0 ? (self.servicios[index].Estado ? "checked" : "") : "checked";
+                    var bloqueid =  self.tablaSelectId ;
+
+
+                    Swal.fire({
+                        title: (index >= 0 ? 'Editar':'Nuevo') + ' Servicio',
+                        html:
+                          '<input id="swal-input1" class="swal2-input" value="' + txtprompt + '" placeholder="Nombre Examen">' +
+                          '<label><input type="checkbox" class="" id="chkabcd" ' + chkServicio + '/><span>Estado</span></label>',
+                        focusConfirm: false,
+                        preConfirm: () => {
+                            return [
+                              document.getElementById('swal-input1').value,
+                              document.getElementById('chkabcd').checked
+                            ]
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.value) {
+                            var servicio = {
+                                Id: servicioid,
+                                Denominacion: result.value[0],
+                                Estado: result.value[1],
+                                BloqueId: bloqueid
+                            };
+                            $.ajax({
+                                type: 'POST',
+                                dataType: 'json',
+                                url: '@Url.Action("MantenerServicio", "Home")',
+                                data: { pServicio: servicio },
+                                success: function (res) {
+                                    if (index < 0) {
+                                        self.servicios.push(res);
+                                    }
+                                    else {
+                                        self.servicios[index].Denominacion = res.Denominacion;
+                                        self.servicios[index].Estado = res.Estado;
+                                    }
+                                },
+                                error: function (req, status, err) {
+                                    alert('Ocurrio un error: ' + err);
+                                }
+                            });
+                        }
+                    });
+                },
+                MantenerVentanilla: function (index) {
+                    var self = this;
+                    var txtprompt = index >= 0 ? self.ventanillas[index].Denominacion : "";
+                    var id = index >= 0 ? self.ventanillas[index].Id : 0;
+                    var servicioid = self.servicioSelectId ;  
+                    //console.log(servicioid);
+
+                    swal.fire({
+                        title: 'Ventanillas',
+                        input: 'text', 
+                        inputValue: txtprompt,
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        preConfirm: (cambio) => {
+                            var ventanilla = {
+                                Id: id,
+                                Denominacion: cambio,
+                                ServicioId:servicioid
+                            };
+                            
+                            return $.post('@Url.Action("MantenerVentanilla", "Home")',
+                                { pVentanilla: ventanilla })
+                                .done(function (data) {                                    
+                                    if (data)
+                                        return data;
+                                    else {
+                                        Swal.showValidationMessage(
+                                            `Error: ${data.message}`
+                                        );
+                                    }
+                                });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then(function (result) {                        
+                        if (result.value) {
+                            if (index < 0) {
+                                self.ventanillas.push(result.value);
+                            }
+                            else {
+                                self.ventanillas[index].Denominacion = result.value.Denominacion;
+                            }
+                        }
+                    });
+                },
+                CargarBloque: function () {
+                    var self = this;
+                    $.get('@Url.Action("ListarBloque", "Home")', {}, function (d) {
+                        self.bloques = d;
+                    });
+                },
+                CargarServicio: function (id) {
+                    var self = this;
+                    $.get('@Url.Action("ListarServicio", "Home")', { pBloqueId: id }, function (d) {
+                        self.servicios = d;
+                        self.servicioSelectId = 0;
+                    });
+                },
+                CargarVentanilla: function (id) {
+                    var self = this;
+                    $.get('@Url.Action("ListarVentanilla", "Home")', { pServicioId: id }, function (d) {
+                        self.ventanillas = d;
+                    });
+                }
+            }
+        });
+        </script>
+    </div>
+}

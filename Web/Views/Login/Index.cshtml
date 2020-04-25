@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+    string empresa = Web.Controllers.ComunController.ObtenerEmpresa();
+}
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>@empresa</title>
+    <link rel="apple-touch-icon" href="~/app-assets/images/favicon/apple-touch-icon-152x152.png">
+    <link rel="shortcut icon" type="image/x-icon" href="~/app-assets/images/favicon/favicon-32x32.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/vendors.min.css">
+    <link href="~/Scripts/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/themes/vertical-modern-menu-template/materialize.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/themes/vertical-modern-menu-template/style.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/pages/login.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/custom/custom.css">
+</head>
+<body class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 1-column login-bg  blank-page blank-page" data-open="click" data-menu="vertical-modern-menu" data-col="1-column" onload="window.history.forward ();">
+    <div class="row">
+        <div class="col s12">
+            <div class="container">
+                <div id="login-page" class="row">
+                    <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">
+                        <form id="form1" class="login-form" method="post" action='@Url.Action("Autenticar","Login")'>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <h5 class="ml-4">@empresa</h5>
+                                </div>
+                            </div>
+                            <div class="row margin">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix pt-2">person_outline</i>
+                                    <input id="username" type="text" name="Usuario" value="admin@gmail.com" autofocus>
+                                    <label for="username" class="center-align">Correo Electrónico</label>
+                                </div>
+                            </div>
+                            <div class="row margin">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix pt-2">lock_outline</i>
+                                    <input id="password" type="password" name="Clave" value="123">
+                                    <label for="password">Password</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m12 l12 ml-2 mt-1">
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" />
+                                            <span>Recordarme</span>
+                                        </label>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <button type="submit" data-ajax="true" class="btn waves-effect waves-light border-round gradient-45deg-purple-deep-orange col s12">Iniciar Sesión</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+    <script src="~/app-assets/vendors/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/app-assets/js/plugins.js" type="text/javascript"></script>
+    <script src="~/Scripts/ini.js"></script>
+    <script>
+        async function nuevaclave(id, user) {
+            Swal.fire({
+                title: 'Cambio de Clave ' + user,
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                //showCancelButton: true,
+                confirmButtonText: 'Cambiaré mi clave',
+                showLoaderOnConfirm: true,
+                preConfirm: (cambio) => {
+                    return $.post('@Url.Action("CambiarClave", "Login")',
+                        { id: id, usuario: user, clave: cambio })
+                        .done(function (data) {
+                            if (data.response)
+                                return data;
+                            else {
+                                Swal.showValidationMessage(
+                                    `Error: ${data.message}`
+                                );
+                            }
+                        });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "/";
+                }
+            });            
+        }
+    </script>
+</body>
+</html>
