@@ -17,13 +17,25 @@ namespace Web.Controllers
         private DAEntities db;
         private readonly int RegistrosPorPagina = 5;
         private List<Alumno> Alumnos;
-        private Paginador<Alumno> ListadoAlumnos;
+        private Paginador<AlumnoVm> ListadoAlumnos;
         // GET: Alumno
-        public ActionResult Index(string dni, int pagina = 1)
+        public ActionResult Index()
         {
-            int TotalRegistros = 0;
+            return View();
+        }
+
+        public ActionResult Tabla(string dni, int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+
             using (db = new DAEntities())
             {
+                db.Configuration.ProxyCreationEnabled = false;
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ValidateOnSaveEnabled = false;
+
+                int TotalRegistros = 0;
+
                 // Total number of records in the student table
                 TotalRegistros = db.Alumno.Count();
                 // We get the 'records page' from the student table
@@ -31,6 +43,7 @@ namespace Web.Controllers
                                                  .Skip((pagina - 1) * RegistrosPorPagina)
                                                  .Take(RegistrosPorPagina)
                                                  .ToList();
+
                 if (!string.IsNullOrEmpty(dni))
                 {
                     Alumnos = db.Alumno.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
@@ -40,23 +53,33 @@ namespace Web.Controllers
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                //We list "Especialidad" only with the required fields to avoid serialization problems
+                var SubAlumnos = Alumnos.Select(S => new AlumnoVm
+                {
+                    Id = S.Id,
+                    Dni = S.Dni,
+                    AlumnoNombres = S.Paterno + " " + S.Materno + " " + S.Nombres,
+                    Celular = S.Celular,
+                    Correo = S.Correo,
+                    Estado = S.Estado
+
+                }).ToList();
+
                 // We instantiate the 'Paging class' and assign the new values
-                ListadoAlumnos = new Paginador<Alumno>()
+                ListadoAlumnos = new Paginador<AlumnoVm>()
                 {
                     RegistrosPorPagina = RegistrosPorPagina,
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = Alumnos
+                    Listado = SubAlumnos
                 };
+                rm.SetResponse(true);
+                rm.result = ListadoAlumnos;
             }
             //we send the pagination class to the view
-            return View(ListadoAlumnos);
-        }
-
-        public ActionResult ListarTodo()
-        {
-            return View(AlumnoBL.Listar());
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Mantener(int id = 0)

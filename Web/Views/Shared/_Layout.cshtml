@@ -74,15 +74,15 @@
                             <span style="padding-left:20px">
                                 <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
                                     <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Usuario</span>
+                                    <span class="menu-title" data-i18n="">@menu[0]</span>
                                 </a>
                             </span>
                         </div>
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[10])">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[11])">
                                     <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Periodo</span>
+                                    <span class="menu-title" data-i18n="">@menu[11]</span>
                                 </a>
                             </span>
                         </div>
@@ -107,14 +107,6 @@
                         </div>
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[5]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
                                 <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
                                     <i class="material-icons">image_aspect_ratio</i>
                                     <span class="menu-title" data-i18n="">@menu[6]</span>
@@ -131,9 +123,9 @@
                         </div>
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[11])">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
                                     <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[11]</span>
+                                    <span class="menu-title" data-i18n="">@menu[8]</span>
                                 </a>
                             </span>
                         </div>
@@ -142,6 +134,14 @@
                                 <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[12])">
                                     <i class="material-icons">image_aspect_ratio</i>
                                     <span class="menu-title" data-i18n="">@menu[12]</span>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="collapsible-body">
+                            <span style="padding-left:20px">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[13])">
+                                    <i class="material-icons">image_aspect_ratio</i>
+                                    <span class="menu-title" data-i18n="">@menu[13]</span>
                                 </a>
                             </span>
                         </div>
@@ -155,7 +155,14 @@
                                     <span class="menu-title" data-i18n="">@menu[3]</span>
                                 </a>
                             </span>
-
+                        </div>
+                        <div class="collapsible-body">
+                            <span style="padding-left:20px">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
+                                    <i class="material-icons">image_aspect_ratio</i>
+                                    <span class="menu-title" data-i18n="">@menu[5]</span>
+                                </a>
+                            </span>
                         </div>
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
@@ -168,17 +175,17 @@
 
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
                                     <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">SaldosCaja</span>
+                                    <span class="menu-title" data-i18n="">@menu[9]</span>
                                 </a>
                             </span>
                         </div>
                         <div class="collapsible-body">
                             <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[10])">
                                     <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[9]</span>
+                                    <span class="menu-title" data-i18n="">@menu[10]</span>
                                 </a>
                             </span>
                         </div>
@@ -198,6 +205,30 @@
                                 <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
                                     <i class="material-icons">image_aspect_ratio</i>
                                     <span class="menu-title" data-i18n="">Personal</span>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="collapsible-body">
+                            <span style="padding-left:20px">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesIngreso","Reportes")">
+                                    <i class="material-icons">image_aspect_ratio</i>
+                                    <span class="menu-title" data-i18n="">Ingresos</span>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="collapsible-body">
+                            <span style="padding-left:20px">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesEgreso","Reportes")">
+                                    <i class="material-icons">image_aspect_ratio</i>
+                                    <span class="menu-title" data-i18n="">Egresos</span>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="collapsible-body">
+                            <span style="padding-left:20px">
+                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesDeudas","Reportes")">
+                                    <i class="material-icons">image_aspect_ratio</i>
+                                    <span class="menu-title" data-i18n="">Deudas</span>
                                 </a>
                             </span>
                         </div>

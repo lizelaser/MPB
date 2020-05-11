@@ -85,7 +85,13 @@
     <Compile Include="ValorTablaBL.cs" />
     <Compile Include="Vm\AlumnoVm.cs" />
     <Compile Include="Vm\CajaDiarioVm.cs" />
+    <Compile Include="Vm\CuentasPorCobrarVm.cs" />
+    <Compile Include="Vm\CursoVm.cs" />
+    <Compile Include="Vm\HorarioVm.cs" />
     <Compile Include="Vm\MatriculaVm.cs" />
+    <Compile Include="Vm\CajaMovimientoVm.cs" />
+    <Compile Include="Vm\PersonalVm.cs" />
+    <Compile Include="Vm\UsuarioViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

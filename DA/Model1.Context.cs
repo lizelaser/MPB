@@ -46,8 +46,6 @@ namespace DA
         public virtual DbSet<TipoPersonal> TipoPersonal { get; set; }
         public virtual DbSet<ValorTabla> ValorTabla { get; set; }
         public virtual DbSet<ConceptoPago> ConceptoPago { get; set; }
-        public virtual DbSet<CuentasPorCobrar> CuentasPorCobrar { get; set; }
-        public virtual DbSet<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
         public virtual DbSet<Matricula> Matricula { get; set; }
         public virtual DbSet<MatriculaDetalle> MatriculaDetalle { get; set; }
         public virtual DbSet<BovedaMovimiento> BovedaMovimiento { get; set; }
@@ -55,5 +53,7 @@ namespace DA
         public virtual DbSet<CajaMovimientoDetalle> CajaMovimientoDetalle { get; set; }
         public virtual DbSet<Caja> Caja { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
+        public virtual DbSet<CuentasPorCobrar> CuentasPorCobrar { get; set; }
+        public virtual DbSet<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
     }
 }

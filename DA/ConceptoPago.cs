@@ -17,8 +17,8 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ConceptoPago()
         {
-            this.CuentasPorCobrarDetalle = new HashSet<CuentasPorCobrarDetalle>();
             this.CajaMovimientoDetalle = new HashSet<CajaMovimientoDetalle>();
+            this.CuentasPorCobrarDetalle = new HashSet<CuentasPorCobrarDetalle>();
         }
     
         public int Id { get; set; }
@@ -27,8 +27,8 @@ namespace DA
         public decimal Precio { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimientoDetalle> CajaMovimientoDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
     }
 }

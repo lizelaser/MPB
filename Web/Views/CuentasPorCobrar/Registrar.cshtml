@@ -1,0 +1,389 @@
+﻿
+@{
+    ViewBag.Title = "Registrar";
+}
+
+
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .collapsible-header {
+        background-color: #E0EAF4;
+        font-weight: bold;
+    }
+
+    .ulConcepto, .ulConcepto li {
+        background-color: #E0EAF4;
+        height: 80px;
+    }
+
+        .ulConcepto li {
+            margin: 10px;
+            margin-top: 20px;
+        }
+
+    #cabecera {
+        margin-left: 30px;
+        width: 970px;
+    }
+
+    #divConceptos {
+        height: 255px;
+    }
+</style>
+<div class="row" style="margin:30px;" id="principal">
+    <div class="row" id="contenedor">
+        <ul class="collapsible" id="cabecera">
+            <li class="active">
+                <div class="collapsible-header"><i class="material-icons">monetization_on</i>REGISTRO CUENTAS POR COBRAR FECHA INICIO OPERACION @DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second hrs</div>
+            </li>
+        </ul>
+        <div class="col s12">
+            <div class="col s6">
+                <div id="validations" class="card card-tabs">
+                    <div class="card-content">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col s6 m12">
+                                    <h4 class="card-title">
+                                        <a href="@Url.Action("Index", "CuentasPorCobrar")"><i class="material-icons left">keyboard_backspace</i></a>
+                                        @{
+                                            <text>Nuevo</text>
+                                        }
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s6 m12">
+                                    <input class="filtro" type="text" name="filtro" placeholder="INGRESE DNI DEL ALUMNO">
+                                    <i class="material-icons prefix" style="margin-left:-25px;">search</i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s6 m12">
+                                    <input class="ID" type="text" name="Id" id="Id" hidden/>
+                                    <input class="DATOS" type="text" name="txtdatos" id="txtdatos" placeholder="APELLIDOS Y NOMBRES*" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s6">
+                <div id="validations" class="card card-tabs">
+                    <div class="card-content" id="divConceptos">
+                        <div class="row">
+                            <div class="input-field col s6 m12" style="padding-left:0px;">
+                                @Html.DropDownList("ListaConceptos", ViewBag.ListaConceptos as SelectList, "SELECCIONE CONCEPTO DE PAGO", htmlAttributes: new { @class = "browser-default" })
+                            </div>
+                            <div class="input-field col s6 m12">
+                                <input type="text" name="descripcion" id="descripcion" placeholder="DESCRIPCION" />
+                                <input type="text" name="fecha" id="fecha" value="@DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" hidden />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m12">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="input-field col s6 m4">
+                                    <input type="number" id="id_concepto" hidden />
+                                    <input type="number" id="item_concepto" hidden />
+                                    <label for="concepto">CONCEPTO:</label>
+                                    <input type="text" name="concepto" id="concepto" placeholder="CONCEPTO PAGO" readonly />
+                                </div>
+                                <div class="input-field col s6 m2">
+                                    <label for="precio">PRECIO:</label>
+                                    <input type="text" name="precio" id="precio" placeholder="PRECIO" readonly />
+                                </div>
+                                <div class="input-field col s6 m2">
+                                    <label for="cantidad">CANTIDAD</label>
+                                    <input type="number" min="1" name="cantidad" id="cantidad" value="1" />
+                                </div>
+                                <div class="input-field col s6 m2">
+                                    <label for="descuento">DESCUENTO</label>
+                                    <input type="number" name="descuento" min="0.00" id="descuento" step='0.01' value='0.00' />
+                                </div>
+                                <div class="input-field col s6 m2">
+                                    <button id="agregar_concepto" class="btn btn-small blue right">Agregar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col s12 m12" id="div_conceptos">
+                <div id="highlight-table" class="card card card-default scrollspy">
+                    <ul class="collapsible" style="margin-top:0px;margin-bottom:0px;">
+                        <li class="active">
+                            <div class="collapsible-header"><span style="font-size:medium;">CONCEPTOS SELECCIONADOS</span></div>
+                            <div class="collapsible-body">
+                                <table class="highlight" id="tblConceptos">
+                                    <thead>
+                                        <tr>
+                                            <th>Concepto</th>
+                                            <th>Precio</th>
+                                            <th>Cantidad</th>
+                                            <th>Descuento</th>
+                                            <th>SubTotal</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbd_conceptos">
+
+                                    </tbody>
+                                </table>
+                                <table>
+                                    <tr>
+                                        <td>Total a Pagar:</td>
+                                        <td><input style="font-size: 20px; font-weight: 700;" class="form-control" name="total" id="total" type="number" step="any" required readonly /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row" style="margin-left:1px;">
+                <table>
+                    <tr>
+                        <td><button class="btn btn-small blue right" type="submit" id="generar" name="generar" style="margin-right:20px;">GUARDAR<i class="material-icons right">send</i></button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</div>
+
+<div class="row">
+    <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</div>
+
+
+@section scripts{
+<script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
+<script>
+    $(".filtro").autocomplete({
+    dataType: 'JSON',
+    source: function (request, response) {
+        jQuery.ajax({
+            url: '/CuentasPorCobrar/BuscarAlumno',
+            type: "post",
+            dataType: "json",
+            data: {
+                dni: request.term
+            },
+            success: function (data) {
+                response($.map(data, function (item) {
+                    return {
+                        id: item.Id,
+                        value: item.Dni,
+                        paterno: item.Paterno,
+                        materno: item.Materno,
+                        nombres: item.Nombres
+                    }
+                }))
+            }
+        })
+
+    },
+    select: function (e, ui) {
+        $("#Id").val(ui.item.id);
+        $("#txtdatos").val(ui.item.paterno + " " + ui.item.materno + " " + ui.item.nombres);
+        //First we enable available concepts dropdownlist
+        $("#ListaConceptos").prop("disabled", false);
+    }
+});      
+</script>
+}
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        //disabled buttons add concept and save
+        fn_deshabilitar_botones();
+        //disabled inputs quantity and discount
+        fn_deshabilitar_inputs();
+        //we disabled dropdownlist concepts if user do not insert yet the dni of student
+        $("#ListaConceptos").prop("disabled",true);
+        //hide concepts div
+        $("#div_conceptos").hide();
+
+        $("#ListaConceptos").change(function () {
+            var envio = {
+                item: $("#ListaConceptos").val(),
+                denominacion: $("#ListaConceptos option:selected").text()
+            }
+            console.log(envio)
+            $.ajax({
+                url: '@Url.Action("SeleccionarConcepto","CuentasPorCobrar")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (response) {
+
+                    //we put default value of drop down list every time user that select any concept
+                    $("#ListaConceptos").val('').prop('defaultSelected');
+                    
+                    //recover the data of the concept selected
+                    $("#id_concepto").val(response.Id);
+                    $("#item_concepto").val(response.Item);
+                    $("#concepto").val(response.Concepto);
+                    $("#precio").val((response.Precio).toFixed(2));
+
+                    //Enable add concepts button
+                    $("#agregar_concepto").prop("disabled", false);
+
+                    // Enable inputs quantity and discount
+                    $("#cantidad").prop("disabled",false);
+                    $("#descuento").prop("disabled",false);
+                }
+            });
+
+        });
+
+        $("#agregar_concepto").click(function () {
+
+            var column1 = $("#id_concepto").val();
+            var column2 = $("#item_concepto").val();
+            var column3 = $("#concepto").val();
+            var column4 = parseFloat($("#precio").val());
+            var column5 = $("#cantidad").val();
+            var column6 = parseFloat($("#descuento").val());
+            var column7 = (column4 * column5) - column6;
+
+            //Agregamos los conceptos de los inputs a nuestra tabla cuenta por cobrar detalle
+            $("#tbd_conceptos").append(
+                `<tr>
+                    <td style="padding:0" hidden>${column1}</td>
+                    <td style="padding:0" hidden>${column2}</td>
+                    <td style="padding:0">${column3}</td>
+                    <td style="padding:0">${column4}</td>
+                    <td style="padding:0">${column5}</td>
+                    <td style="padding:0">${column6}</td>
+                    <td style="padding:0" class='subtotal'>${column7}</td>
+                    <td style="padding:0"><a class ='remover'><button class='btn left red' type='button'><i class='material-icons left'>clear</i></button></a></td>
+                </tr>`);
+
+            //Show payment concepts details table
+            $("#div_conceptos").show();
+            //Limpiamos campos al agregar los conceptos
+            $("#concepto").val("");
+            $("#precio").val("");
+            $("#cantidad").val(1);
+            $("#descuento").val("0.00");
+            // disable the add button until the user selects a concept again
+            $("#agregar_concepto").prop("disabled",true);
+
+            fn_habilitar_guardado();
+            fn_sumar();
+            fn_eliminar_concepto();
+        });
+
+        $("#generar").click(GuardarFunc);
+
+    });
+
+    var total = 0;
+    var valor = 0;
+
+    function fn_sumar() {
+        var suma = 0;
+        $(".subtotal").each(function () {
+            suma += parseFloat($(this).text());
+        });
+
+        $("#total").val(suma.toFixed(2));
+    }
+    function fn_restar() {
+        total = total - valor;
+        $("#total").val(total.toFixed(2));
+    }
+
+    function fn_eliminar_concepto() {
+        $("a.remover").click(function () {
+            filas = $("#tbd_conceptos tr").length;
+            total = $("#total").val();
+            valor = $(this).parents("tr").find("td").eq(6).html();
+            $(this).parents("tr").fadeOut("normal", function () {
+                $(this).remove();
+                fn_restar();
+                if (filas == 1) {
+                    $("#generar").prop('disabled', true);
+                }
+            });
+        });
+    };
+    function fn_deshabilitar_inputs() {
+        $("#cantidad").prop("disabled",true);
+        $("#descuento").prop("disabled",true);
+    }
+
+    function fn_deshabilitar_botones() {
+        if ($("#id_concepto").val("") && $("#item_concepto").val("") && $("#concepto").val("") && $("#precio").val("")) {
+            $("#agregar_concepto").prop("disabled", true);
+        }
+        // disabled and hide generate button
+        $("#generar").prop("disabled", true);
+        $("#generar").hide();
+    }
+    function fn_habilitar_guardado() {
+
+        $("#generar").show();
+        if (!($("#tbd_conceptos tr").length == 0) && !($("#Id").val() == "")) {
+            $("#generar").prop("disabled", false);
+        }
+        else {
+            $("#generar").prop("disabled",true);
+        }
+    }
+
+
+</script>
+<script>
+    var GuardarFunc = function () {
+        var _CuentasPorCobrarDetalle = new Array();
+
+        $("#tbd_conceptos tr").each(function(_,value) {
+            _CuentasPorCobrarDetalle.push({
+                ConceptoPagoId: value.childNodes[1].innerText,
+                ItemId: value.childNodes[3].innerText,
+                Cantidad: value.childNodes[9].innerText,
+                Descuento: value.childNodes[11].innerText,
+                Importe: value.childNodes[13].innerText
+            })
+        });
+
+        var envio = {
+            AlumnoId: $("#Id").val(),
+            Fecha: $("#fecha").val(),
+            Total: $("#total").val(),
+            Descripcion: $("#descripcion").val(),
+            CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
+        }
+
+        $.ajax({
+            url: '@Url.Action("Guardar","CuentasPorCobrar")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                window.location.href = rm.href;
+            }
+
+        });
+    }
+
+</script>
+

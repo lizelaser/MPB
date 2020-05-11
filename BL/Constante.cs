@@ -28,10 +28,10 @@ namespace BL
         public static class Menu {
             public static List<string> Listar(string rol)
             {
-                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno", "Matricula", "Pagos","Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
-                var mnuSecretaria = new List<string> {"","Personal","Alumno","Matricula","Pagos","","","Caja", "CajaDiario",""};
-                var mnuCoordinador = new List<string> {"Periodo","Caja", "Curso", "Especialidad", "Horario", "Nota" };
-                var mnuDireccion = new List<string> {"Periodo","Caja","Curso","Especialidad","Horario","Nota"};
+                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno", "Matricula", "Pagos", "CuentasPorCobrar" ,"Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
+                var mnuSecretaria = new List<string> {"Usuario","Personal","Alumno","Matricula","Pagos", "CuentasPorCobrar", "Curso","Especialidad","Caja", "CajaDiario","Boveda","Periodo", "Aula", "Horario" };
+                var mnuCoordinador = new List<string> {"Usuario", "Personal", "Alumno", "Matricula","Pagos", "CuentasPorCobrar", "Curso", "Especialidad", "Caja", "CajaDiario", "Boveda", "Periodo", "Aula", "Horario" };
+                var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno", "Matricula", "Pagos", "CuentasPorCobrar", "Curso", "Especialidad", "Caja", "CajaDiario", "Boveda", "Periodo", "Aula", "Horario" };
                 switch (rol)
                 {
                     case Rol.Administrador: return mnuAdministrador;

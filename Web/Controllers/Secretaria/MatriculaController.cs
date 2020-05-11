@@ -15,46 +15,69 @@ namespace Web.Controllers
     public class MatriculaController : Controller
     {
         private DAEntities db = new DAEntities();
-        private MatriculaBL matric = new MatriculaBL();
-
+        private List<Matricula> Matriculas;
+        private Paginador<MatriculaVm> ListadoMatriculas;
+        private readonly int RegistrosPorPagina = 5;
         // GET: Matricula
         public ActionResult Index()
         {
-            return View(MatriculaBL.Listar(includeProperties:"Periodo,Alumno,CondicionEstudio"));
+            return View();
         }
         [HttpPost]
-        public ActionResult Tabla()
+        public ActionResult Tabla(int pagina)
         {
-            //logistica datatable
-            var draw = Request.Form.GetValues("draw").FirstOrDefault();
-            var start = Request.Form.GetValues("start").FirstOrDefault();
-            var length = Request.Form.GetValues("length").FirstOrDefault();
-            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
-            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
-            var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
-            int pageSize, skip, recordsTotal;
-            pageSize = length != null ? Convert.ToInt32(length) : 0;
-            skip = start != null ? Convert.ToInt32(start) : 0;
-            recordsTotal = 0;
+            var rm = new Comun.ResponseModel();
 
-            var lst = new List<MatriculaVm>();
-            using (var db = new DAEntities())
+            using (db = new DAEntities())
             {
-                var query = (from d in db.Matricula select new MatriculaVm{Id=d.Id,Monto=d.Monto,Observacion=d.Observacion});
 
-                if (searchValue != "")
-                    query = query.Where(d => d.Observacion.Contains(searchValue));
-                //Sorting    
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
+                int TotalRegistros = 0;
+
+                // Total number of records in Matricula table with pending status
+                TotalRegistros = db.Matricula.Count();
+                // We get the 'records page' from the Cuentas Por Cobrar table
+                Matriculas = db.Matricula.OrderByDescending(x => x.Id)
+                                                 .Skip((pagina - 1) * RegistrosPorPagina)
+                                                 .Take(RegistrosPorPagina)
+                                                 .Include(x=>x.Periodo)
+                                                 .Include(x=>x.CondicionEstudio)
+                                                 .Include(x => x.Alumno)
+                                                 .Include(x => x.Estado)
+                                                 .ToList();
+                // Total number of pages in the Cuentas por Cobrar table
+                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+
+                //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
+                var SubMatriculas = Matriculas.Select(S => new MatriculaVm
                 {
-                    query = query.OrderBy(sortColumn + " " + sortColumnDir);
-                }
+                    Id = S.Id,
+                    PeriodoDenominacion = S.Periodo.Denominacion,
+                    Fecha = S.Fecha,
+                    AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
+                    CondicionEstudioDenominacion = S.CondicionEstudio.Denominacion,
+                    EstadoDenominacion = S.Estado.Denominacion,
+                    Monto = S.Monto,
+                    Observacion = S.Observacion
+                }).ToList();
 
-                recordsTotal = query.Count();
-                lst = query.Skip(skip).Take(pageSize).ToList();
+
+                // We instantiate the 'Paging class' and assign the new values
+                ListadoMatriculas = new Paginador<MatriculaVm>()
+                {
+                    RegistrosPorPagina = RegistrosPorPagina,
+                    TotalRegistros = TotalRegistros,
+                    TotalPaginas = TotalPaginas,
+                    PaginaActual = pagina,
+                    Listado = SubMatriculas
+                };
+
+                rm.SetResponse(true);
+                rm.result = ListadoMatriculas;
             }
 
-            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = lst });
+            //we send the pagination class to the view
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult BuscarAlumno(string dni)
@@ -110,19 +133,16 @@ namespace Web.Controllers
         public ActionResult Registrar(string CondicionEstudio, string Fecha, string PeriodoId, string AlumnoId, string Monto, string Observacion, List<MatriculaDetalle> MatriculaDetalle, List<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle)
         {
             var rm = new Comun.ResponseModel();
-            string mensaje = "";
             var estado = (db.Estado.Where(x=>x.Id==2)).Single();
             int EstadoId = estado.Id;
-            //var condicion = (db.CondicionEstudio.Where(x => x.Id == 1)).Single();
-            //int CondicionEstudioId = condicion.Id;
             int CondicionEstudioId = Convert.ToInt32(CondicionEstudio);
             bool IndPagoMatricula = true;
             bool IndPagoUnico = true;
             string Serie = "001";
-            string Numero = "0000001";
+            string Numero = "0000003";
             int cantidad = 1;
             decimal descuento = 0;
-            bool IndEntrada = true;
+            string descripcion = "PAGO POR MATRICULA";
 
             try
             {
@@ -158,7 +178,7 @@ namespace Web.Controllers
                         Numero = Numero,
                         Fecha = Convert.ToDateTime(Fecha),
                         Total = Convert.ToDecimal(Monto),
-                        IndEntrada = IndEntrada
+                        Descripcion = descripcion
                     });
 
                     MatriculaBL.Crear(matricula);
@@ -178,9 +198,8 @@ namespace Web.Controllers
                         CuentasPorCobrarDetalleBL.Crear(cuentasdetalle);
                     }
 
-                    mensaje = "MATRÍCULA GUARDADA CON ÉXITO";
                 }
-                else if (CondicionEstudioId == 2){//CONDICION ESTUDIO == CURSO
+                else{//CONDICION ESTUDIO == CURSO
                      //REGISTRO MATRÍCULA
                         Matricula matricula = new Matricula();
                         matricula.Fecha = Convert.ToDateTime(Fecha);
@@ -211,7 +230,7 @@ namespace Web.Controllers
                             Numero = Numero,
                             Fecha = Convert.ToDateTime(Fecha),
                             Total = Convert.ToDecimal(Monto),
-                            IndEntrada = IndEntrada
+                            Descripcion = descripcion
                         });
 
                         MatriculaBL.Crear(matricula);
@@ -231,21 +250,16 @@ namespace Web.Controllers
                             cuentasdetalle.Importe = item.Importe;
                             CuentasPorCobrarDetalleBL.Crear(cuentasdetalle);
                         }
-                    mensaje = "MATRÍCULA GUARDADA CON ÉXITO";
 
                 }
-                    
-                else
-                {
-                    mensaje = "ERROR AL GUARDAR LA MATRÍCULA";
-                }
-
+                rm.SetResponse(true);
+                rm.href = Url.Action("Index","Matricula");
             }
             catch (Exception ex)
             {
                 rm.SetResponse(false, ex.Message);
             }
-            return Json(mensaje, JsonRequestBehavior.AllowGet);
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
     }

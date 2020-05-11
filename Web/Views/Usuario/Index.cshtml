@@ -1,4 +1,4 @@
-﻿@model Web.Models.Paginador<DA.Usuario>
+﻿
 <div class="row">
     <div class="col s12 m12 l12">
         <div id="bordered-table" class="card card card-default scrollspy">
@@ -13,14 +13,9 @@
                         </div>
                     </div>
                 </div>
-                @using (Html.BeginForm(null, null, FormMethod.Get))
-                {
-                    <div>
-                        <input type="text" name="nombre" id="nombre" />
-                        <input type="submit" value="Buscar" class="btn btn-success blue left" />
-                    </div>
-                    <button @Url.Action("ListarTodo", "Usuario") class="btn btn-success blue left" style="margin-left:5px">Listar Todo</button>
-                }
+                <div class="row">
+                    <input type="text" name="nombre" id="nombre" placeholder="BUSCAR USUARIO POR NOMBRE DE USUARIO" />
+                </div>
 
                 <div class="row">
                     <div class="col s12">
@@ -34,35 +29,44 @@
                                     <th>Personal</th>
                                     <th>Rol</th>
                                     <th>Activo</th>
-                                    <th></th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach (var item in Model.Listado)
-                                {
-                                    <tr>
-                                        <td style="padding:0">@item.Nombre</td>
-                                        <td style="padding:0">@item.Correo</td>
-                                        <td style="padding:0">@item.Personal.Paterno @item.Personal.Materno @item.Personal.Nombres</td>
-                                        <td style="padding:0">@item.Rol.Denominacion</td>
-                                        <td style="padding:0">
-                                            @if (item.Activo)
-                                            {
-                                                <a href="#"><i class="material-icons">check_circle</i></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="#"><i class="material-icons red-text">remove_circle</i></a>
-                                            }
-                                        </td>
-                                        <td style="padding:0">
-                                            <a href="@Url.Action("Mantener","Usuario",new { id = item.Id })"><i class="material-icons">edit</i></a>
-                                        </td>
-                                    </tr>
-                                }
-
+                            <tbody id="tbd_usuarios">
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div id="bordered-table" class="card card card-default scrollspy">
+                            <div class="col-md-12 center text-center">
+                                <div id="Encontrado">
+                                    <span>
+                                        <label id="TotalRegistros"></label> registros encontrados
+                                    </span>
+                                    <span>&nbsp;|&nbsp;</span>
+                                    <span>
+                                        Página <label id="PaginaActual"></label> de
+                                        <label id="TotalPaginas"></label>
+                                    </span>
+                                </div>
+                                <div class="row" id="NoEncontrado">
+                                    <span>&nbsp;|&nbsp;</span>
+                                    <span>No hay resultados de la búsqueda</span>
+                                    <span>&nbsp;|&nbsp;</span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-small blue" id="inicio_usuarios"><<</button>
+                                    <span></span>
+                                    <button class="btn btn-small blue" id="anterior_usuarios">Anterior</button>
+
+                                    <button class="btn btn-small blue" id="siguiente_usuarios">Siguiente</button>
+                                    <span></span>
+                                    <button class="btn btn-small blue" id="ultimo_usuarios">>></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,68 +74,111 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div id="bordered-table" class="card card card-default scrollspy">
-            <div class="col-md-12 center text-center">
-                @if (Model.Listado.Count() > 0)
-                {
-                    <span>
-                        <strong>@Model.TotalRegistros</strong> registros encontrados
-                    </span>
-                    <span>&nbsp;|&nbsp;</span>
-                    <span>
-                        Página <strong>@(Model.PaginaActual)</strong> de
-                        <strong>@Model.TotalPaginas</strong>
-                    </span>
-                    <span>&nbsp;|&nbsp;</span>
-                }
-                else
-                {
-                    <span>No hay resultados para esta búsqueda</span>
-                    <span>&nbsp;|&nbsp;</span>
-                }
-
-                @if (Model.PaginaActual > 1)
-                {
-                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                    <span></span>
-                    @Html.ActionLink("Anterior", "Index", new { pagina = Model.PaginaActual - 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                }
-                else
-                {
-                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                    <span></span>
-                    @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                }
-                <span></span>
-                @if (Model.PaginaActual < Model.TotalPaginas)
-                {
-                    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.PaginaActual + 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                    <span></span>
-                    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                                    new { @class = "btn btn-sm btn-default" })
-                }
-                else
-                {
-                    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.TotalPaginas - 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                    <span></span>
-                    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                }
-            </div>
-        </div>
-    </div>
-</div>
 
 @section scripts{
-    <script>
-        
-    </script>
+
 }
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/paginador/paginador.js"></script>
+<script>
+
+    var currentPage = 1;
+    var pageCount = 0;
+
+    $(document).ready(function () {
+        //START PAGINATION 'AULAS'
+        paginadorFuncUsuarios($("#nombre").val(),currentPage);
+
+        $("#inicio_usuarios").click(function () {
+            paginadorFuncUsuarios($("#nombre").val(),1);
+        });
+        $("#siguiente_usuarios").click(function () {
+            paginadorFuncUsuarios($("#nombre").val(),currentPage + 1);
+        });
+        $("#ultimo_usuarios").click(function () {
+            paginadorFuncUsuarios($("#nombre").val(),pageCount);
+        });
+        $("#anterior_usuarios").click(function () {
+            paginadorFuncUsuarios($("#nombre").val(),currentPage - 1)
+        });
+    });
+
+    //Filter Speciality denomination
+    $("#nombre").on('input', function () {
+        paginadorFuncUsuarios($("#nombre").val(), 1)
+    });
+
+    //PAGINATION 'AULAS'
+    var paginadorFuncUsuarios = function (nombre, pagina) {
+        var envio = {
+            nombre: nombre,
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("Tabla","Usuario")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+
+                if (Listado.length > 0) {
+                    $("#NoEncontrado").hide();
+                    $("#TotalRegistros").html(TotalRegistros);
+                    $("#PaginaActual").html(PaginaActual);
+                    $("#TotalPaginas").html(TotalPaginas);
+                    $("#tbd_usuarios").empty();
+                    fillPaginatorUsuarios("#tbd_usuarios", Listado)
+                }
+                else {
+                    $("#Encontrado").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'aulas')
+            }
+        });
+    }
+
+
+    function fillPaginatorUsuarios(id, list) {
+        list.forEach(function (item, index) {
+            const button = `<td style="padding:0">
+                                <a href="Usuario/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
+                                <a href="Usuario/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
+                            </td>
+                            `
+            var activo = '';
+
+            //Validate checkbox material icons if a student is active or not
+            if (item.Activo) {
+                activo = `<a href="#"><i class="material-icons">check_circle</i></a>`
+            } else {
+                activo = `<a href="#"><i class="material-icons red-text">remove_circle</i></a>`
+            }
+
+            fillTable(id,
+                { keyword: 'usuario', id: item.Id },
+                item.Nombre,
+                item.Correo,
+                item.PersonalNombres,
+                item.RolDenominacion,
+                activo,
+                { isExtra: true, value: button }
+            )
+
+        });
+
+    }
+
+</script>

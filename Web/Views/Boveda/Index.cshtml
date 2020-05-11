@@ -3,7 +3,7 @@
     Web.Models.Paginador<DA.BovedaMovimiento> ListadoBovedasMovimiento = ViewBag.ListadoBovedasMovimiento;
     Web.Models.Paginador<DA.CajaDiario> ListadoCajasDiario = ViewBag.ListadoCajasDiario;
     List<DA.Boveda> bovedaActual = ViewBag.BovedaActual;
-    List<DA.Operacion> ListaOperacion = ViewBag.ListaOperacion;
+    DA.Boveda BovedaAbierta = ViewBag.Cards;
 }
 
 <style>
@@ -35,6 +35,10 @@
     .modal-footer {
         background-color: #E5EAEE;
     }
+    .cardBoveda{
+        font-weight:bold;
+        color:#323E6A;
+    }
 
     #pie {
         background-color: #ffffff;
@@ -53,8 +57,8 @@
                                 <div class="card">
                                     <div class="card-content black-text">
                                         <span class="card-title center-align">SALDO INICIAL S/.</span>
-                                        <p style="text-align:center" id="cardInicial">
-                                            0.00
+                                        <p style="text-align:center" id="cardInicial" class="cardBoveda">
+                                            @BovedaAbierta.SaldoInicial
                                         </p>
                                     </div>
                                 </div>
@@ -63,8 +67,8 @@
                                 <div class="card">
                                     <div class="card-content black-text">
                                         <span class="card-title center-align">ENTRADAS S/.</span>
-                                        <p style="text-align:center" id="cardEntradas">
-                                            0.00
+                                        <p style="text-align:center" id="cardEntradas" class="cardBoveda">
+                                            @BovedaAbierta.Entradas
                                         </p>
                                     </div>
                                 </div>
@@ -73,8 +77,8 @@
                                 <div class="card">
                                     <div class="card-content black-text">
                                         <span class="card-title center-align">SALIDAS S/.</span>
-                                        <p style="text-align: center " id="cardSalidas">
-                                            0.00
+                                        <p style="text-align: center " id="cardSalidas" class="cardBoveda">
+                                            @BovedaAbierta.Salidas
                                         </p>
                                     </div>
                                 </div>
@@ -83,8 +87,8 @@
                                 <div class="card">
                                     <div class="card-content black-text">
                                         <span class="card-title center-align">SALDO FINAL S/.</span>
-                                        <p style="text-align:center" id="cardFinal">
-                                            0.00
+                                        <p style="text-align:center" id="cardFinal" class="cardBoveda">
+                                            @BovedaAbierta.SaldoFinal
                                         </p>
                                     </div>
                                 </div>
@@ -207,20 +211,11 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="input-field col s12 m6">
-                                <select class="browser-default" id="ListaOperaciones">
-                                    <option value="" selected disabled>OPERACION</option>
-                                    @foreach (var operacion in ListaOperacion)
-                                    {
-
-                                        <option value="@operacion.Id">
-                                            @operacion.Denominacion
-                                        </option>
-                                    }
-                                </select>
+                                @Html.DropDownList("ListaOperaciones", ViewBag.ListaOperaciones as SelectList, "SELECCIONE OPERACION", htmlAttributes: new { @class = "browser-default" })
                             </div>
-                        <div class="input-field col s12 m6">
-                            @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
-                        </div>
+                            <div class="input-field col s12 m6">
+                                @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "CAJAS ABIERTAS", htmlAttributes: new { @class = "browser-default" })
+                            </div>
                             <div class="input-field col s12 m6">
                                 <label for="GTransferencia" style="font-weight:bold">GLOSA:</label>
                                 <input type="text" name="GTransferencia" id="GTransferencia" value="" />
@@ -238,7 +233,7 @@
     <div class="modal-footer">
         <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="transferencia">Guardar</a>
         &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarT">Cancelar</a>
     </div>
 </div>
 <!--Modal Structure EGRESO-INGRESO-->
@@ -251,16 +246,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="input-field col s12 m6">
-                                <select class="browser-default" id="OEntradasSalidas">
-                                    <option value="" selected disabled>OPERACION</option>
-                                    @foreach (var operacion in ListaOperacion)
-                                    {
-
-                                        <option value="@operacion.Id">
-                                            @operacion.Denominacion
-                                        </option>
-                                    }
-                                </select>
+                                @Html.DropDownList("Operaciones", ViewBag.Operaciones as SelectList, "SELECCIONE OPERACION", htmlAttributes: new { @class = "browser-default" })
                             </div>
                             <div class="input-field col s12 m6">
                                 <label for="IEntradasSalidas" style="font-weight:bold">IMPORTE:</label>
@@ -279,7 +265,7 @@
     <div class="modal-footer">
         <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="egreso_ingreso">Guardar</a>
         &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarEI">Cancelar</a>
     </div>
 </div>
 
@@ -354,35 +340,35 @@
                                         @if (ListadoBovedas.PaginaActual > 1)
                                         {
                                             @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                             <span></span>
                                             @Html.ActionLink("Anterior", "Index", new { pagina = ListadoBovedas.PaginaActual - 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                         }
                                         else
                                         {
                                             @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                             <span></span>
                                             @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                         }
                                         <span></span>
                                         @if (ListadoBovedas.PaginaActual < ListadoBovedas.TotalPaginas)
                                         {
                                             @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedas.PaginaActual + 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                             <span></span>
                                             @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedas.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                         }
                                         else
                                         {
                                             @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedas.TotalPaginas - 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                             <span></span>
                                             @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedas.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                         }
                                     </div>
                                 </div>
@@ -415,13 +401,20 @@
                                             <th>IMPORTE</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tbd_Movimiento">
                                         @foreach (var item in ListadoBovedasMovimiento.Listado)
                                         {
 
                                             <tr>
                                                 <td style="padding:0">@item.Id</td>
-                                                <td style="padding:0">@item.CajaDiario.Id</td>
+                                                @if (item.CajaDiarioId != null)
+                                                {
+                                                    <td style="padding:0">@item.CajaDiarioId</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="padding:0">0</td>
+                                                }
                                                 <td style="padding:0">@item.Fecha</td>
                                                 <td style="padding:0">@item.Operacion.Denominacion</td>
                                                 <td style="padding:0">@item.Glosa</td>
@@ -458,35 +451,35 @@
                                         @if (ListadoBovedasMovimiento.PaginaActual > 1)
                                         {
                                             @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                             <span></span>
                                             @Html.ActionLink("Anterior", "Index", new { pagina = ListadoBovedasMovimiento.PaginaActual - 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                         }
                                         else
                                         {
                                             @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                             <span></span>
                                             @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                         }
                                         <span></span>
                                         @if (ListadoBovedasMovimiento.PaginaActual < ListadoBovedasMovimiento.TotalPaginas)
                                         {
                                             @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedasMovimiento.PaginaActual + 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                             <span></span>
                                             @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default" })
+                                                            new { @class = "btn btn-small blue" })
                                         }
                                         else
                                         {
                                             @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas - 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                             <span></span>
                                             @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
+                                                            new { @class = "btn btn-small blue disabled" })
                                         }
                                     </div>
                                 </div>
@@ -522,20 +515,52 @@
                                             <th>BOVEDA</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tbd_CajaDiario">
                                         @foreach (var item in ListadoCajasDiario.Listado)
                                         {
+                                            string[] aux = item.Caja.Denominacion.Split(' ');
+                                            var IdCaja = string.Join("_", aux);
+                                            var dynamicId = "Final" + string.Join("_", aux);
                                             <tr>
-
                                                 <td style="padding:0">@item.Id</td>
-                                                <td style="padding:0">@item.Caja.Denominacion</td>
+                                                @if (item.IndCierre == false && item.IndBoveda == false)
+                                                {
+                                                    <td style="padding:0" id="@IdCaja">@item.Caja.Denominacion</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="padding:0">@item.Caja.Denominacion</td>
+                                                }
                                                 <td style="padding:0">@item.Usuario.Nombre</td>
                                                 <td style="padding:0">@item.SaldoInicial</td>
-                                                <td style="padding:0">@item.SaldoFinal</td>
+                                                @if (item.IndCierre == false && item.IndBoveda == false)
+                                                {
+                                                    <td style="padding:0" id="@dynamicId">@item.SaldoFinal</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="padding:0">@item.SaldoFinal</td>
+                                                }
                                                 <td style="padding:0">@item.FechaInicio</td>
                                                 <td style="padding:0">@item.FechaFin</td>
-                                                <td style="padding:0">@item.IndCierre</td>
-                                                <td style="padding:0">@item.IndBoveda</td>
+                                                <td style="padding:0">
+                                                    @if (item.IndCierre)
+                                                    {
+                                                        <text>SI</text>
+                                                    }
+                                                    else
+                                                    {<text>NO</text>}
+                                                </td>
+                                                <td style="padding:0">
+                                                    @if (item.IndBoveda)
+                                                    {
+                                                        <text>SI</text>
+                                                    }
+                                                    else
+                                                    {<text>NO</text>}
+                                                </td>
+
+
                                             </tr>
                                         }
 
@@ -720,7 +745,9 @@
     var transfereciaFunc = function () {
         var envio = {
             OperacionId: $("#ListaOperaciones").val(),
+            OperacionDenominacion: $("#ListaOperaciones option:selected").text(),
             CajaDiarioId: $("#CajasDisponibles").val(),
+            CajaDenominacion: $("#CajasDisponibles option:selected").text(),
             Glosa: $("#GTransferencia").val(),
             Importe: $("#ITransferencia").val()
         }
@@ -733,8 +760,51 @@
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function (response) {
-                alert(response);
+            success: function (rm) {
+                console.log(rm.result);
+                if ($("#tbd_Movimiento tr").length == 5) {
+                    $("#tbd_Movimiento tr:last").remove();
+                    $("#tbd_Movimiento").prepend(
+                        `<tr>
+                             <td style="padding:0">${rm.result[0]}</td>
+                             <td style="padding:0">${rm.result[1]}</td>
+                             <td style="padding:0">${rm.result[2]}</td>
+                             <td style="padding:0">${rm.result[3]}</td>
+                             <td style="padding:0">${rm.result[4]}</td>
+                             <td style="padding:0">${rm.result[5]}</td>
+                             </tr>`);
+                }
+                else {
+                $("#tbd_Movimiento").prepend(
+                    `<tr>
+                         <td style="padding:0">${rm.result[0]}</td>
+                         <td style="padding:0">${rm.result[1]}</td>
+                         <td style="padding:0">${rm.result[2]}</td>
+                         <td style="padding:0">${rm.result[3]}</td>
+                         <td style="padding:0">${rm.result[4]}</td>
+                         <td style="padding:0">${rm.result[5]}</td>
+                         </tr>`);
+                }
+
+                //Actualizamos las salidas y el saldo final de la bóveda
+                $("#Cerrar_sa").html(rm.result[7]);
+                $("#Cerrar_sf").html(rm.result[8]);
+                $(`#Final${rm.result[10]}`).html(rm.result[9])
+
+                //Actualizamos los Cards
+                $("#cardEntradas").text(`${rm.result[6]}`);
+                $("#cardSalidas").text(`${rm.result[7]}`);
+                $("#cardFinal").text(`${rm.result[8]}`);
+
+                //Actualizamos el saldo final de las CajasDiario
+
+
+                //Refrescamos modal
+                $("#ListaOperaciones").val('').prop('defaultSelected');
+                $("#CajasDisponibles").val('').prop('defaultSelected');
+                $("#GTransferencia").val("");
+                $("#ITransferencia").val("0.00");
+                
             }
 
         });
@@ -742,7 +812,8 @@
 
     var entradas_salidasFunc = function () {
         var envio = {
-            OperacionId: $("#OEntradasSalidas").val(),
+            OperacionId: $("#Operaciones").val(),
+            OperacionDenominacion: $("#Operaciones option:selected").text(),
             Glosa: $("#GEntradasSalidas").val(),
             Importe: $("#IEntradasSalidas").val()
         }
@@ -755,19 +826,73 @@
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function (response) {
-                alert(response);
+            success: function (rm) {
+                if ($("#tbd_Movimiento tr").length == 5) {
+                    $("#tbd_Movimiento tr:last").remove();
+                    $("#tbd_Movimiento").prepend(
+                        `<tr>
+                             <td style="padding:0">${rm.result[0]}</td>
+                             <td style="padding:0">0</td>
+                             <td style="padding:0">${rm.result[1]}</td>
+                             <td style="padding:0">${rm.result[2]}</td>
+                             <td style="padding:0">${rm.result[3]}</td>
+                             <td style="padding:0">${rm.result[4]}</td>
+                             </tr>`);
+                }
+                else {
+                    $("#tbd_Movimiento").prepend(
+                        `<tr>
+                             <td style="padding:0">${rm.result[0]}</td>
+                             <td style="padding:0">0</td>
+                             <td style="padding:0">${rm.result[1]}</td>
+                             <td style="padding:0">${rm.result[2]}</td>
+                             <td style="padding:0">${rm.result[3]}</td>
+                             <td style="padding:0">${rm.result[4]}</td>
+                             </tr>`);
+                }
+                //Actualizamos los datos de la boveda
+                if (`${rm.result[2]}` == "TRANSFERENCIA CUENTA BANCARIA" || `${rm.result[2]}` == "EGRESO AJUSTE BOVEDA") {
+                    $("#Cerrar_sa").html(`${rm.result[6]}`);
+                    $("#Cerrar_sf").html(`${rm.result[7]}`);
+                }
+                else {
+                    $("#Cerrar_en").html(`${rm.result[5]}`);
+                    $("#Cerrar_sf").html(`${rm.result[7]}`);
+                }
+                $("#cardEntradas").text(`${rm.result[5]}`);
+                $("#cardSalidas").text(`${rm.result[6]}`);
+                $("#cardFinal").text(`${rm.result[7]}`);
+
+                //Refrescar
+                $("#Operaciones").val('').prop('defaultSelected');
+                $("#IEntradasSalidas").val("0.00");
+                $("#GEntradasSalidas").val("");
             }
 
         });
     }
 
+    var limpiarModal = function () {
+        $("#ListaOperaciones").val('').prop('defaultSelected');
+        $("#Operaciones").val('').prop('defaultSelected');
+        $("#CajasDisponibles").val('').prop('defaultSelected');
+        $("#GTransferencia").val("");
+        $("#ITransferencia").val("0.00");
+        $("#IEntradasSalidas").val("0.00");
+        $("#GEntradasSalidas").val("");
+    }
+
+    /*btn.isEnabled = !aea.map(function (obj) {
+        return obj.flag;
+    }).includes(false) */
 
     $(document).ready(function () {
         $("#apertura").click(aperturafunc);
         $("#cierre").click(cierreFunc);
         $("#transferencia").click(transfereciaFunc);
         $("#egreso_ingreso").click(entradas_salidasFunc);
+        $("#cancelarT").click(limpiarModal);
+        $("#cancelarEI").click(limpiarModal);
 
         $("#btnCierre").click(function () {
 

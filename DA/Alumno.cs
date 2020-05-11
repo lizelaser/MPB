@@ -19,9 +19,9 @@ namespace DA
         {
             this.Alumno_Especialidad = new HashSet<Alumno_Especialidad>();
             this.Notas = new HashSet<Notas>();
-            this.CuentasPorCobrar = new HashSet<CuentasPorCobrar>();
             this.Matricula = new HashSet<Matricula>();
             this.CajaMovimiento = new HashSet<CajaMovimiento>();
+            this.CuentasPorCobrar = new HashSet<CuentasPorCobrar>();
         }
     
         public int Id { get; set; }
@@ -42,10 +42,10 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Notas> Notas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Matricula> Matricula { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimiento> CajaMovimiento { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
     }
 }

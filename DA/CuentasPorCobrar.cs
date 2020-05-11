@@ -21,14 +21,14 @@ namespace DA
         }
     
         public int Id { get; set; }
-        public int MatriculaId { get; set; }
+        public Nullable<int> MatriculaId { get; set; }
         public int EstadoId { get; set; }
         public int AlumnoId { get; set; }
         public string Numero { get; set; }
         public string Serie { get; set; }
         public System.DateTime Fecha { get; set; }
         public decimal Total { get; set; }
-        public bool IndEntrada { get; set; }
+        public string Descripcion { get; set; }
     
         public virtual Alumno Alumno { get; set; }
         public virtual Estado Estado { get; set; }

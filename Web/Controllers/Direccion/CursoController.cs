@@ -1,6 +1,5 @@
 ﻿using BL;
 using DA;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -18,25 +17,22 @@ namespace Web.Controllers
         private DAEntities db = new DAEntities();
         private readonly int RegistrosPorPagina = 5;
         private List<Curso> Cursos;
-        private Paginador<Curso> ListadoCursos;
+        private Paginador<CursoVm> ListadoCursos;
         // GET: Alumno
         public ActionResult Index()
         {
+            var TotalRegistros = (from c in db.Curso select c).Count();
             return View(CursoBL.Listar(includeProperties:"Especialidad"));
 
         }
 
-        
-        public ActionResult Tabla(string denominacion, int pagina = 1)
+        [HttpPost]
+        public ActionResult Tabla(string denominacion, int pagina)
         {
             var rm = new Comun.ResponseModel();
-
+            
             using (db = new DAEntities())
             {
-                db.Configuration.ProxyCreationEnabled = false;
-                db.Configuration.LazyLoadingEnabled = false;
-                db.Configuration.ValidateOnSaveEnabled = false;
-
                 int TotalRegistros = 0;
 
                 // Total number of records in the student table
@@ -55,20 +51,35 @@ namespace Web.Controllers
                     TotalRegistros = db.Curso.Where(x => x.Denominacion.Contains(denominacion)).Count();
                 }
                 // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+                var TotalPaginas = (int) Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+
+                //We list courses only with the required fields to avoid serialization problems
+                var SubCursos = Cursos.Select(S => new CursoVm
+                {
+                    Id = S.Id,
+                    Codigo = S.Codigo,
+                    Denominacion = S.Denominacion,
+                    Credito = S.Credito,
+                    NombreEspecialidad = S.Especialidad.Denominacion
+
+                }).ToList();
+
+
                 // We instantiate the 'Paging class' and assign the new values
-                ListadoCursos = new Paginador<Curso>()
+                ListadoCursos = new Paginador<CursoVm>()
                 {
                     RegistrosPorPagina = RegistrosPorPagina,
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = Cursos
+                    Listado = SubCursos
                 };
-
+                
                 rm.SetResponse(true);
                 rm.result = ListadoCursos;
             }
+
             //we send the pagination class to the view
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
@@ -118,6 +129,14 @@ namespace Web.Controllers
                 rm.SetResponse(false, ex.Message);
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Eliminar(int id)
+        {
+            var curso = CursoBL.Obtener(id);
+            CursoBL.Eliminar(db, curso);
+            return RedirectToAction("Index");
+
         }
 
     }

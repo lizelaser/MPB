@@ -19,7 +19,7 @@ namespace BL
 
                 var alumnos = context.Alumno.OrderBy(x => x.Id)
                                         .Where(x => x.Dni.Contains(dni))
-                                        .Take(10)
+                                        .Take(5)
                                         .ToList();
 
                 return alumnos;

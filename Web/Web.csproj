@@ -553,6 +553,7 @@
     <Content Include="Scripts\jquery.form.min.js" />
     <Content Include="Scripts\materialize\materialize.css" />
     <Content Include="Scripts\materialize\materialize.min.css" />
+    <Content Include="Scripts\paginador\paginador.js" />
     <Content Include="Scripts\sweetalert2\sweetalert2.min.css" />
     <Content Include="Scripts\sweetalert2\sweetalert2.min.js" />
     <Content Include="Scripts\tether.js" />
@@ -602,7 +603,6 @@
     <Content Include="Views\Aula\Index.cshtml" />
     <Content Include="Views\Aula\Mantener.cshtml" />
     <Content Include="Views\Matricula\Registrar.cshtml" />
-    <Content Include="Views\Pagos\Registrar.cshtml" />
     <Content Include="Views\CajaDiario\Index.cshtml" />
     <Content Include="Views\Reportes\ReportesAlumno.cshtml" />
     <Content Include="Views\Reportes\ReportesPersonal.cshtml" />
@@ -611,6 +611,7 @@
     <Content Include="Views\Reportes\ReportesDeudas.cshtml" />
     <Content Include="Views\CuentasPorCobrar\Index.cshtml" />
     <Content Include="Views\Boveda\Index.cshtml" />
+    <Content Include="Views\CuentasPorCobrar\Registrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj">

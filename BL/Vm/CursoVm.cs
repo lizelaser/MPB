@@ -6,8 +6,8 @@ using System.Web;
 
 namespace BL
 {
-    public class AlumnoVm: Alumno
+    public class CursoVm: Curso
     {
-        public string AlumnoNombres { get; set; }
+        public string NombreEspecialidad { get; set; }
     }
 }

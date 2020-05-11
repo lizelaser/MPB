@@ -16,45 +16,67 @@ namespace Web.Controllers
         private readonly int RegistrosPorPagina = 5;
         private List<Caja> Cajas;
         private Paginador<Caja> ListadoCajas;
-        public ActionResult Index(string denominacion, int pagina = 1)
+        public ActionResult Index()
         {
-            int TotalRegistros = 0;
+            return View();
+        }
+
+        public ActionResult Tabla(string denominacion, int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+
             using (db = new DAEntities())
             {
-                // Total number of records in the student table
-                TotalRegistros = db.Caja.Count();
-                // We get the 'records page' from the student table
-                Cajas = db.Caja.OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .ToList();
-                if (!string.IsNullOrEmpty(denominacion))
+                db.Configuration.ProxyCreationEnabled = false;
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ValidateOnSaveEnabled = false;
+
+                int TotalRegistros = 0;
+                using (db = new DAEntities())
                 {
-                    Cajas = db.Caja.Where(x => x.Denominacion.Contains(denominacion)).OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = db.Caja.Where(x => x.Denominacion.Contains(denominacion)).Count();
+                    // Total number of records in the caja table
+                    TotalRegistros = db.Caja.Count();
+                    // We get the 'records page' from the caja table
+                    Cajas = db.Caja.OrderBy(x => x.Id)
+                                                     .Skip((pagina - 1) * RegistrosPorPagina)
+                                                     .Take(RegistrosPorPagina)
+                                                     .ToList();
+                    if (!string.IsNullOrEmpty(denominacion))
+                    {
+                        Cajas = db.Caja.Where(x => x.Denominacion.Contains(denominacion)).OrderBy(x => x.Id)
+                            .Skip((pagina - 1) * RegistrosPorPagina)
+                            .Take(RegistrosPorPagina).ToList();
+                        TotalRegistros = db.Caja.Where(x => x.Denominacion.Contains(denominacion)).Count();
+                    }
+                    // Total number of pages in the caja table
+                    var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                    //We list "Cajas" only with the required fields to avoid serialization problems
+                    var SubCajas = Cajas.Select(S => new Caja
+                    {
+                        Id = S.Id,
+                        Denominacion = S.Denominacion
+                    }).ToList();
+
+                    // We instantiate the 'Paging class' and assign the new values
+                    ListadoCajas = new Paginador<Caja>()
+                    {
+                        RegistrosPorPagina = RegistrosPorPagina,
+                        TotalRegistros = TotalRegistros,
+                        TotalPaginas = TotalPaginas,
+                        PaginaActual = pagina,
+                        Listado = SubCajas
+                    };
+
+                    rm.SetResponse(true);
+                    rm.result = ListadoCajas;
                 }
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoCajas = new Paginador<Caja>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Cajas
-                };
+                //we send the pagination class to the view
+                return Json(rm,JsonRequestBehavior.AllowGet);
             }
-            //we send the pagination class to the view
-            return View(ListadoCajas);
+
         }
-  
-        public ActionResult ListarTodo()
-        {
-            return View(CajaBL.Listar());
-        }
+
         public ActionResult Mantener(int id = 0)
         {
 
@@ -83,8 +105,8 @@ namespace Web.Controllers
                 {
                     CajaBL.ActualizarParcial(obj,x=>x.Denominacion);
                 }
-                rm.SetResponse(true,"Caja Guardada con Éxito");
-                //rm.href = Url.Action("Index","Caja");
+                rm.SetResponse(true);
+                rm.href = Url.Action("Index","Caja");
             }
             catch(Exception ex)
             {

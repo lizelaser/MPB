@@ -24,61 +24,14 @@ namespace Web.Controllers
         /// <returns>Retorna el listado de saldos de caja asignados y totales</returns>
         /// 
         private readonly int RegistrosPorPagina = 5;
+        private List<CajaDiario> CajasAsignadas;
+        private Paginador<CajaDiarioVm> ListadoAsignadas;
         private List<CajaDiario> CajasDiario;
-        private Paginador<CajaDiario> ListadoCajasDiario;
-        // GET: Alumno
-        public ActionResult Index(int pagina = 1)
-        {
-            int TotalRegistros = 0;
-            using (db = new DAEntities())
-            {
-                // Total number of records in the caja diario table
-                TotalRegistros = db.CajaDiario.Count();
-                // We get the 'records page' from the caja diario table
-                CajasDiario = db.CajaDiario.Where(x=>x.IndBoveda==false || x.IndCierre == false ).OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .Include(x=>x.Caja)
-                                                 .Include(x=>x.Usuario)
-                                                 .ToList();
-                // Total number of pages in the caja diario table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoCajasDiario = new Paginador<CajaDiario>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = CajasDiario
-                };
-                ViewBag.ListadoCajasAsignadas = ListadoCajasDiario;
-            }
-            using (db = new DAEntities())
-            {
-                // Total number of records in the boveda table
-                TotalRegistros = db.CajaDiario.Count();
-                // We get the 'records page' from the boveda table
-                CajasDiario = db.CajaDiario.OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .Include(x => x.Caja)
-                                                 .Include(x => x.Usuario)
-                                                 .ToList();
-                // Total number of pages in the boveda table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoCajasDiario = new Paginador<CajaDiario>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = CajasDiario
-                };
-                ViewBag.ListadoCajasDiario = ListadoCajasDiario;
-            }
+        private Paginador<CajaDiarioVm> ListadoCajasDiario;
 
+        // GET: CAJA DIARIO
+        public ActionResult Index()
+        {
             using (db = new DAEntities())
             {
                 //Lista de USUARIOS DISPONIBLES
@@ -86,10 +39,7 @@ namespace Web.Controllers
                 var UsuariosDisponibles = (from p in db.Personal join
                                            u in db.Usuario
                                            on p.Id equals u.PersonalId
-                                           join cd in db.CajaDiario
-                                           on u.Id equals cd.UsuarioId into ucd
-                                           from cd in ucd.DefaultIfEmpty()
-                                           where (cd.UsuarioId).Equals(null) && (u.Activo).Equals(true)
+                                           where u.IndUso.Equals(false)
                                            select new{ Id = u.Id, Usuario = p.Paterno + " " + p.Materno + ", " + p.Nombres }).ToList();
 
                 SelectList usuarios = new SelectList(UsuariosDisponibles, "Id", "Usuario");
@@ -98,10 +48,7 @@ namespace Web.Controllers
                 //Lista de CAJAS DISPONIBLES
 
                 var CajasDisponibles = (from c in db.Caja
-                                           join cd in db.CajaDiario
-                                           on c.Id equals cd.CajaId into ccd
-                                           from cd in ccd.DefaultIfEmpty()
-                                           where cd.CajaId.Equals(null)
+                                           where c.IndUso.Equals(false)
                                            select new { Id = c.Id, Caja = c.Denominacion }).ToList();
 
                 SelectList listaCajas = new SelectList(CajasDisponibles, "Id", "Caja");
@@ -112,6 +59,141 @@ namespace Web.Controllers
             }
 
             return View();
+        }
+
+        //FILTRO, PAGINACIÓN Y LISTADO CAJAS ASIGNADAS
+        [HttpPost]
+        public ActionResult TablaAsignadas(int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+            int TotalRegistros = 0;
+
+            using (db = new DAEntities())
+            {
+                try
+                {
+                    db.Configuration.ProxyCreationEnabled = false;
+                    db.Configuration.LazyLoadingEnabled = false;
+                    db.Configuration.ValidateOnSaveEnabled = false;
+
+                    // Total number of records in the caja diario table
+                    TotalRegistros = db.CajaDiario.Where(x=>x.IndBoveda.Equals(false) || x.IndCierre.Equals(false)).Count();
+                    // We get the 'records page' from the caja diario table
+                    CajasAsignadas = db.CajaDiario.Where(x => x.IndBoveda == false || x.IndCierre == false).OrderBy(x => x.Id)
+                                                     .Skip((pagina - 1) * RegistrosPorPagina)
+                                                     .Take(RegistrosPorPagina)
+                                                     .Include(x => x.Caja)
+                                                     .Include(x => x.Usuario)
+                                                     .ToList();
+                    // Total number of pages in the caja diario table
+                    var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                    //We list 'assigned boxes' only with the required fields to avoid serialization problems
+                    var SubAsignadas = CajasAsignadas.Select(S => new CajaDiarioVm
+                    {
+                        Id = S.Id,
+                        CajaDenominacion = S.Caja.Denominacion,
+                        UsuarioNombre = S.Usuario.Nombre,
+                        FechaInicio = S.FechaInicio,
+                        FechaFin = S.FechaFin,
+                        SaldoInicial = S.SaldoInicial,
+                        Entradas = S.Entradas,
+                        Salidas = S.Salidas,
+                        SaldoFinal = S.SaldoFinal,
+                        IndCierre = S.IndCierre,
+                        IndBoveda = S.IndBoveda
+
+                    }).ToList();
+
+                    // We instantiate the 'Paging class' and assign the new values
+                    ListadoAsignadas = new Paginador<CajaDiarioVm>()
+                    {
+                        RegistrosPorPagina = RegistrosPorPagina,
+                        TotalRegistros = TotalRegistros,
+                        TotalPaginas = TotalPaginas,
+                        PaginaActual = pagina,
+                        Listado = SubAsignadas
+                    };
+
+                    rm.SetResponse(true);
+                    rm.result = ListadoAsignadas;
+
+                }
+                catch (Exception ex)
+                {
+                    rm.SetResponse(false, ex.Message);
+                }
+
+            }
+
+            //we send the pagination class to the view
+            return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        //FILTRO, PAGINACIÓN Y LISTADO CAJAS DIARIO
+        [HttpPost]
+        public ActionResult TablaCajasDiario(int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+            int TotalRegistros = 0;
+
+            using (db = new DAEntities())
+            {
+                try
+                {
+                    db.Configuration.ProxyCreationEnabled = false;
+                    db.Configuration.LazyLoadingEnabled = false;
+                    db.Configuration.ValidateOnSaveEnabled = false;
+
+                    // Total number of records in the boveda table
+                    TotalRegistros = db.CajaDiario.Count();
+
+                    // We get the 'records page' from the boveda table
+                    CajasDiario = db.CajaDiario.OrderByDescending(x => x.Id)
+                                                     .Skip((pagina - 1) * RegistrosPorPagina)
+                                                     .Take(RegistrosPorPagina)
+                                                     .Include(x => x.Caja)
+                                                     .Include(x => x.Usuario)
+                                                     .ToList();
+                    // Total number of pages in the boveda table
+                    var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                    //We list 'assigned boxes' only with the required fields to avoid serialization problems
+                    var SubCajasDiario = CajasDiario.Select(S => new CajaDiarioVm
+                    {
+                        Id = S.Id,
+                        CajaDenominacion = S.Caja.Denominacion,
+                        UsuarioNombre = S.Usuario.Nombre,
+                        SaldoInicial = S.SaldoInicial,
+                        SaldoFinal = S.SaldoFinal,
+                        FechaInicio = S.FechaInicio,
+                        FechaFin = S.FechaFin,
+                        IndCierre = S.IndCierre,
+                        IndBoveda = S.IndBoveda
+
+                    }).ToList();
+                    // We instantiate the 'Paging class' and assign the new values
+                    ListadoCajasDiario = new Paginador<CajaDiarioVm>()
+                    {
+                        RegistrosPorPagina = RegistrosPorPagina,
+                        TotalRegistros = TotalRegistros,
+                        TotalPaginas = TotalPaginas,
+                        PaginaActual = pagina,
+                        Listado = SubCajasDiario
+                    };
+                    rm.SetResponse(true);
+                    rm.result = ListadoCajasDiario;
+
+                }
+                catch (Exception ex)
+                {
+                    rm.SetResponse(false, ex.Message);
+                }
+
+            }
+
+            //we send the pagination class to the view
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -154,16 +236,31 @@ namespace Web.Controllers
                     int CajaDiarioId = cajadiario.Id;
 
                     //Asignamos la operación correspondiente con asignaciones de caja
-                    int OperacionId = (from o in db.Operacion where o.Denominacion == "EGRESO AJUSTE BOVEDA" select o.Id).SingleOrDefault();
-                    //Guardamos la asignación de caja en bóveda movimiento
-                    BovedaMovimiento movimiento = new BovedaMovimiento();
-                    movimiento.BovedaId = BovedaId;
-                    movimiento.CajaDiarioId = CajaDiarioId;
-                    movimiento.OperacionId = OperacionId;
-                    movimiento.Fecha = DateTime.Now;
-                    movimiento.Glosa = "INGRESO A " + CajaDenominacion;
-                    movimiento.Importe = Convert.ToDecimal(SaldoInicial);
-                    BovedaMovimientoBL.Crear(movimiento);
+                    int OperacionId = (from o in db.Operacion where o.Denominacion == "TRANSFERENCIA EGRESO BOVEDA" select o.Id).SingleOrDefault();
+
+                    //Guardamos la asignación de caja en bóveda movimiento siempre y cuando saldo inicial sea diferente de 0.00 soles
+                    if (SaldoInicial!=0)
+                    {
+                        BovedaMovimiento movimiento = new BovedaMovimiento();
+                        movimiento.BovedaId = BovedaId;
+                        movimiento.CajaDiarioId = CajaDiarioId;
+                        movimiento.OperacionId = OperacionId;
+                        movimiento.Fecha = DateTime.Now;
+                        movimiento.Glosa = "INGRESO A " + CajaDenominacion;
+                        movimiento.Importe = Convert.ToDecimal(SaldoInicial);
+                        BovedaMovimientoBL.Crear(movimiento);
+                    }
+
+                    //Actualizamos los IndUso de la caja y usuario correspondientes
+                    Caja caja = new Caja();
+                    caja.Id = CajaId;
+                    caja.IndUso = true;
+                    CajaBL.ActualizarParcial(caja,x=>x.IndUso);
+
+                    Usuario usuario = new Usuario();
+                    usuario.Id = UsuarioId;
+                    usuario.IndUso = true;
+                    UsuarioBL.ActualizarParcial(usuario,x=>x.IndUso);
 
                     //Actualizamos el Saldo Final de la Bóveda actual
                     Boveda actual = new Boveda();
@@ -172,7 +269,24 @@ namespace Web.Controllers
                     actual.SaldoFinal = SaldoFinalBoveda;
                     BovedaBL.ActualizarParcial(actual, x => x.Salidas, x => x.SaldoFinal);
 
+                    //Recover data that send from asignación de caja to view
+                    Usuario Usuario = UsuarioBL.Obtener(UsuarioId);
+                    var MontoTotal = (from b in db.Boveda where b.IndCierre.Equals(false) select b.SaldoFinal).SingleOrDefault();
+
+                    var datos = new string[9];
+                    datos[0] = Convert.ToString(cajadiario.CajaId);
+                    datos[1] = Convert.ToString(cajadiario.UsuarioId);
+                    datos[2] = Convert.ToString(cajadiario.Id);
+                    datos[3] = CajaDenominacion;
+                    datos[4] = Usuario.Nombre;
+                    datos[5] = Convert.ToString(cajadiario.FechaInicio);
+                    datos[6] = Convert.ToString(cajadiario.SaldoInicial);
+                    datos[7] = Convert.ToString(cajadiario.SaldoFinal);
+                    datos[8] = Convert.ToString(MontoTotal.Value);
+
                     rm.SetResponse(true);
+                    rm.result = datos;
+                    
                 }
 
                 else
@@ -189,7 +303,7 @@ namespace Web.Controllers
         }
 
         [HttpPatch]
-        public ActionResult CerrarCajas(decimal SaldoFinal)
+        public ActionResult CerrarCajas(decimal SaldoFinal, List<BovedaMovimiento> CajasACerrar)
         {
             var rm = new Comun.ResponseModel();
             try
@@ -212,6 +326,9 @@ namespace Web.Controllers
                 EntradasBoveda = EntradasBoveda + Convert.ToDecimal(SaldoFinal);
                 decimal SaldoFinalBoveda = BovedaSaldoInicial + EntradasBoveda - BovedaSalidas;
 
+                // -- Operacion Ingreso Ajuste Boveda para el cierre de cajas --//
+                Operacion operacionIngresoAjusteBoveda = (from o in db.Operacion where o.Denominacion == "TRANSFERENCIA INGRESO BOVEDA" select o).SingleOrDefault();
+
                 //Actualizamos el Saldo Final de la Bóveda actual
                 Boveda actual = new Boveda();
                 actual.Id = BovedaId;
@@ -219,6 +336,39 @@ namespace Web.Controllers
                 actual.SaldoFinal = SaldoFinalBoveda;
                 BovedaBL.ActualizarParcial(actual, x => x.Entradas, x => x.SaldoFinal);
 
+                //Creamos Movimientos de Bóveda correspondientes con el cierre de cada una de las cajas
+                BovedaMovimiento movimiento = new BovedaMovimiento();
+                foreach (var item in CajasACerrar)
+                {
+                    movimiento.BovedaId = BovedaId;
+                    movimiento.CajaDiarioId = item.CajaDiarioId;
+                    movimiento.OperacionId = operacionIngresoAjusteBoveda.Id;
+                    movimiento.Fecha = DateTime.Now;
+                    movimiento.Glosa = item.Glosa;
+                    movimiento.Importe = item.Importe;
+                    BovedaMovimientoBL.Crear(movimiento);
+
+                }
+
+
+                //Actualizamos el IndUso de los usuarios y las cajas
+                var usuariosEnUso = (from u in db.Usuario where u.IndUso.Equals(true) select u).ToList();
+                foreach (var item in usuariosEnUso)
+                {
+                    item.IndUso = false;
+                }
+                db.SaveChanges();
+
+                var cajasEnUso = (from c in db.Caja where c.IndUso.Equals(true) select c).ToList();
+                foreach (var item in cajasEnUso)
+                {
+                    item.IndUso = false;
+                }
+                db.SaveChanges();
+
+                //Llamamos a las cajas asignadas para retornarlas a la vista
+                //var Asignadas = (from ca in db.CajaDiario where ca.IndCierre.Equals(false) || ca.IndBoveda.Equals(false) select ca).ToList();
+                //rm.result = Asignadas;
                 rm.SetResponse(true);
  
             }
@@ -228,6 +378,38 @@ namespace Web.Controllers
             }
 
             return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult ModuloCierre()
+        {
+            var rm = new Comun.ResponseModel();
+            try
+            {
+                List<CajaDiario> Asignadas = (from ca in db.CajaDiario where ca.IndCierre.Equals(false) || ca.IndBoveda.Equals(false) select ca).ToList();
+                var SubAsignadas = Asignadas.Select(S => new CajaDiarioVm
+                {
+                    Id = S.Id,
+                    CajaDenominacion = S.Caja.Denominacion,
+                    UsuarioNombre = S.Usuario.Nombre,
+                    FechaInicio = S.FechaInicio,
+                    FechaFin = S.FechaFin,
+                    SaldoInicial = S.SaldoInicial,
+                    Entradas = S.Entradas,
+                    Salidas = S.Salidas,
+                    SaldoFinal = S.SaldoFinal,
+                    IndCierre = S.IndCierre,
+                    IndBoveda = S.IndBoveda
+                }).ToList();
+
+                rm.result = SubAsignadas;
+                rm.SetResponse(true);
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false,ex.Message);
+            }
+            return Json(rm,JsonRequestBehavior.AllowGet);
         }
 
     }

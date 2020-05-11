@@ -2,10 +2,12 @@
 using DA;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Web.Models;
+using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -14,47 +16,70 @@ namespace Web.Controllers
     {
         private DAEntities db = new DAEntities();
         private readonly int RegistrosPorPagina = 5;
-        private List<Personal> Personal;
-        private Paginador<Personal> ListadoPersonal;
+        private List<Personal> Trabajadores;
+        private Paginador<PersonalVm> ListadoPersonal;
         // GET: Personal
-        public ActionResult Index(string dni, int pagina = 1)
+        public ActionResult Index()
         {
-            int TotalRegistros = 0;
+            return View();
+        }
+
+        public ActionResult Tabla(string dni, int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+
             using (db = new DAEntities())
             {
+                db.Configuration.ProxyCreationEnabled = false;
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ValidateOnSaveEnabled = false;
+
+                int TotalRegistros = 0;
+
                 // Total number of records in the student table
                 TotalRegistros = db.Personal.Count();
                 // We get the 'records page' from the student table
-                Personal = db.Personal.OrderBy(x => x.Id)
+                Trabajadores = db.Personal.OrderBy(x => x.Id)
                                                  .Skip((pagina - 1) * RegistrosPorPagina)
                                                  .Take(RegistrosPorPagina)
                                                  .ToList();
+
                 if (!string.IsNullOrEmpty(dni))
                 {
-                    Personal = db.Personal.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
+                    Trabajadores = db.Personal.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
                         .Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina).ToList();
                     TotalRegistros = db.Personal.Where(x => x.Dni.Contains(dni)).Count();
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                //We list "Especialidad" only with the required fields to avoid serialization problems
+                var SubPersonal = Trabajadores.Select(S => new PersonalVm
+                {
+                    Id = S.Id,
+                    Dni = S.Dni,
+                    PersonalNombres = S.Paterno +  " " + S.Materno + " " + S.Nombres,
+                    Celular = S.Celular,
+                    Correo = S.Correo,
+                    Estado = S.Estado
+
+                }).ToList();
+
                 // We instantiate the 'Paging class' and assign the new values
-                ListadoPersonal = new Paginador<Personal>()
+                ListadoPersonal = new Paginador<PersonalVm>()
                 {
                     RegistrosPorPagina = RegistrosPorPagina,
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = Personal
+                    Listado = SubPersonal
                 };
+                rm.SetResponse(true);
+                rm.result = ListadoPersonal;
             }
             //we send the pagination class to the view
-            return View(ListadoPersonal);
-        }
-
-        public ActionResult ListarTodo()
-        {
-            return View(PersonalBL.Listar());
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Mantener(int id = 0)
@@ -92,6 +117,14 @@ namespace Web.Controllers
                 rm.SetResponse(false, ex.Message);
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Eliminar(int id)
+        {
+            var personal = PersonalBL.Obtener(id);
+            PersonalBL.Eliminar(db, personal);
+            return RedirectToAction("Index");
+
         }
     }
 }

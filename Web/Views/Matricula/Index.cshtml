@@ -1,4 +1,6 @@
-﻿@model List<DA.Matricula>
+﻿@{ 
+
+}
 
 <style>
     .collapsible-header {
@@ -13,44 +15,62 @@
                 <li class="active">
                     <div class="collapsible-header"><i class="material-icons">account_balance</i>MATRICULAS</div>
                     <div class="collapsible-body">
-                        <div class="card-title">
-                            <div class="row">
-                                <div class="col s4 m6 l2">
-                                    <a class="btn-small blue right" href="@Url.Action("Registrar","Matricula", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
-                                </div>
-                            </div>
+                        <div class="row">
+                            <a class="btn btn-small blue right" href="@Url.Action("Registrar","Matricula")" style="margin-right:15px;margin-top:15px;">REGISTRAR NUEVO</a>
                         </div>
                         <div class="row">
                             <div class="col s12 m12">
                                 <table class="bordered" id="tblMatricula">
                                     <thead>
                                         <tr>
+                                            <th>Id</th>
                                             <th>Periodo</th>
                                             <th>Fecha</th>
                                             <th>Alumno</th>
                                             <th>Condicion Estudio</th>
+                                            <th>Estado</th>
                                             <th>Monto</th>
                                             <th>Observacion</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach (var item in Model)
-                                        {
-                                            <tr>
-
-                                                <td style="padding:0">@item.Periodo.Denominacion</td>
-                                                <td style="padding:0">@item.Fecha</td>
-                                                <td style="padding:0">@item.Alumno.Paterno  @item.Alumno.Materno @item.Alumno.Nombres</td>
-                                                <td style="padding:0">@item.CondicionEstudio.Denominacion</td>
-                                                <td style="padding:0">@item.Monto</td>
-                                                <td style="padding:0">@item.Observacion</td>
-                                            </tr>
-                                        }
-
+                                    <tbody id="tbd_matriculas">
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col s12 m12 l12">
+                                <div id="bordered-table" class="card card card-default scrollspy">
+                                    <div class="col-md-12 center text-center">
+                                        <div id="Encontrado">
+                                            <span>
+                                                <label id="TotalRegistros"></label> registros encontrados
+                                            </span>
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <span>
+                                                Página <label id="PaginaActual"></label> de
+                                                <label id="TotalPaginas"></label>
+                                            </span>
+                                        </div>
+                                        <div class="row" id="NoEncontrado">
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <span>No hay resultados de la búsqueda</span>
+                                            <span>&nbsp;|&nbsp;</span>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-small blue" id="inicio_matriculas"><<</button>
+                                            <span></span>
+                                            <button class="btn btn-small blue" id="anterior_matriculas">Anterior</button>
+
+                                            <button class="btn btn-small blue" id="siguiente_matriculas">Siguiente</button>
+                                            <span></span>
+                                            <button class="btn btn-small blue" id="ultimo_matriculas">>></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                     </div>
                 </li>
@@ -67,4 +87,98 @@
     </script>
 }
 
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/paginador/paginador.js"></script>
+
+<script>
+    var currentPage = 1;
+    var pageCount = 0;
+
+    $(document).ready(function () {
+        //START PAGINATION 'MATRICULAS'
+        paginadorFunc(currentPage);
+
+        $("#inicio_matriculas").click(function () {
+            paginadorFunc(1);
+        });
+        $("#siguiente_matriculas").click(function () {
+            paginadorFunc(currentPage + 1);
+        });
+        $("#ultimo_matriculas").click(function () {
+            paginadorFunc(pageCount);
+        });
+        $("#anterior_matriculas").click(function () {
+            paginadorFunc(currentPage - 1)
+        });
+    });
+</script>
+<script>
+    //PAGINATION MATRICULA TABLE
+    var paginadorFunc = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("Tabla","Matricula")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+
+                if (Listado.length > 0) {
+                    $("#NoEncontrado").hide();
+                    $("#TotalRegistros").html(TotalRegistros);
+                    $("#PaginaActual").html(PaginaActual);
+                    $("#TotalPaginas").html(TotalPaginas);
+                    $("#tbd_matriculas").empty();
+                    fillPaginator("#tbd_matriculas", Listado)
+                }
+                else {
+                    $("#EncontradoCobranzas").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'matriculas')
+            }
+        });
+    }
+
+
+    function fillPaginator(id, list) {
+        list.forEach(function (item, index) {
+            var date = new Date(parseInt((item.Fecha).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var standardDate = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            fillTable(id,
+                { keyword: 'matricula', id: item.Id },
+                item.Id,
+                item.PeriodoDenominacion,
+                standardDate,
+                item.AlumnoNombres,
+                item.CondicionEstudioDenominacion,
+                item.EstadoDenominacion,
+                item.Monto,
+                item.Observacion
+            )
+        });
+    }
+
+
+</script>
 

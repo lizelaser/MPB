@@ -44,7 +44,7 @@
                                         <table class="bordered">
                                             <thead>
                                                 <tr>
-                                                    <th>DiarioId</th>
+                                                    <th>N°</th>
                                                     <th>CAJA</th>
                                                     <th>CAJERO</th>
                                                     <th>FECHA INICIO</th>
@@ -57,42 +57,7 @@
                                                     <th hidden>BOVEDA</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="tbd_Asignadas">
-                                                @foreach (var item in ListadoCajasAsignadas.Listado)
-                                                {
-                                                    <tr>
-                                                        <td style="padding:0">@item.Id</td>
-                                                        <td style="padding: 0 ">@item.Caja.Denominacion</td>
-                                                        <td style="padding:0">@item.Usuario.Nombre</td>
-                                                        <td style="padding:0">@item.FechaInicio</td>
-                                                        <td style="padding:0">@item.FechaFin</td>
-                                                        <td style="padding:0">@item.SaldoInicial</td>
-                                                        <td style="padding:0">@item.Entradas</td>
-                                                        <td style="padding:0">@item.Salidas</td>
-                                                        <td class="Final" style="padding:0">@item.SaldoFinal</td>
-                                                        <td style="padding:0">
-                                                            @if (item.IndCierre)
-                                                            {
-                                                                <text>SI</text>
-                                                            }
-                                                            else
-                                                            {
-                                                                <text>NO</text>
-                                                            }
-                                                        </td>
-                                                        <td style="padding:0" hidden>
-                                                            @if (item.IndBoveda)
-                                                            {
-                                                                <text>SI</text>
-                                                            }
-                                                            else
-                                                            {
-                                                                <text>NO</text>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                }
-
+                                            <tbody id="tbd_asignadas">
                                             </tbody>
                                         </table>
                                     </div>
@@ -101,57 +66,31 @@
                                     <div class="col s12 m12 l12">
                                         <div id="bordered-table" class="card card card-default scrollspy">
                                             <div class="col-md-12 center text-center">
-                                                @if (ListadoCajasAsignadas.Listado.Count() > 0)
-                                                {
+                                                <div id="EncontradoAsignadas">
                                                     <span>
-                                                        <strong>@ListadoCajasAsignadas.TotalRegistros</strong> registros encontrados
+                                                        <label id="TotalRegistrosAsignadas"></label> registros encontrados
                                                     </span>
                                                     <span>&nbsp;|&nbsp;</span>
                                                     <span>
-                                                        Página <strong>@(ListadoCajasAsignadas.PaginaActual)</strong> de
-                                                        <strong>@ListadoCajasAsignadas.TotalPaginas</strong>
+                                                        Página <label id="PaginaActualAsignadas"></label> de
+                                                        <label id="TotalPaginasAsignadas"></label>
                                                     </span>
+                                                </div>
+                                                <div class="row" id="NoEncontradoAsignadas">
                                                     <span>&nbsp;|&nbsp;</span>
-                                                }
-                                                else
-                                                {
-                                                    <span>No hay resultados para esta búsqueda</span>
+                                                    <span>No hay resultados de la búsqueda</span>
                                                     <span>&nbsp;|&nbsp;</span>
-                                                }
+                                                </div>
 
-                                                @if (ListadoCajasAsignadas.PaginaActual > 1)
-                                                {
-                                                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
+                                                <div>
+                                                    <button class="btn btn-small blue" id="inicio_asignadas"><<</button>
                                                     <span></span>
-                                                    @Html.ActionLink("Anterior", "Index", new { pagina = ListadoCajasAsignadas.PaginaActual - 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                }
-                                                else
-                                                {
-                                                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
+                                                    <button class="btn btn-small blue" id="anterior_asignadas">Anterior</button>
+
+                                                    <button class="btn btn-small blue" id="siguiente_asignadas">Siguiente</button>
                                                     <span></span>
-                                                    @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                }
-                                                <span></span>
-                                                @if (ListadoCajasAsignadas.PaginaActual < ListadoCajasAsignadas.TotalPaginas)
-                                                {
-                                                    @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasAsignadas.PaginaActual + 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                    <span></span>
-                                                    @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasAsignadas.TotalPaginas },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                }
-                                                else
-                                                {
-                                                    @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasAsignadas.TotalPaginas - 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                    <span></span>
-                                                    @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasAsignadas.TotalPaginas },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                }
+                                                    <button class="btn btn-small blue" id="ultimo_asignadas">>></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -164,7 +103,7 @@
                             <div>
                                 <button data-target="modal1" class="btn modal-trigger btn-small blue left" id="asignar_caja">ASIGNAR CAJA</button>
                                 &nbsp;
-                                <button data-target="modal2" class="btn modal-trigger btn-small blue right" id="cerrar_caja" disabled>CERRAR CAJAS</button>
+                                <button data-target="modal2" class="btn modal-trigger btn-small blue right" id="cerrar_caja">CERRAR CAJAS</button>
                             </div>
                         </li>
                     </ul>
@@ -208,7 +147,7 @@
             <div class="modal-footer">
                 <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="asignar">Guardar</a>
                 &nbsp;
-                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar">Cancelar</a>
             </div>
         </div>
 
@@ -227,8 +166,9 @@
                     </div>
                 </div>
             </div>
+            
             <div class="modal-footer">
-                <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar">Guardar</a>
+                <button class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar" disabled>Guardar</button>
                 &nbsp;
                 <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
             </div>
@@ -254,46 +194,11 @@
                                                     <th>SALDO FINAL</th>
                                                     <th>F.INICIO</th>
                                                     <th>F.FIN</th>
-                                                    <th>CERRADO</th>
+                                                    <th>CIERRE</th>
                                                     <th>BOVEDA</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                @foreach (var item in ListadoCajasDiario.Listado)
-                                                {
-                                                    var aux = item.IndBoveda;
-                                                    string Ind = "td" + aux;
-                                                    <tr>
-                                                        <td style="padding:0">@item.Id</td>
-                                                        <td style="padding:0">@item.Caja.Denominacion</td>
-                                                        <td style="padding:0">@item.Usuario.Nombre </td>
-                                                        <td style="padding:0">@item.SaldoInicial</td>
-                                                        <td style="padding:0">@item.SaldoFinal</td>
-                                                        <td style="padding:0">@item.FechaInicio</td>
-                                                        <td style="padding:0">@item.FechaFin</td>
-                                                        <td style="padding:0">
-                                                            @if (item.IndCierre)
-                                                            {
-                                                                <text>SI</text>
-                                                            }
-                                                            else
-                                                            {
-                                                                <text>NO</text>
-                                                            }
-                                                        </td>
-                                                        <td style="padding:0" class="@Ind">
-                                                            @if (item.IndBoveda)
-                                                            {
-                                                                <text>SI</text>
-                                                            }
-                                                            else
-                                                            {
-                                                                <text>NO</text>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                }
-
+                                            <tbody id="tbd_cajasdiario">
                                             </tbody>
                                         </table>
                                     </div>
@@ -302,61 +207,36 @@
                                     <div class="col s12 m12 l12">
                                         <div id="bordered-table" class="card card card-default scrollspy">
                                             <div class="col-md-12 center text-center">
-                                                @if (ListadoCajasDiario.Listado.Count() > 0)
-                                                {
+                                                <div id="EncontradoCajasDiario">
                                                     <span>
-                                                        <strong>@ListadoCajasDiario.TotalRegistros</strong> registros encontrados
+                                                        <label id="TotalRegistrosCajasDiario"></label> registros encontrados
                                                     </span>
                                                     <span>&nbsp;|&nbsp;</span>
                                                     <span>
-                                                        Página <strong>@(ListadoCajasDiario.PaginaActual)</strong> de
-                                                        <strong>@ListadoCajasDiario.TotalPaginas</strong>
+                                                        Página <label id="PaginaActualCajasDiario"></label> de
+                                                        <label id="TotalPaginasCajasDiario"></label>
                                                     </span>
+                                                </div>
+                                                <div class="row" id="NoEncontradoCajasDiario">
                                                     <span>&nbsp;|&nbsp;</span>
-                                                }
-                                                else
-                                                {
-                                                    <span>No hay resultados para esta búsqueda</span>
+                                                    <span>No hay resultados de la búsqueda</span>
                                                     <span>&nbsp;|&nbsp;</span>
-                                                }
+                                                </div>
 
-                                                @if (ListadoCajasDiario.PaginaActual > 1)
-                                                {
-                                                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
+                                                <div>
+                                                    <button class="btn btn-small blue" id="inicio_diarios"><<</button>
                                                     <span></span>
-                                                    @Html.ActionLink("Anterior", "Index", new { pagina = ListadoCajasDiario.PaginaActual - 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                }
-                                                else
-                                                {
-                                                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
+                                                    <button class="btn btn-small blue" id="anterior_diarios">Anterior</button>
+
+                                                    <button class="btn btn-small blue" id="siguiente_diarios">Siguiente</button>
                                                     <span></span>
-                                                    @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                }
-                                                <span></span>
-                                                @if (ListadoCajasDiario.PaginaActual < ListadoCajasDiario.TotalPaginas)
-                                                {
-                                                    @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasDiario.PaginaActual + 1 },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                    <span></span>
-                                                    @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasDiario.TotalPaginas },
-                                                                    new { @class = "btn btn-sm btn-default" })
-                                                }
-                                                else
-                                                {
-                                                    @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasDiario.TotalPaginas - 1 },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                    <span></span>
-                                                    @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasDiario.TotalPaginas },
-                                                                    new { @class = "btn btn-sm btn-default disabled" })
-                                                }
+                                                    <button class="btn btn-small blue" id="ultimo_diarios">>></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </li>
                     </ul>
@@ -367,7 +247,7 @@
             <div class="col s6">
                 <div class="card-content">
                     <ul class="collapsible">
-                        <li class="active">
+                        <li>
                             <div class="collapsible-header"><i class="material-icons">delete_outline</i>ANULAR MOVIMIENTO DE CAJA</div>
                             <div class="collapsible-body">
                                 <div class="row">
@@ -428,6 +308,7 @@
 }
 
 <script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/paginador/paginador.js"></script>
 <script>
     var asignarfunc = function () {
         var envio = {
@@ -444,8 +325,22 @@
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function () {
+            success: function (rm) {
+                $("#CajasDisponibles").find(`option[value=${rm.result[0]}]`).remove()
+                $("#UsuariosDisponibles").find(`option[value=${rm.result[1]}]`).remove()
 
+                //Llamamos de nuevo a los registros de nuestra base de datos
+                paginadorFuncAsignadas(currentPage);
+                paginadorFuncCajasDiario(currentPage);
+
+                // Actualizamos el monto total disponible de la bóveda
+                $("#monto").val(`${rm.result[8]}`);
+
+                //Refrescamos modal
+                var numero = 0;
+                $("#inicial").val(numero.toFixed(2));
+                $("#CajasDisponibles").val('').prop('defaultSelected');
+                $("#UsuariosDisponibles").val('').prop('defaultSelected');                
             }
         });
     }
@@ -457,9 +352,18 @@
             sumaTotal += parseFloat($(this).text());
         });
 
+        var _CajasAsignadas = new Array();
+        $("#tbd_asignadas tr").each(function (_, value) {
+            _CajasAsignadas.push({
+                CajaDiarioId: value.childNodes[1].innerText,
+                Glosa: "CIERRE DE " + value.childNodes[3].innerText,
+                Importe: value.childNodes[17].innerText
+            });
+        });
+
         var envio = {
-            SaldoFinal: sumaTotal
-            //CajasAsignadas: _CajasAsignadas
+            SaldoFinal: sumaTotal,
+            CajasACerrar: _CajasAsignadas
         }
         console.log(envio)
         $.ajax({
@@ -470,7 +374,8 @@
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function () {
-                $("#tbd_Asignadas").remove();
+                //console.log(rm.result);
+                $("#tbd_asignadas").remove();
                 $(".tdFalse").html("SI");
                 $(".tdFalse").attr("class","");
             }
@@ -478,14 +383,290 @@
 
     }
 
+
+    var moduloCierreFun = function () {
+        $.ajax({
+            url: '@Url.Action("ModuloCierre","CajaDiario")',
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                
+                const isDisabled = rm.result.map(function (caja) {
+                    return caja.IndCierre
+                }).includes(false)
+
+                console.log(isDisabled);
+
+                if (isDisabled) {
+                    $("#cerrar").prop("disabled", isDisabled)
+                    
+                } else {
+                    $("#cerrar").removeAttr('disabled');
+                    $("#cerrar").click(cerrarfunc);
+                }
+
+                
+            }
+        });
+    }
+
+    var limpiarModal = function () {
+        var numero = 0;
+        $("#inicial").val(numero.toFixed(2));
+        $("#CajasDisponibles").val('').prop('defaultSelected');
+        $("#UsuariosDisponibles").val('').prop('defaultSelected');
+    }
+
+    //Initialize variables necessaries for the pagination
+
+    var currentPage = 1;
+    var pageCount = 0;
+
     $(document).ready(function () {
         $("#asignar").click(asignarfunc);
-        $("#cerrar").click(cerrarfunc);
+        $("#cancelar").click(limpiarModal);
+        $("#cerrar_caja").click(moduloCierreFun);
 
-        if ($("#tbd_Asignadas").length > 1) {
-            $("#cerrar_caja").prop('disabled', false);
-        }
-        
+        //START PAGINATION 'CAJAS ASIGNADAS'
+        paginadorFuncAsignadas(currentPage);
+
+        $("#inicio_asignadas").click(function () {
+            paginadorFuncAsignadas(1);
+        });
+        $("#siguiente_asignadas").click(function () {
+            paginadorFuncAsignadas(currentPage + 1);
+        });
+        $("#ultimo_asignadas").click(function () {
+            paginadorFuncAsignadas(pageCount);
+        });
+        $("#anterior_asignadas").click(function () {
+            paginadorFuncAsignadas(currentPage - 1)
+        });
+
+        //START PAGINATION 'CAJAS DIARIO'
+        paginadorFuncCajasDiario(currentPage);
+
+        $("#inicio_diarios").click(function () {
+            paginadorFuncCajasDiario(1);
+        });
+        $("#siguiente_diarios").click(function () {
+            paginadorFuncCajasDiario(currentPage + 1);
+        });
+        $("#ultimo_diarios").click(function () {
+            paginadorFuncCajasDiario(pageCount);
+        });
+        $("#anterior_diarios").click(function () {
+            paginadorFuncCajasDiario(currentPage - 1)
+        });
+
 
     });
 </script>
+
+<script>
+    //PAGINATION 'CAJAS ASIGNADAS'
+    var paginadorFuncAsignadas = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("TablaAsignadas","CajaDiario")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                console.log(rm.result);
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+
+                if (Listado.length > 0) {
+                    $("#NoEncontradoAsignadas").hide();
+                    $("#TotalRegistrosAsignadas").html(TotalRegistros);
+                    $("#PaginaActualAsignadas").html(PaginaActual);
+                    $("#TotalPaginasAsignadas").html(TotalPaginas);
+                    $("#tbd_asignadas").empty();
+                    fillPaginatorAsignadas("#tbd_asignadas", Listado)
+                }
+                else {
+                    $("#EncontradoAsignadas").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'asignadas')
+            }
+        });
+    }
+
+
+
+    function fillPaginatorAsignadas(id, list) {
+        list.forEach(function (item, index) {
+            // Convert format date from asp.net format json to datetime (javascript)
+            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            // Convert format date from asp.net format json to datetime (javascript)
+            var fecha_fin;
+
+            if (item.FechaFin != null) {
+                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+                var mydate = new Date(datetime);
+                var getMonth = mydate.getMonth() + 1;
+                var getDay = mydate.getDate();
+                var getYear = mydate.getFullYear();
+                var getHour = mydate.getHours();
+                var getMinute = mydate.getMinutes();
+                var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+            }
+            else {
+                fecha_fin = '';
+            }
+
+            //We validate texts of IndCierre and IndBoveda
+            var ind_cierre;
+            var ind_boveda;
+
+            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
+
+            if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO' }
+
+
+            $(id).append(
+                `<tr>
+                        <td style="padding:0">${item.Id}</td>
+                        <td style="padding:0">${item.CajaDenominacion}</td>
+                        <td style="padding:0">${item.UsuarioNombre}</td>
+                        <td style="padding:0">${fecha_inicio}</td>
+                        <td style="padding:0">${fecha_fin}</td>
+                        <td style="padding:0">${item.SaldoInicial}</td>
+                        <td style="padding:0">${item.Entradas}</td>
+                        <td style="padding:0">${item.Salidas}</td>
+                        <td style="padding:0">${item.SaldoFinal}</td>
+                        <td style="padding:0">${ind_cierre}</td>
+                        <td style="padding:0" hidden>${ind_boveda}</td>
+                </tr>`
+            )
+
+        });
+
+    }
+
+</script>
+
+<script>
+    //PAGINATION 'CAJAS DIARIO'
+    var paginadorFuncCajasDiario = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("TablaCajasDiario","CajaDiario")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                console.log(rm.result);
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+
+                if (Listado.length > 0) {
+                    $("#NoEncontradoCajasDiario").hide();
+                    $("#TotalRegistrosCajasDiario").html(TotalRegistros);
+                    $("#PaginaActualCajasDiario").html(PaginaActual);
+                    $("#TotalPaginasCajasDiario").html(TotalPaginas);
+                    $("#tbd_cajasdiario").empty();
+                    fillPaginatorCajasDiario("#tbd_cajasdiario", Listado)
+                }
+                else {
+                    $("#EncontradoCajasDiario").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'diarios')
+            }
+        });
+    }
+
+    function fillPaginatorCajasDiario(id, list) {
+        list.forEach(function (item, index) {
+
+            // Convert format date from asp.net format json to datetime (javascript)
+            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            // Convert format date from asp.net format json to datetime (javascript)
+            var fecha_fin;
+
+            // We validate if the final date isn´t null
+            if (item.FechaFin != null) {
+                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+                var mydate = new Date(datetime);
+                var getMonth = mydate.getMonth() + 1;
+                var getDay = mydate.getDate();
+                var getYear = mydate.getFullYear();
+                var getHour = mydate.getHours();
+                var getMinute = mydate.getMinutes();
+                var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+            }
+            else {
+                fecha_fin = '';
+            }
+
+            //We validate texts of IndCierre and IndBoveda
+            var ind_cierre;
+            var ind_boveda;
+
+            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
+
+            if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO'}
+
+            $(id).append(
+                `<tr>
+                        <td style="padding:0">${item.Id}</td>
+                        <td style="padding:0">${item.CajaDenominacion}</td>
+                        <td style="padding:0">${item.UsuarioNombre}</td>
+                        <td style="padding:0">${item.SaldoInicial}</td>
+                        <td style="padding:0">${item.SaldoFinal}</td>
+                        <td style="padding:0">${fecha_inicio}</td>
+                        <td style="padding:0">${fecha_fin}</td>
+                        <td style="padding:0">${ind_cierre}</td>
+                        <td style="padding:0">${ind_boveda}</td>
+                </tr>`
+            )
+
+        });
+
+    }
+
+</script>
+

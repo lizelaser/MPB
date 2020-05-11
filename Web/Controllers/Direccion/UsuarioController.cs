@@ -16,49 +16,77 @@ namespace Web.Controllers
         private DAEntities db = new DAEntities();
         private readonly int RegistrosPorPagina = 5;
         private List<Usuario> Usuarios;
-        private Paginador<Usuario> ListadoUsuarios;
+        private Paginador<UsuarioViewModel> ListadoUsuarios;
         // GET: Usuario
-        public ActionResult Index(string nombre, int pagina = 1)
+        public ActionResult Index()
         {
-            int TotalRegistros = 0;
+            return View();
+        }
+        public ActionResult Tabla(string nombre, int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+
             using (db = new DAEntities())
             {
+                db.Configuration.ProxyCreationEnabled = false;
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ValidateOnSaveEnabled = false;
+
+                int TotalRegistros = 0;
+
                 // Total number of records in the student table
                 TotalRegistros = db.Usuario.Count();
                 // We get the 'records page' from the student table
                 Usuarios = db.Usuario.OrderBy(x => x.Id)
                                                  .Skip((pagina - 1) * RegistrosPorPagina)
                                                  .Take(RegistrosPorPagina)
-                                                 .Include(x => x.Personal)
+                                                 .Include(x=>x.Personal)
                                                  .Include(x=>x.Rol)
                                                  .ToList();
+
                 if (!string.IsNullOrEmpty(nombre))
                 {
                     Usuarios = db.Usuario.Where(x => x.Nombre.Contains(nombre)).OrderBy(x => x.Id)
                         .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).Include(x => x.Personal).Include(x=>x.Rol).ToList();
+                        .Take(RegistrosPorPagina)
+                        .Include(x=>x.Personal)
+                        .Include(x=>x.Rol)
+                        .ToList();
                     TotalRegistros = db.Usuario.Where(x => x.Nombre.Contains(nombre)).Count();
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                //We list "Especialidad" only with the required fields to avoid serialization problems
+                var SubUsuarios = Usuarios.Select(S => new UsuarioViewModel
+                {
+                    Id = S.Id,
+                    Nombre = S.Nombre,
+                    Correo = S.Correo,
+                    PersonalNombres = S.Personal.Paterno + " " + S.Personal.Materno + " " + S.Personal.Nombres,
+                    RolDenominacion = S.Rol.Denominacion,
+                    Activo = S.Activo
+
+                }).ToList();
+
                 // We instantiate the 'Paging class' and assign the new values
-                ListadoUsuarios = new Paginador<Usuario>()
+                ListadoUsuarios = new Paginador<UsuarioViewModel>()
                 {
                     RegistrosPorPagina = RegistrosPorPagina,
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = Usuarios
+                    Listado = SubUsuarios
                 };
+                rm.SetResponse(true);
+                rm.result = ListadoUsuarios;
             }
             //we send the pagination class to the view
-            return View(ListadoUsuarios);
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ListarTodo()
-        {
-            return View(UsuarioBL.Listar(includeProperties:"Personal,Rol"));
-        }
+
+
         public ActionResult Mantener(int id=0)
         {
 

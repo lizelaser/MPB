@@ -20,10 +20,10 @@ namespace Web.Controllers
         // GET: Especialidad
         public ActionResult Index()
         {
-            return View(EspecialidadBL.Listar());
+            return View();
         }
 
-        public ActionResult Tabla(string denominacion, int pagina = 1)
+        public ActionResult Tabla(string denominacion, int pagina)
         {
             var rm = new Comun.ResponseModel();
 
@@ -52,6 +52,18 @@ namespace Web.Controllers
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+                //We list "Especialidad" only with the required fields to avoid serialization problems
+                var SubEspecialidades = Especialidades.Select(S => new Especialidad
+                {
+                    Id = S.Id,
+                    Denominacion = S.Denominacion,
+                    Matricula = S.Matricula,
+                    Mensualidad = S.Mensualidad,
+                    Cuotas = S.Cuotas
+
+                }).ToList();
+
                 // We instantiate the 'Paging class' and assign the new values
                 ListadoEspecialidades = new Paginador<Especialidad>()
                 {
@@ -59,7 +71,7 @@ namespace Web.Controllers
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = Especialidades
+                    Listado = SubEspecialidades
                 };
                 rm.SetResponse(true);
                 rm.result = ListadoEspecialidades;
@@ -68,10 +80,6 @@ namespace Web.Controllers
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ListarTodo()
-        {
-            return View(EspecialidadBL.Listar());
-        }
 
         public ActionResult Mantener(int id = 0)
         {
@@ -103,5 +111,14 @@ namespace Web.Controllers
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult Eliminar(int id)
+        {
+            var especialidad = EspecialidadBL.Obtener(id);
+            EspecialidadBL.Eliminar(db, especialidad);
+            return RedirectToAction("Index");
+
+        }
+
     }
 }
