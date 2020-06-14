@@ -12,6 +12,7 @@ using Web.Models;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_curso_todo)]
     public class CursoController : Controller
     {
         private DAEntities db = new DAEntities();
@@ -131,6 +132,7 @@ namespace Web.Controllers
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpDelete]
         public ActionResult Eliminar(int id)
         {
             var curso = CursoBL.Obtener(id);

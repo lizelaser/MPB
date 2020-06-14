@@ -1,88 +1,93 @@
 ﻿
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div id="bordered-table" class="card card card-default scrollspy">
-            <div class="card-content">
-                <div class="card-title">
+
+@if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_curso_todo))
+{
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div id="bordered-table" class="card card card-default scrollspy">
+                <div class="card-content">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class="col s8 m6 l10">
+                                <h4 class="card-title">GESTIONAR CURSOS</h4>
+                            </div>
+                            <div class="col s4 m6 l2">
+                                <a class="btn-small blue right" href="@Url.Action("Mantener","Curso", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <input type="text" name="denominacion" id="denominacion" placeholder="BUSCAR CURSO POR NOMBRE" />
+                    </div>
+
                     <div class="row">
-                        <div class="col s8 m6 l10">
-                            <h4 class="card-title">GESTIONAR CURSOS</h4>
+                        <div class="col s12">
                         </div>
-                        <div class="col s4 m6 l2">
-                            <a class="btn-small blue right" href="@Url.Action("Mantener","Curso", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
+                        <div class="col s12">
+                            <table class="bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Codigo</th>
+                                        <th>Denominacion</th>
+                                        <th>Creditos</th>
+                                        <th>Especialidad</th>
+                                        <th>Acciones</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody id="tbd_cursos">
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                </div>
-
-                <div>
-                    <input type="text" name="denominacion" id="denominacion" placeholder="BUSCAR CURSO POR NOMBRE" />
-                </div>
-
-                <div class="row">
-                    <div class="col s12">
-                    </div>
-                    <div class="col s12">
-                        <table class="bordered">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Codigo</th>
-                                    <th>Denominacion</th>
-                                    <th>Creditos</th>
-                                    <th>Especialidad</th>
-                                    <th>Acciones</th>
-
-                                </tr>
-                            </thead>
-                            <tbody id="tbd_cursos">
-
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div id="bordered-table" class="card card card-default scrollspy">
-            <div class="col-md-12 center text-center">
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div id="bordered-table" class="card card card-default scrollspy">
+                <div class="col-md-12 center text-center">
 
-                <div id="Encontrado">
-                    <span>
-                        <label id="TotalRegistros"></label> registros encontrados
-                    </span>
-                    <span>&nbsp;|&nbsp;</span>
-                    <span>
-                        Página <label id="PaginaActual"></label> de
-                        <label id="TotalPaginas"></label>
-                    </span>
+                    <div id="Encontrado">
+                        <span>
+                            <label id="TotalRegistros"></label> registros encontrados
+                        </span>
+                        <span>&nbsp;|&nbsp;</span>
+                        <span>
+                            Página <label id="PaginaActual"></label> de
+                            <label id="TotalPaginas"></label>
+                        </span>
+                    </div>
+                    <div class="row" id="NoEncontrado">
+                        <span>&nbsp;|&nbsp;</span>
+                        <span>No hay resultados de la búsqueda</span>
+                        <span>&nbsp;|&nbsp;</span>
+                    </div>
+
+                    <div>
+                        <button class="btn btn-small blue" id="inicio_cursos"><<</button>
+                        <span></span>
+                        <button class="btn btn-small blue" id="anterior_cursos">Anterior</button>
+
+                        <button class="btn btn-small blue" id="siguiente_cursos">Siguiente</button>
+                        <span></span>
+                        <button class="btn btn-small blue" id="ultimo_cursos">>></button>
+                    </div>
+
                 </div>
-                <div class="row" id="NoEncontrado">
-                    <span>&nbsp;|&nbsp;</span>
-                    <span>No hay resultados de la búsqueda</span>
-                    <span>&nbsp;|&nbsp;</span>
-                </div>
-
-                <div>
-                    <button class="btn btn-small blue" id="inicio_cursos"><<</button>
-                    <span></span>
-                    <button class="btn btn-small blue" id="anterior_cursos">Anterior</button>
-
-                    <button class="btn btn-small blue" id="siguiente_cursos">Siguiente</button>
-                    <span></span>
-                    <button class="btn btn-small blue" id="ultimo_cursos">>></button>
-                </div>
-
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-</div>
+    <div class="row">
+        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+    </div>
+
+}
+
 
 @section scripts{
 

@@ -24,7 +24,7 @@ namespace DA
         public int Id { get; set; }
         public int Item { get; set; }
         public string Concepto { get; set; }
-        public decimal Precio { get; set; }
+        public Nullable<decimal> Precio { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimientoDetalle> CajaMovimientoDetalle { get; set; }

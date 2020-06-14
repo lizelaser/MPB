@@ -69,5 +69,5 @@ function fillTable(tableId, trArgs, ...args) {
 
     const table = `<tr id="${trArgs.keyword}_${trArgs.id}">${items.join()}</tr>`
 
-    $(tableId).prepend(table)
+    $(tableId).append(table)
 }

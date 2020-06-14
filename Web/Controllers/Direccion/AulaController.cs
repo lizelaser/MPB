@@ -9,6 +9,8 @@ using Web.Models;
 
 namespace Web.Controllers
 {
+    [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_aula_todo)]
     public class AulaController : Controller
     {
 
@@ -16,6 +18,7 @@ namespace Web.Controllers
         private readonly int RegistrosPorPagina = 5;
         private List<Aula> Aulas;
         private Paginador<Aula> ListadoAulas;
+
         public ActionResult Index()
         {
             return View();
@@ -75,6 +78,7 @@ namespace Web.Controllers
             }
 
         }
+
         public ActionResult Mantener(int id = 0)
         {
             if (id == 0)

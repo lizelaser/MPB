@@ -11,6 +11,7 @@ using Web.Models;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_alumno_todo)]
     public class AlumnoController : Controller
     {
 

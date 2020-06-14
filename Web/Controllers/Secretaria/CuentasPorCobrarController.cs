@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 namespace Web.Controllers.Secretaria
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_cuentasporcobrar_todo)]
     public class CuentasPorCobrarController : Controller
     {
         private DAEntities db;
@@ -109,42 +110,53 @@ namespace Web.Controllers.Secretaria
         {
             DAEntities db = new DAEntities();
             var rm = new Comun.ResponseModel();
-            string serie = "001";
-            string numero = "0000001";
             //Asignamos el estado pendiente a la cuenta por cobrar
             int EstadoId = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e.Id).SingleOrDefault();
 
             try
             {
+
                 //Registramos la cuenta por cobrar
 
                 CuentasPorCobrar cobranzas = new CuentasPorCobrar();
                 cobranzas.AlumnoId = AlumnoId;
                 cobranzas.EstadoId = EstadoId;
-                cobranzas.Serie = serie;
-                cobranzas.Numero = numero;
                 cobranzas.Fecha = Convert.ToDateTime(Fecha);
                 cobranzas.Total = Total;
                 cobranzas.Descripcion = Descripcion;
-                //Registramos los detalles de las cuentas por cobrar
-                CuentasPorCobrarBL.Crear(cobranzas);
 
-                //Recuperamos id de la cuenta por cobrar
-                int CuentaPorCobrarId = cobranzas.Id;
+                //Verify if exist any 'cuenta por cobrar' that already exist in BD
 
-                CuentasPorCobrarDetalle detalles = new CuentasPorCobrarDetalle();
-                foreach (var item in CuentasPorCobrarDetalle){
-                    detalles.CuentasPorCobrarId = CuentaPorCobrarId;
-                    detalles.ConceptoPagoId = item.ConceptoPagoId;
-                    detalles.ItemId = item.ItemId;
-                    detalles.Cantidad = item.Cantidad;
-                    detalles.Descuento = item.Descuento;
-                    detalles.Importe = item.Importe;
-                    CuentasPorCobrarDetalleBL.Crear(detalles);
+                var existe_cobranza = (from cc in db.CuentasPorCobrar where cc.Id == cobranzas.Id select cc).Any();
+
+                if (!existe_cobranza)
+                {
+                    //Registramos los detalles de las cuentas por cobrar
+                    CuentasPorCobrarBL.Crear(cobranzas);
+
+                    //Recuperamos id de la cuenta por cobrar
+                    int CuentaPorCobrarId = cobranzas.Id;
+
+                    CuentasPorCobrarDetalle detalles = new CuentasPorCobrarDetalle();
+                    foreach (var item in CuentasPorCobrarDetalle)
+                    {
+                        detalles.CuentasPorCobrarId = CuentaPorCobrarId;
+                        detalles.ConceptoPagoId = item.ConceptoPagoId;
+                        detalles.ItemId = item.ItemId;
+                        detalles.Cantidad = item.Cantidad;
+                        detalles.Descuento = item.Descuento;
+                        detalles.Importe = item.Importe;
+                        CuentasPorCobrarDetalleBL.Crear(detalles);
+                    }
+
+                    rm.SetResponse(true);
+                    rm.href = Url.Action("Index", "CuentasPorCobrar");
+                }
+                else
+                {
+                    rm.SetResponse(false, "Esta cuenta por cobrar ya fue registrada");
                 }
 
-                rm.SetResponse(true);
-                rm.href = Url.Action("Index","CuentasPorCobrar");
             }
             catch (Exception ex)
             {

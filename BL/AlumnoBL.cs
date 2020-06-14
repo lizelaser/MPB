@@ -26,5 +26,20 @@ namespace BL
             }
         }
 
+        public static List<Alumno> Search(string nombres)
+        {
+            using (var context = new DAEntities())
+            {
+                context.Configuration.LazyLoadingEnabled = false;
+                context.Configuration.ProxyCreationEnabled = false;
+
+                var alumno = context.Alumno.OrderBy(x => x.Id)
+                                        .Where(x => x.Paterno.Contains(nombres) || x.Materno.Contains(nombres) || x.Nombres.Contains(nombres))
+                                        .Take(5)
+                                        .ToList();
+                return alumno;
+            }
+        }
+
     }
 }

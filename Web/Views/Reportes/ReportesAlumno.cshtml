@@ -1,131 +1,95 @@
-﻿@model Web.Models.Paginador<DA.Alumno>
+﻿@model IEnumerable<DA.Alumno>
 
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div id="bordered-table" class="card card card-default scrollspy">
-            <div class="card-content">
-                <div class="card-title">
-                    <div class="row">
-                        <button class="btn-large right green">Imprimir</button>
-                        <h3>REPORTES ALUMNOS MPB</h3>
-                    </div>
-                </div>
-                @using (Html.BeginForm(null, null, FormMethod.Get))
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ReportesAlumno</title>
+    <link rel="stylesheet" href="~/Bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="~/Bootstrap/Site.css" />
+
+    <style>
+        /* SOLUCIONA PROBLEMA DE SOLAPAMIENTO EN TABLAS <table /> */
+        thead {
+            display: table-header-group;
+            background-color: #E0EAF4;
+             
+        }
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body style="padding: 0px; margin: 0px;">
+    <div class="container">
+        <br /><br />
+        <p>
+            TIPO REPORTE: Listado de Alumnos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            GENERADO: @DateTime.Now.Day de @DateTime.Now.ToString("MMMM") del @DateTime.Now.Year
+        </p>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        N° &nbsp;
+                    </th>
+                    <th>
+                        Alumno
+                    </th>
+                    <th>
+                        Dni
+                    </th>
+                    <th>
+                        Nacimiento
+                    </th>
+                    <th>
+                        Direccion
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var _count = 0;
+                }
+                @foreach (var item in Model)
                 {
-                    <div>
-                        <input type="text" name="dni" id="dni" />
-                        <input type="submit" value="Buscar" class="btn btn-success blue left" />
-                    </div>
-                    <button @Url.Action("ListarTodo", "Alumno") class="btn btn-success blue left" style="margin-left:5px">Listar Todo</button>
-
+                    _count++;
+                    <tr>
+                        <td>
+                            @_count
+                        </td>
+                        <td>
+                            @item.Paterno @item.Materno @item.Nombres
+                        </td>
+                        <td>
+                            @item.Dni
+                        </td>
+                        <td>
+                            @item.Nacimiento
+                        </td>
+                        <td>
+                            @item.Direccion
+                        </td>
+                    </tr>
                 }
 
-                <div class="row">
-                    <div class="col s12">
-                    </div>
-                    <div class="col s12">
-                        <table class="bordered" id="tblAlumnos">
-                            <thead>
-                                <tr>
-                                    <th>DNI</th>
-                                    <th>Nombre</th>
-                                    <th>Celular</th>
-                                    <th>Correo</th>
-                                    <th>Activo</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Listado)
-                                {
-                                    <tr>
-                                        <td style="padding:0">@item.Dni</td>
-                                        <td style="padding:0">@item.Paterno @item.Materno @item.Nombres </td>
-                                        <td style="padding:0">@item.Celular</td>
-                                        <td style="padding:0">@item.Correo</td>
-                                        <td style="padding:0">
-                                            @if (item.Estado)
-                                            {
-                                                <a href="#"><i class="material-icons">check_circle</i></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="#"><i class="material-icons red-text">remove_circle</i></a>
-                                            }
-                                        </td>
-                                        <td style="padding:0">
-                                            <a href="@Url.Action("Mantener","Alumno",new { id = item.Id })"><i class="material-icons">edit</i></a>
-                                        </td>
-                                    </tr>
-                                }
+            </tbody>
 
-                            </tbody>
-                        </table>
+        </table>
 
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div id="bordered-table" class="card card card-default scrollspy">
-            <div class="col-md-12 center text-center">
-                @if (Model.Listado.Count() > 0)
-                {
-                    <span>
-                        <strong>@Model.TotalRegistros</strong> registros encontrados
-                    </span>
-                    <span>&nbsp;|&nbsp;</span>
-                    <span>
-                        Página <strong>@(Model.PaginaActual)</strong> de
-                        <strong>@Model.TotalPaginas</strong>
-                    </span>
-                    <span>&nbsp;|&nbsp;</span>
-                }
-                else
-                {
-                    <span>No hay resultados para esta búsqueda</span>
-                    <span>&nbsp;|&nbsp;</span>
-                }
-
-                @if (Model.PaginaActual > 1)
-                {
-                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                    <span></span>
-                    @Html.ActionLink("Anterior", "Index", new { pagina = Model.PaginaActual - 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                }
-                else
-                {
-                    @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                    <span></span>
-                    @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                }
-                <span></span>
-                @if (Model.PaginaActual < Model.TotalPaginas)
-                {
-                    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.PaginaActual + 1 },
-                                    new { @class = "btn btn-sm btn-default" })
-                    <span></span>
-                    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                                    new { @class = "btn btn-sm btn-default" })
-                }
-                else
-                {
-                    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.TotalPaginas - 1 },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                    <span></span>
-                    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                                    new { @class = "btn btn-sm btn-default disabled" })
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
+</body>
+</html>

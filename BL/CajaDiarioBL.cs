@@ -12,5 +12,6 @@ namespace BL
     public class CajaDiarioBL:Repositorio<CajaDiario>
     {
 
+
     }
 }

@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "PrincipalDeudas";
+}
+
+
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .tabs {
+        border: none;
+        background-color: transparent;
+    }
+
+    .tabs li {
+        border: 1px solid #ccc;
+        border-bottom: none;
+        background-color: #E0EAF4;
+        color: #000000;
+    }
+
+    .filtro {
+        border: 1px solid #ccc;
+        padding: 0px;
+        border-radius: 10px;
+        background-color: white;
+    }
+    #divFiltro {
+        margin-left: 5px;
+    }
+</style>
+
+<div class="row" style="margin: 20px;" id="principal">
+    <div class="row" id="contenedor">
+        <div class="col s12">
+            <ul class="tabs align-center s12 m12">
+                <li class="tab col s12 m4 active" id="reporte"><a id="linkReporte" href="#test1"><strong>REPORTES DEUDAS PENDIENTES</strong></a></li>
+            </ul>
+            <div class="col s12" style="border: 1px solid #ccc;">
+                <div id="test1">
+                    <div class="col s12 m12">
+                        <div class="card card-tabs">
+                            <div class="card-content" style="">
+                                @using (Html.BeginForm("ReportesDeudas", "Reportes", FormMethod.Post))
+                                {
+                                    <p style="margin-left:5px; font-weight:bold;">BUSCAR ALUMNO POR NOMBRES Y APELLIDOS</p>
+                                    <div class="row" id="divFiltro">
+                                        <div class="input-field col s12 m5 filtro">
+                                            <input type="text" id="nombres" name="nombres" placeholder="BUSCAR ALUMNO POR NOMBRES" />
+                                            <i class="material-icons prefix" style="margin-left:-40px;">search</i>
+                                        </div>
+                                        <div class="input-field col s12 m5">
+                                            <button type="submit" class="btn btn-small red">
+                                                <i><span class="material-icons">picture_as_pdf</span>Generar</i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section  Scripts{
+    <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+    <script>
+        $.fn.tabs2 = $.fn.tabs;
+        delete $.fn.tabs;
+        $(document).ready(function () {
+            $('.tabs').tabs2();
+        });
+    </script>
+
+    <script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
+    <script>
+        $("#nombres").autocomplete({
+            dataType: 'JSON',
+            source: function (request, response) {
+                jQuery.ajax({
+                    url: '/Reportes/BuscarAlumno',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        nombres: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                value: item.Paterno + " " + item.Materno + " " + item.Nombres,
+                                paterno: item.Paterno,
+                                materno: item.Materno,
+                                nombres: item.Nombres
+                            }
+                        }))
+                    }
+                })
+
+            },
+            select: function (e, ui) {
+
+            }
+
+        });
+
+    </script>
+}

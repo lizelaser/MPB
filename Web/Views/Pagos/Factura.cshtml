@@ -1,0 +1,326 @@
+﻿@model List<BL.CajaMovimientoDetalleVm>
+@{
+    Layout = null;
+
+    string Alumno = ViewBag.Alumno;
+    string Direccion = ViewBag.Direccion;
+    DateTime Fecha = ViewBag.Fecha;
+    string Serie = ViewBag.Serie;
+    int Numero = ViewBag.Numero;
+    decimal Total = ViewBag.Total;
+    string Observacion = ViewBag.Observacion;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Boleta</title>
+    <link rel="stylesheet" href="~/Bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="~/Bootstrap/Site.css" />
+    <style>
+        /* SOLUCIONA PROBLEMA DE SOLAPAMIENTO EN TABLAS <table /> */
+        thead {
+            display: table-header-group;
+            background-color: #E0EAF4;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body style="padding: 0px; margin: 0px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3">
+                <img src="~/Images/MPB reporte.png" />
+            </div>
+            <div class="col-xs-6" style="text-align:center;">
+                <p style="text-align:center;">
+                    <strong>I.E.S.T.Pr. MARÍA PARADO DE BELLIDO</strong>
+                    <br />
+                    Dirección: 9 de Diciembre 471, Ayacucho 05001
+                    <br />
+                    Teléfono: 996 685 647
+                    <br />
+                    Correo: istmpbellido@hotmail.com
+                </p>
+            </div>
+            <div class="col-xs-3" style="border:1px solid #000">
+                <p></p>
+                <p style="text-align:center;">RUC: 20493974026</p>
+                <p style="text-align:center;"><strong>FACTURA ELECTRÓNICA</strong></p>
+                <p style="text-align:center;">Nro: @Serie - @Numero</p>
+            </div>
+        </div>
+        <br />
+        <div class="row" style="border: 1px solid #000;">
+            <div class="col-xs-12">
+                <p></p>
+                <p>Fecha Emisión: <strong>@Fecha</strong></p>
+                <p>Señor(es): <strong>@Alumno</strong></p>
+                <p>Ruc:</p>
+                <p>Dirección: <strong>@Direccion</strong></p>
+                <p>Tipo de Moneda: <strong>NUEVOS SOLES</strong></p>
+                <p>Observación: <strong>@Observacion</strong></p>
+            </div>
+        </div>
+        <br />
+        <div class="row" style="">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            Item
+                        </th>
+                        <th>
+                            Descripcion
+                        </th>
+                        <th>
+                            Valor Unitario
+                        </th>
+                        <th>
+                            Cantidad
+                        </th>
+                        <th>
+                            Descuento
+                        </th>
+                        <th>
+                            Valor Venta
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                @{
+                    var _count = 0;
+                }
+
+                @foreach (var item in Model)
+                {
+                    _count++;
+                    <tr>
+                        <td>
+                            @_count
+                        </td>
+                        <td>
+                            @item.Descripcion
+                        </td>
+                        <td>
+                            @item.ValorUnitario
+                        </td>
+                        <td>
+                            @item.Cantidad
+                        </td>
+                        <td>
+                            @item.Descuento
+                        </td>
+                        <td class="valor_venta">
+                            @item.Importe
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="row">
+            <table class="table table-bordered" align="right">
+                <tr>
+                    <td>SON: <span id="texto"></span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;">SUB TOTAL</td>
+                    <td id="sub_total"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;">IGV</td>
+                    <td>18%</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;">TOTAL</td>
+                    <td id="total">@Total</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        var numero = NumeroALetras($("#total").html());
+        $("#texto").html(numero);
+        sumarValorVentaFun();
+    });
+
+    function sumarValorVentaFun() {
+        var sum_valor_venta = 0;
+        $('.valor_venta').each(function () {
+            sum_valor_venta += parseFloat($(this).text());
+        });
+
+        $("#sub_total").html(sum_valor_venta.toFixed(2));
+    }
+
+    function Unidades(num) {
+
+        switch (num) {
+            case 1: return "UN";
+            case 2: return "DOS";
+            case 3: return "TRES";
+            case 4: return "CUATRO";
+            case 5: return "CINCO";
+            case 6: return "SEIS";
+            case 7: return "SIETE";
+            case 8: return "OCHO";
+            case 9: return "NUEVE";
+        }
+
+        return "";
+    }
+
+    function Decenas(num) {
+
+        decena = Math.floor(num / 10);
+        unidad = num - (decena * 10);
+
+        switch (decena) {
+            case 1:
+                switch (unidad) {
+                    case 0: return "DIEZ";
+                    case 1: return "ONCE";
+                    case 2: return "DOCE";
+                    case 3: return "TRECE";
+                    case 4: return "CATORCE";
+                    case 5: return "QUINCE";
+                    default: return "DIECI" + Unidades(unidad);
+                }
+            case 2:
+                switch (unidad) {
+                    case 0: return "VEINTE";
+                    default: return "VEINTI" + Unidades(unidad);
+                }
+            case 3: return DecenasY("TREINTA", unidad);
+            case 4: return DecenasY("CUARENTA", unidad);
+            case 5: return DecenasY("CINCUENTA", unidad);
+            case 6: return DecenasY("SESENTA", unidad);
+            case 7: return DecenasY("SETENTA", unidad);
+            case 8: return DecenasY("OCHENTA", unidad);
+            case 9: return DecenasY("NOVENTA", unidad);
+            case 0: return Unidades(unidad);
+        }
+    }//Unidades()
+
+    function DecenasY(strSin, numUnidades) {
+        if (numUnidades > 0)
+            return strSin + " Y " + Unidades(numUnidades)
+
+        return strSin;
+    }//DecenasY()
+
+    function Centenas(num) {
+
+        centenas = Math.floor(num / 100);
+        decenas = num - (centenas * 100);
+
+        switch (centenas) {
+            case 1:
+                if (decenas > 0)
+                    return "CIENTO " + Decenas(decenas);
+                return "CIEN";
+            case 2: return "DOSCIENTOS " + Decenas(decenas);
+            case 3: return "TRESCIENTOS " + Decenas(decenas);
+            case 4: return "CUATROCIENTOS " + Decenas(decenas);
+            case 5: return "QUINIENTOS " + Decenas(decenas);
+            case 6: return "SEISCIENTOS " + Decenas(decenas);
+            case 7: return "SETECIENTOS " + Decenas(decenas);
+            case 8: return "OCHOCIENTOS " + Decenas(decenas);
+            case 9: return "NOVECIENTOS " + Decenas(decenas);
+        }
+
+        return Decenas(decenas);
+    }//Centenas()
+
+    function Seccion(num, divisor, strSingular, strPlural) {
+        cientos = Math.floor(num / divisor)
+        resto = num - (cientos * divisor)
+
+        letras = "";
+
+        if (cientos > 0)
+            if (cientos > 1)
+                letras = Centenas(cientos) + " " + strPlural;
+            else
+                letras = strSingular;
+
+        if (resto > 0)
+            letras += "";
+
+        return letras;
+    }//Seccion()
+
+    function Miles(num) {
+        divisor = 1000;
+        cientos = Math.floor(num / divisor)
+        resto = num - (cientos * divisor)
+
+        strMiles = Seccion(num, divisor, "MIL", "MIL");
+        strCentenas = Centenas(resto);
+
+        if (strMiles == "")
+            return strCentenas;
+
+        return strMiles + " " + strCentenas;
+
+        //return Seccion(num, divisor, "UN MIL", "MIL") + " " + Centenas(resto);
+    }//Miles()
+
+    function Millones(num) {
+        divisor = 1000000;
+        cientos = Math.floor(num / divisor)
+        resto = num - (cientos * divisor)
+
+        strMillones = Seccion(num, divisor, "UN MILLON", "MILLONES");
+        strMiles = Miles(resto);
+
+        if (strMillones == "")
+            return strMiles;
+
+        return strMillones + " " + strMiles;
+
+        //return Seccion(num, divisor, "UN MILLON", "MILLONES") + " " + Miles(resto);
+    }//Millones()
+
+    function NumeroALetras(num, centavos) {
+        var data = {
+            numero: num,
+            enteros: Math.floor(num),
+            centavos: (((Math.round(num * 100)) - (Math.floor(num) * 100))),
+            letrasCentavos: "",
+        };
+        if (centavos == undefined || centavos == false) {
+            data.letrasMonedaPlural = "SOLES";
+            data.letrasMonedaSingular = "SOL";
+        } else {
+            data.letrasMonedaPlural = "CENTIMOS";
+            data.letrasMonedaSingular = "CENTIMO";
+        }
+
+        if (data.centavos > 0)
+            data.letrasCentavos = "CON " + NumeroALetras(data.centavos, true);
+
+        if (data.enteros == 0)
+            return "CERO " + data.letrasMonedaPlural + " " + data.letrasCentavos;
+        if (data.enteros == 1)
+            return Millones(data.enteros) + " " + data.letrasMonedaSingular + " " + data.letrasCentavos;
+        else
+            return Millones(data.enteros) + " " + data.letrasMonedaPlural + " " + data.letrasCentavos;
+    }
+</script>

@@ -12,14 +12,11 @@ namespace Web.Controllers
         
         public ActionResult Index()
         {
-            var rol = Session["Rol"].ToString();
-            /*if (rol == BL.Constante.Rol.Secretaria)
-                return RedirectToAction("Index", "Secretaria");
-            if (rol == BL.Constante.Rol.Coordinador)
-                return RedirectToAction("Index", "Coordinador");
-            if (rol == BL.Constante.Rol.Direccion)
-                return RedirectToAction("Index", "Direccion");*/
+            return View();
+        }
 
+        public ActionResult AccesoDenegado()
+        {
             return View();
         }
 

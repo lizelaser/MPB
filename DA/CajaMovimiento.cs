@@ -27,11 +27,14 @@ namespace DA
         public int OperacionId { get; set; }
         public int EstadoId { get; set; }
         public string Serie { get; set; }
-        public string Numero { get; set; }
+        public Nullable<int> Numero { get; set; }
         public System.DateTime Fecha { get; set; }
         public Nullable<decimal> Total { get; set; }
         public bool IndEntrada { get; set; }
         public string Descripcion { get; set; }
+        public bool IndComprobante { get; set; }
+        public Nullable<int> TipoComprobante { get; set; }
+        public string ComprobanteDes { get; set; }
     
         public virtual Alumno Alumno { get; set; }
         public virtual CajaDiario CajaDiario { get; set; }

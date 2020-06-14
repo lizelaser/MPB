@@ -11,6 +11,7 @@ namespace Web.Controllers
 {
 
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_especialidad_todo)]
     public class EspecialidadController : Controller
     {
         private DAEntities db = new DAEntities();
@@ -112,6 +113,7 @@ namespace Web.Controllers
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpDelete]
         public ActionResult Eliminar(int id)
         {
             var especialidad = EspecialidadBL.Obtener(id);

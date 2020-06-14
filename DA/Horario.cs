@@ -23,7 +23,7 @@ namespace DA
         public int Dia { get; set; }
     
         public virtual Aula Aula { get; set; }
-        public virtual Curso Curso { get; set; }
         public virtual Periodo Periodo { get; set; }
+        public virtual Curso Curso { get; set; }
     }
 }

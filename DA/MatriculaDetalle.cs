@@ -18,7 +18,7 @@ namespace DA
         public int MatriculaId { get; set; }
         public int CursoId { get; set; }
     
-        public virtual Curso Curso { get; set; }
         public virtual Matricula Matricula { get; set; }
+        public virtual Curso Curso { get; set; }
     }
 }

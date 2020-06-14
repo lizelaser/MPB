@@ -7,6 +7,8 @@
     decimal SaldoNetoCaja = ViewBag.SaldoNetoCaja;
     decimal SaldoFinalCaja = ViewBag.SaldoFinalCaja;
     string CajaDenominacion = ViewBag.CajaDenominacion;
+    int OperacionId = ViewBag.OperacionId;
+    string OperacionDenominacion = ViewBag.OperacionDenominacion;
 }
 
 <link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
@@ -21,11 +23,6 @@
 
     .modal-footer {
         background-color: #E5EAEE;
-    }
-
-    #modal1, #modal4 {
-        position: absolute;
-        width: 400px;
     }
 
     #modal2, #modal5 {
@@ -69,7 +66,6 @@
     #desplegable_cards .card {
         margin-top: -30px;
         margin-left: -35px;
-        width: 1074px;
         height: 130px;
     }
 
@@ -85,543 +81,562 @@
         padding: 0px;
         border-radius: 10px;
     }
+    .contenedor_mensaje{
+        background-color:#F94040;
+        color:white; 
+        height:50px;
+    }
 
     #divFiltro {
         margin-left: 5px;
     }
 </style>
 
-@if (CajaAsignada.Count > 0)
+@if (CajaAsignada.Count > 0 && Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_pagos_todo))
 {
-<div class="row" id="principal">
-    <div class="row" id="balance_card">
-        <div class="col s12 m12">
-            <div class="card-content">
-                <ul class="collapsible">
-                    <li class="active">
-                        <div class="collapsible-header"></div>
-                        <div class="collapsible-body" id="desplegable_cards">
-                            <div class="row">
-                                <div class="col s12">
-                                    <div class="card">
-                                        <div class="card-content black-text">
-                                            <div class="col s12 m2" style="margin-left:45px;">
-                                                <span style="font-weight:bold;" class="card-title center-align">Saldo Inicial (S/.)</span>
-                                                <p style="text-align: center; color: #323E6A;" id="inicial_caja">
-                                                    @SaldoInicialCaja
-                                                </p>
-                                            </div>
-                                            <div class="col s12 m2">
-                                                <span style="font-weight:bold;" class="card-title center-align">Entradas (S/.)</span>
-                                                <p style="text-align: center; color:#323E6A;" id="entradas_caja">
-                                                    @EntradasCaja
-                                                </p>
-                                            </div>
-                                            <div class="col s12 m2">
-                                                <span style="font-weight:bold;" class="card-title center-align">Salidas (S/.)</span>
-                                                <p style="text-align: center; color:#323E6A;" id="salidas_caja">
-                                                    @SalidasCaja
-                                                </p>
-                                            </div>
-                                            <div class="col s12 m2">
-                                                <span style="font-weight:bold;" class="card-title center-align">Saldo Neto (S/.)</span>
-                                                <p style="text-align:center;color:#323E6A;" id="neto_caja">
-                                                    @SaldoNetoCaja
-                                                </p>
-                                            </div>
-                                            <div class="col s12 m3" style="margin-top:-5px;">
-                                                <span style="font-weight:bold; color:#9A8787;" class="card-title center-align">@CajaDenominacion</span>
-                                                <span style="color:#4D4747;" class="card-title center-align">@DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second</span>
-                                                <p style="text-align:center; font-weight:bold;">
-                                                    ABIERTO
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!--Modal Start-->
-    <!--Modal Structure Operacion Exitosa-->
-    <div id="modal1" class="modal center-align">
-        <div class="modal-content" style="height:50px;">
-            <h5 class="cabecera">ENTRADAS/SALIDAS</h5>
-        </div>
-        <div class="col s12" style="width:360px;margin-left:20px;">
-            <div id="validations" class="card card-tabs">
-                <div class="card-content">
-                    <p>OPERACIÓN REALIZADA CON ÉXITO</p>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-close btn-small blue right" style="margin-right:120px;">Aceptar</button>
-        </div>
-    </div>
-    <!--Modal Structure Operacion Fallida -->
-    <div id="modal4" class="modal center-align">
-        <div class="modal-content" style="height:50px;">
-            <h5 class="cabecera">ENTRADAS/SALIDAS</h5>
-        </div>
-        <div class="col s12" style="width:360px;margin-left:20px;">
-            <div id="validations" class="card card-tabs">
-                <div class="card-content">
-                    <p>OPERACIÓN FALLIDA</p>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-close btn-small blue right" style="margin-right:120px;">Aceptar</button>
-        </div>
-    </div>
-
-    <!--Modal Structure Transferencia a Caja-->
-    <div id="modal2" class="modal center-align">
-        <div class="modal-content" style="height:60px;">
-            <h5 class="" style="margin-top:-10px;">TRANSFERENCIAS</h5>
-        </div>
-        <div class="col s12" style="width:760px;margin-left:20px;">
-            <div id="validations" class="card card-tabs">
-                <div class="card-content">
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="input-field col s12 m6">
-                                <label for="operacion">Operacion</label>
-                                <input type="text" id="operacion" />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="caja">Caja:</label>
-                                <input type="text" id="caja" />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="usuario">Usuario:</label>
-                                <input type="text" id="usuario" />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="inicial" style="font-weight: bold">SALDO INICIAL*</label>
-                                <input type="number" step="any" name="inicial" id="inicial" value="0.00" required />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="monto" style="font-weight:bold">MONTO TOTAL DE BÓVEDA:</label>
-                                <input type="text" name="monto" id="monto" value="" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="transferencia">Guardar</a>
-            &nbsp;
-            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar_transferencia">Cancelar</a>
-        </div>
-    </div>
-    <!--Modal Structure Cerrar Caja-->
-    <div id="modal3" class="modal center-align">
-        <div class="modal-content" style="height:50px;">
-            <h5 class="cabecera">MPB CAJAS</h5>
-        </div>
-        <div class="col s12" style="width:360px;margin-left:20px;">
-            <div id="validations" class="card card-tabs">
-                <div class="card-content">
-                    <p>¿DESEA CERRAR ESTA CAJA?</p>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar_caja">Guardar</a>
-            &nbsp;
-            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar_cierre">Cancelar</a>
-        </div>
-    </div>
-
-    <!--Modal Structure pay account receivable-->
-    <div id="modal5" class="modal center-align">
-        <div class="modal-content" style="height:60px;">
-            <h5 class="" style="margin-top:-10px;">REALIZAR COBRO</h5>
-        </div>
-        <div class="col s12" style="width:760px;margin-left:20px;">
-            <div id="validations" class="card card-tabs">
-                <div class="card-content">
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="input-field col s12 m6">
-                                <input type="number" id="num_cobranzaId" hidden />
-                                <label for="txt_alumno" style="font-weight:bold;">ALUMNO</label>
-                                <input type="number" id="num_matricula" hidden/>
-                                <input type="number" id="num_id" hidden />
-                                <input type="text" id="txt_alumno" placeholder="APELLIDOS Y NOMBRES" readonly required />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <input type="text" id="txt_serie" hidden />
-                                <input type="text" id="txt_numero" hidden />
-                                <label for="txt_fecha" style="font-weight:bold;">FECHA</label>
-                                <input type="text" id="txt_fecha" value="@DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" readonly />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="num_importe" style="font-weight:bold;">IMPORTE</label>
-                                <input type="number" step=".01" id="num_importe" placeholder="IMPORTE" readonly required />
-                            </div>
-                            <div class="input-field col s12 m6">
-                                <label for="txt_descripcion" style="font-weight:bold;">DESCRIPCION</label>
-                                <input type="text" id="txt_descripcion" placeholder="DESCRIPCION" readonly required />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="realizar_cobranza">Guardar</a>
-            &nbsp;
-            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
-        </div>
-    </div>
-    <!--End Modal-->
     <div class="row" id="principal">
-        <div class="row" id="contenedor">
-            <div class="col s12">
-                <ul class="tabs align-center s12 m12">
-                    <li class="tab col s12 m5 disabled" id="movimiento"><span style="text-align:left">MOVIMIENTOS MARIA PARADO DE BELLIDO</span></li>
-                    <li class="tab col s12 m2"><a class="active" href="#test1" id="linkPagos">PAGOS</a></li>
-                    <li class="tab col s12 m3"><a href="#test2" id="linkEgreso_Ingreso">EGRESO-INGRESO</a></li>
-                    <li class="tab col s12 m2"><a href="#test3" id="linkArqueo">ARQUEO</a></li>
-                </ul>
-                <div class="col s12" style="border: 1px solid #ccc;">
-                    <div id="test1">
-                        <div class="row" id="divFiltro">
-                            <div class="input-field col s12 m5 filtro" style="margin-right:10px;">
-                                <input type="text" id="filtro" name="filtro" placeholder="BUSCAR ALUMNO POR DNI Y NOMBRES">
-                                <i class="material-icons prefix" style="margin-left:-40px;">search</i>
-                            </div>
-                            <div class="input-field col s12 m5 filtrador">
-                                <input type="text" id="filtrador" name="filtrador" placeholder="BUSCAR PERSONAL POR DNI Y NOMBRES">
-                                <i class="material-icons prefix" style="margin-left:-40px;">search</i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <ul class="collapsible">
-                                    <li>
-                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>CUENTAS POR COBRAR</div>
-                                        <div class="collapsible-body">
-                                            <div class="row">
-                                                <div class="col s12 m12">
-                                                    <table class="bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>N°</th>
-                                                                <th>Alumno</th>
-                                                                <th>Fecha</th>
-                                                                <th>Importe</th>
-                                                                <th>Descripcion</th>
-                                                                <th>Accion</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tbd_cobranzas">
-                                                        </tbody>
-                                                    </table>
+        <div class="row" id="balance_card">
+            <div class="col s12 m12">
+                <div class="card-content">
+                    <ul class="collapsible">
+                        <li class="active">
+                            <div class="collapsible-header"></div>
+                            <div class="collapsible-body" id="desplegable_cards">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="card">
+                                            <div class="card-content black-text">
+                                                <div class="col s12 m2" style="margin-left:45px;">
+                                                    <span style="font-weight:bold;" class="card-title center-align">Saldo Inicial (S/.)</span>
+                                                    <p style="text-align: center; color: #323E6A;" id="inicial_caja">
+                                                        @SaldoInicialCaja
+                                                    </p>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s12 m12 l12">
-                                                    <div id="bordered-table" class="card card card-default scrollspy">
-                                                        <div class="col-md-12 center text-center">
-
-                                                            <div id="EncontradoCobranzas">
-                                                                <span>
-                                                                    <label id="TotalRegistrosCobranzas"></label> registros encontrados
-                                                                </span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>
-                                                                    Página <label id="PaginaActualCobranzas"></label> de
-                                                                    <label id="TotalPaginasCobranzas"></label>
-                                                                </span>
-                                                            </div>
-                                                            <div class="row" id="NoEncontradoCobranzas">
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>No hay resultados de la búsqueda</span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                            </div>
-
-                                                            <div>
-                                                                <button class="btn btn-small blue" id="inicio_cobranzas"><<</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="anterior_cobranzas">Anterior</button>
-
-                                                                <button class="btn btn-small blue" id="siguiente_cobranzas">Siguiente</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="ultimo_cobranzas">>></button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div class="col s12 m2">
+                                                    <span style="font-weight:bold;" class="card-title center-align">Entradas (S/.)</span>
+                                                    <p style="text-align: center;color: #323E6A;" id="entradas_caja">
+                                                        @EntradasCaja
+                                                    </p>
+                                                </div>
+                                                <div class="col s12 m2">
+                                                    <span style="font-weight:bold;" class="card-title center-align">Salidas (S/.)</span>
+                                                    <p style="text-align: center; color:#323E6A;" id="salidas_caja">
+                                                        @SalidasCaja
+                                                    </p>
+                                                </div>
+                                                <div class="col s12 m2">
+                                                    <span style="font-weight:bold;" class="card-title center-align">Saldo Neto (S/.)</span>
+                                                    <p style="text-align:center;color:#323E6A;" id="neto_caja">
+                                                        @SaldoNetoCaja
+                                                    </p>
+                                                </div>
+                                                <div class="col s12 m3" style="margin-top:-5px;">
+                                                    <span style="font-weight:bold; color:#9A8787;" class="card-title center-align">@CajaDenominacion</span>
+                                                    <span style="color:#4D4747;" class="card-title center-align">@DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second</span>
+                                                    <p style="text-align:center; font-weight:bold;">
+                                                        ABIERTO
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </li>
-                                </ul>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <ul class="collapsible">
-                                    <li>
-                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>PAGOS</div>
-                                        <div class="collapsible-body">
-                                            <div class="row">
-                                                <div class="col s12 m12">
-                                                    <table class="bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nro.</th>
-                                                                <th>Fecha</th>
-                                                                <th>Operacion</th>
-                                                                <th>Persona</th>
-                                                                <th>Descripcion</th>
-                                                                <th>Importe</th>
-                                                                <th>Estado</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tbd_pagos">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s12 m12 l12">
-                                                    <div id="bordered-table" class="card card card-default scrollspy">
-                                                        <div class="col-md-12 center text-center">
-                                                            <div id="EncontradoPagos">
-                                                                <span>
-                                                                    <label id="TotalRegistrosPagos"></label> registros encontrados
-                                                                </span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>
-                                                                    Página <label id="PaginaActualPagos"></label> de
-                                                                    <label id="TotalPaginasPagos"></label>
-                                                                </span>
-                                                            </div>
-                                                            <div class="row" id="NoEncontradoPagos">
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>No hay resultados de la búsqueda</span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-                                                            <div>
-                                                                <button class="btn btn-small blue" id="inicio_pagos"><<</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="anterior_pagos">Anterior</button>
-
-                                                                <button class="btn btn-small blue" id="siguiente_pagos">Siguiente</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="ultimo_pagos">>></button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+        <!--Modal Structure Transferir Saldos-->
+        <div id="modal2" class="modal center-align">
+            <div class="modal-content" style="height:60px;">
+                <h5 style="margin-top:-10px;">TRANSFERENCIAS</h5>
+            </div>
+            <div class="col s12" style="width:760px;margin-left:20px;">
+                <div id="validations" class="card card-tabs">
+                    <div class="card-content contenedor_mensaje" id="div_mensaje" hidden>
+                        <p id="mensaje" style="margin-top:-10px;"></p>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <label for ="transf_operacion" style="font-weight:bold;">OPERACIÓN</label>
+                                    <input type="number" name="id_operacion" id="id_operacion" value="@OperacionId" hidden required />
+                                    <input type="text" name="transf_operacion" id="transf_operacion" style="font-weight:bold;" value="@OperacionDenominacion" readonly required />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="transf_total_caja" style="font-weight:bold;">TOTAL EN CAJA</label>
+                                    <input style="color:#2D1AEA;" type="text" id="transf_total_caja" name="transf_total_caja" value="@SaldoFinalCaja" readonly />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="transf_importe" style="font-weight:bold">IMPORTE*</label>
+                                    <input type="number" id="transf_importe" step="0.01" min="0" placeholder="0.00" />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="transf_descripcion" style="font-weight:bold">DESCRIPCIÓN*</label>
+                                    <input type="text" name="transf_descripcion" id="transf_descripcion" placeholder="..." />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="test2" style="background-color:white">
-                        <div class="col s12 m12" style="background-color:white">
-                            <div id="tabEntradasSalidas" class="card card-tabs">
-                                <div class="card-content">
-                                    <div class="form-group">
-                                        <div class="input-field col s12 m6">
-                                            @Html.DropDownList("Operaciones", ViewBag.Operaciones as SelectList, "SELECCIONE OPERACION", htmlAttributes: new { @class = "browser-default" })
-                                        </div>
-                                        <div class="input-field col s12 m6 busqueda">
-                                            <input type="number" name="idPersonal" id="idPersonal" hidden />
-                                            <input type="text" name="txtdatos" id="txtdatos" hidden />
-                                            <input type="text" name="busqueda" id="busqueda" placeholder="BUSCAR PERSONA" />
-                                            <i class="material-icons prefix" style="margin-left:-40px;">search</i>
-                                        </div>
-                                        <div class="input-field col s12 m6">
-                                            <label for="descripcion"><strong>DESCRIPCIÓN:</strong></label>
-                                            <input type="text" name="descripcion" id="descripcion">
-                                        </div>
-                                        <div class="input-field col s12 m6">
-                                            <label for="importe"><strong>IMPORTE:</strong></label>
-                                            <input type="number" step="any" min="0.00" name="importe" id="importe">
-                                        </div>
-                                        <div class="row">
-                                            <ul>
-                                                <li>
-                                                    <button class="btn modal-trigger btn-small blue right" id="realizar_operacion" data-target="modal1" style="margin-right:15px;">
-                                                        Realizar Operacion
-                                                    </button>
-                                                </li>
-                                            </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="guardar_transferencia">Guardar</a>
+                &nbsp;
+                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar_transferencia">Cancelar</a>
+            </div>
+        </div>
+        <!--Modal Structure Cerrar Caja-->
+        <div id="modal3" class="modal center-align">
+            <div class="modal-content" style="height:50px;">
+                <h5 class="cabecera">MPB CAJAS</h5>
+            </div>
+            <div class="col s12" style="width:360px;margin-left:20px;">
+                <div id="validations" class="card card-tabs">
+                    <div class="card-content">
+                        <p>¿DESEA CERRAR ESTA CAJA?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar_caja">Guardar</a>
+                &nbsp;
+                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar_cierre">Cancelar</a>
+            </div>
+        </div>
+
+        <!--Modal Structure pay account receivable-->
+        <div id="modal5" class="modal center-align">
+            <div class="modal-content" style="height:60px;">
+                <h5 class="" style="margin-top:-10px;">REALIZAR COBRO</h5>
+            </div>
+            <div class="col s12" style="width:760px;margin-left:20px;">
+                <div id="validations" class="card card-tabs">
+                    <div class="card-content">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col s12 m6">
+                                    <div style="margin-top: 15px;">
+                                        <p style="font-weight:bold;">TIPO DE COMPROBANTE:</p>
+                                    </div>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <div>
+                                        <p>
+                                            <label>
+                                                <input name="cmp_comprobante" id="boleta" type="radio" checked />
+                                                <span>Boleta</span>
+                                            </label>
+                                            <label>
+                                                <input name="cmp_comprobante" id="factura" type="radio" />
+                                                <span>Factura</span>
+                                            </label>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <input type="number" id="num_cobranzaId" hidden />
+                                    <label for="txt_alumno" style="font-weight:bold;">ALUMNO</label>
+                                    <input type="number" id="num_matricula" hidden />
+                                    <input type="number" id="num_id" hidden />
+                                    <input type="text" id="txt_alumno" placeholder="APELLIDOS Y NOMBRES" readonly required />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="txt_fecha" style="font-weight:bold;">FECHA</label>
+                                    <input type="text" id="txt_fecha" value="@DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" readonly />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="num_importe" style="font-weight:bold;">IMPORTE</label>
+                                    <input type="number" step=".01" min="0" id="num_importe" placeholder="IMPORTE" readonly required />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="txt_descripcion" style="font-weight:bold;">DESCRIPCION</label>
+                                    <input type="text" id="txt_descripcion" placeholder="DESCRIPCION" readonly required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="realizar_cobranza">Guardar</a>
+                &nbsp;
+                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+            </div>
+        </div>
+        <!--End Modal-->
+        <div class="row" id="principal">
+            <div class="row" id="contenedor">
+                <div class="col s12">
+                    <ul class="tabs align-center s12 m12">
+                        <li class="tab col s12 m5 disabled" id="movimiento"><span style="text-align:left">MOVIMIENTOS MARIA PARADO DE BELLIDO</span></li>
+                        <li class="tab col s12 m2"><a class="active" href="#test1" id="linkPagos">PAGOS</a></li>
+                        <li class="tab col s12 m3"><a href="#test2" id="linkEgreso_Ingreso">EGRESO-INGRESO</a></li>
+                        <li class="tab col s12 m2"><a href="#test3" id="linkArqueo">ARQUEO</a></li>
+                    </ul>
+                    <div class="col s12" style="border: 1px solid #ccc;">
+                        <div id="test1">
+                            <div class="row" id="divFiltro">
+                                <div class="input-field col s12 m5 filtro" style="margin-right:10px;">
+                                    <input type="text" id="filtro" name="filtro" placeholder="BUSCAR PERSONA POR NOMBRES">
+                                    <i class="material-icons prefix" style="margin-left:-40px;">search</i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <ul class="collapsible">
+                                        <li>
+                                            <div class="collapsible-header"><i class="material-icons">account_balance</i>CUENTAS POR COBRAR</div>
+                                            <div class="collapsible-body">
+                                                <div class="row">
+                                                    <div class="col s12 m12">
+                                                        <table class="bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>N°</th>
+                                                                    <th>Alumno</th>
+                                                                    <th>Fecha</th>
+                                                                    <th>Importe</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Accion</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tbd_cobranzas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col s12 m12 l12">
+                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                            <div class="col-md-12 center text-center">
+
+                                                                <div id="EncontradoCobranzas">
+                                                                    <span>
+                                                                        <label id="TotalRegistrosCobranzas"></label> registros encontrados
+                                                                    </span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>
+                                                                        Página <label id="PaginaActualCobranzas"></label> de
+                                                                        <label id="TotalPaginasCobranzas"></label>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="row" id="NoEncontradoCobranzas">
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>No hay resultados de la búsqueda</span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                </div>
+
+                                                                <div>
+                                                                    <button class="btn btn-small blue" id="inicio_cobranzas"><<</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="anterior_cobranzas">Anterior</button>
+
+                                                                    <button class="btn btn-small blue" id="siguiente_cobranzas">Siguiente</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="ultimo_cobranzas">>></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <ul class="collapsible">
+                                        <li>
+                                            <div class="collapsible-header"><i class="material-icons">account_balance</i>PAGOS</div>
+                                            <div class="collapsible-body">
+                                                <div class="row">
+                                                    <div class="col s12 m12">
+                                                        <table class="bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nro.</th>
+                                                                    <th>Fecha</th>
+                                                                    <th>Operacion</th>
+                                                                    <th>Persona</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Importe</th>
+                                                                    <th>Accion</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tbd_pagos">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col s12 m12 l12">
+                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                            <div class="col-md-12 center text-center">
+                                                                <div id="EncontradoPagos">
+                                                                    <span>
+                                                                        <label id="TotalRegistrosPagos"></label> registros encontrados
+                                                                    </span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>
+                                                                        Página <label id="PaginaActualPagos"></label> de
+                                                                        <label id="TotalPaginasPagos"></label>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="row" id="NoEncontradoPagos">
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>No hay resultados de la búsqueda</span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                </div>
+
+                                                                <div>
+                                                                    <button class="btn btn-small blue" id="inicio_pagos"><<</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="anterior_pagos">Anterior</button>
+
+                                                                    <button class="btn btn-small blue" id="siguiente_pagos">Siguiente</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="ultimo_pagos">>></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="test2" style="background-color:white">
+                            <div class="col s12 m12" style="background-color:white">
+                                <div id="tabEntradasSalidas" class="card card-tabs">
+                                    <div class="card-content contenedor_mensaje" id="div_mensaje_operacion" hidden>
+                                        <p id="txt_mensaje_operacion" style="margin-top:-10px;"></p>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="form-group">
+                                            <div class="input-field col s12 m6">
+                                                @Html.DropDownList("Operaciones", ViewBag.Operaciones as SelectList, "SELECCIONE OPERACION", htmlAttributes: new { @class = "browser-default" })
+                                            </div>
+                                            <div class="input-field col s12 m6 busqueda">
+                                                <input type="number" name="idPersonal" id="idPersonal" hidden />
+                                                <input type="text" name="txtdatos" id="txtdatos" hidden />
+                                                <input type="text" name="busqueda" id="busqueda" placeholder="BUSCAR PERSONA" />
+                                                <i class="material-icons prefix" style="margin-left:-40px;">search</i>
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="importe"><strong>IMPORTE:</strong></label>
+                                                <input type="number" step="0.01" min="0" name="importe" id="importe">
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="descripcion"><strong>DESCRIPCIÓN:</strong></label>
+                                                <input type="text" name="descripcion" id="descripcion">
+                                            </div>
+                                            <div class="row">
+                                                <ul>
+                                                    <li>
+                                                        <button class="btn-small blue right" id="realizar_operacion" style="margin-right:15px;">
+                                                            Realizar Operacion
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="test3">
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <ul class="collapsible">
-                                    <li class="active">
-                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>ENTRADAS</div>
-                                        <div class="collapsible-body">
-                                            <div class="row">
-                                                <div class="col s12 m12">
-                                                    <table class="bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nro.</th>
-                                                                <th>Fecha</th>
-                                                                <th>Operacion</th>
-                                                                <th>Persona</th>
-                                                                <th>Descripcion</th>
-                                                                <th>Importe</th>
-                                                                <th>Estado</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tbd_entradas">
-                                                        </tbody>
-                                                    </table>
+                        <div id="test3">
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <ul class="collapsible">
+                                        <li class="active">
+                                            <div class="collapsible-header"><i class="material-icons">account_balance</i>ENTRADAS</div>
+                                            <div class="collapsible-body">
+                                                <div class="row">
+                                                    <div class="col s12 m12">
+                                                        <table class="bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nro.</th>
+                                                                    <th>Fecha</th>
+                                                                    <th>Operacion</th>
+                                                                    <th>Persona</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Importe</th>
+                                                                    <th>Estado</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tbd_entradas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s12 m12 l12">
-                                                    <div id="bordered-table" class="card card card-default scrollspy">
-                                                        <div class="col-md-12 center text-center">
-                                                            <div id="EncontradoEntradas">
-                                                                <span>
-                                                                    <label id="TotalRegistrosEntradas"></label> registros encontrados
-                                                                </span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>
-                                                                    Página <label id="PaginaActualEntradas"></label> de
-                                                                    <label id="TotalPaginasEntradas"></label>
-                                                                </span>
-                                                            </div>
-                                                            <div class="row" id="NoEncontradoEntradas">
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>No hay resultados de la búsqueda</span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                            </div>
+                                                <div class="row">
+                                                    <div class="col s12 m12 l12">
+                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                            <div class="col-md-12 center text-center">
+                                                                <div id="EncontradoEntradas">
+                                                                    <span>
+                                                                        <label id="TotalRegistrosEntradas"></label> registros encontrados
+                                                                    </span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>
+                                                                        Página <label id="PaginaActualEntradas"></label> de
+                                                                        <label id="TotalPaginasEntradas"></label>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="row" id="NoEncontradoEntradas">
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>No hay resultados de la búsqueda</span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                </div>
 
-                                                            <div>
-                                                                <button class="btn btn-small blue" id="inicio_entradas"><<</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="anterior_entradas">Anterior</button>
+                                                                <div>
+                                                                    <button class="btn btn-small blue" id="inicio_entradas"><<</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="anterior_entradas">Anterior</button>
 
-                                                                <button class="btn btn-small blue" id="siguiente_entradas">Siguiente</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="ultimo_entradas">>></button>
+                                                                    <button class="btn btn-small blue" id="siguiente_entradas">Siguiente</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="ultimo_entradas">>></button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <ul class="collapsible">
-                                    <li class="active">
-                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>SALIDAS</div>
-                                        <div class="collapsible-body">
-                                            <div class="row">
-                                                <div class="col s12 m12">
-                                                    <table class="bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Nro.</th>
-                                                                <th>Fecha</th>
-                                                                <th>Operacion</th>
-                                                                <th>Persona</th>
-                                                                <th>Descripcion</th>
-                                                                <th>Importe</th>
-                                                                <th>Estado</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tbd_salidas">
-                                                        </tbody>
-                                                    </table>
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <ul class="collapsible">
+                                        <li class="active">
+                                            <div class="collapsible-header"><i class="material-icons">account_balance</i>SALIDAS</div>
+                                            <div class="collapsible-body">
+                                                <div class="row">
+                                                    <div class="col s12 m12">
+                                                        <table class="bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nro.</th>
+                                                                    <th>Fecha</th>
+                                                                    <th>Operacion</th>
+                                                                    <th>Persona</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Importe</th>
+                                                                    <th>Estado</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tbd_salidas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s12 m12 l12">
-                                                    <div id="bordered-table" class="card card card-default scrollspy">
-                                                        <div class="col-md-12 center text-center">
-                                                            <div id="EncontradoSalidas">
-                                                                <span>
-                                                                    <label id="TotalRegistrosSalidas"></label> registros encontrados
-                                                                </span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>
-                                                                    Página <label id="PaginaActualSalidas"></label> de
-                                                                    <label id="TotalPaginasSalidas"></label>
-                                                                </span>
-                                                            </div>
-                                                            <div class="row" id="NoEncontradoSalidas">
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>No hay resultados de la búsqueda</span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                            </div>
-                                                            <div>
-                                                                <button class="btn btn-small blue" id="inicio_salidas"><<</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="anterior_salidas">Anterior</button>
+                                                <div class="row">
+                                                    <div class="col s12 m12 l12">
+                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                            <div class="col-md-12 center text-center">
+                                                                <div id="EncontradoSalidas">
+                                                                    <span>
+                                                                        <label id="TotalRegistrosSalidas"></label> registros encontrados
+                                                                    </span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>
+                                                                        Página <label id="PaginaActualSalidas"></label> de
+                                                                        <label id="TotalPaginasSalidas"></label>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="row" id="NoEncontradoSalidas">
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                    <span>No hay resultados de la búsqueda</span>
+                                                                    <span>&nbsp;|&nbsp;</span>
+                                                                </div>
+                                                                <div>
+                                                                    <button class="btn btn-small blue" id="inicio_salidas"><<</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="anterior_salidas">Anterior</button>
 
-                                                                <button class="btn btn-small blue" id="siguiente_salidas">Siguiente</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="ultimo_salidas">>></button>
+                                                                    <button class="btn btn-small blue" id="siguiente_salidas">Siguiente</button>
+                                                                    <span></span>
+                                                                    <button class="btn btn-small blue" id="ultimo_salidas">>></button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <ul>
+                                    <li>
+                                        <button class="btn btn-small blue-grey left" style="margin-left:15px;margin-bottom:15px;">TOTAL CAJA: &nbsp;<span id="total_caja" style="font-weight:bold">@SaldoFinalCaja</span></button>
+                                        <button class="btn modal-trigger btn-small red right" data-target="modal3" style="margin-right:15px; margin-bottom:15px;">CERRAR CAJA</button>
+                                        <button class="btn modal-trigger btn-small blue right" data-target="modal2" style="margin-right:10px; margin-bottom:15px;">TRANSFERIR SALDOS</button>
+
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                        <div class="row">
-                            <ul>
-                                <li>
-                                    <button class="btn btn-small blue-grey left" style="margin-left:15px;margin-bottom:15px;">TOTAL CAJA: &nbsp;<span id="total_caja" style="font-weight:bold">@SaldoFinalCaja</span></button>
-                                    <button class="btn modal-trigger btn-small red right" data-target="modal3" style="margin-right:15px; margin-bottom:15px;">CERRAR CAJA</button>
-                                    <button class="btn modal-trigger btn-small blue right" data-target="modal2" style="margin-right:10px; margin-bottom:15px;">TRANSFERIR SALDOS</button>
-
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    </div>
+        <div class="row">
+            <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
 
-    <div class="row">
-        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <div class="row">
+            <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
     </div>
-</div>
 
 }
 else
 {
-<div class="row" id="no_asignado">
+    if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_pagos_todo))
+    {
+        <div class="row" id="no_asignado">
+            <div class="col s12 m12">
+                <div class="card blue-grey darken-1">
+                    <ul class="collapsible" style="margin-top:-10px;">
+                        <li class="active">
+                            <div class="collapsible-header"></div>
+                            <div class="collapsible-body" id="desplegable_cards">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="card">
+                                            <div class="card-content black-text">
+                                                <span class="card-title center-align" style="font-size:20px;font-weight:bold;">CAJA NO ASIGNADA</span>
+                                                <p style="text-align: center">
+                                                    ESTADO
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    }
+
+}
+
+<div class="row" id="no_asignado_front">
     <div class="col s12 m12">
         <div class="card blue-grey darken-1">
             <ul class="collapsible" style="margin-top:-10px;">
@@ -646,8 +661,6 @@ else
         </div>
     </div>
 </div>
-
-}
 
 @section Scripts{
     <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
@@ -695,6 +708,7 @@ else
             }
 
         });
+
     </script>
 
 
@@ -708,43 +722,58 @@ else
 
     $(document).ready(function () {
 
+        $("#no_asignado_front").hide();
+
         // EXEC MODAL ENTRADAS - SALIDAS
         $("#realizar_operacion").click(entradas_salidasFunc);
 
         //EXEC MODAL CERRAR CAJA
-        $("#cerrar_caja").on("click",cerrarCajaFunc);
-        
+        $("#cerrar_caja").on("click", cerrarCajaFunc);
+
+        //EXEC MODAL TRANSFERRING BALANCES
+        $("#guardar_transferencia").on("click", guardarTransferenciaFunc);
+
+        //CANCEL TRANFERRING FUNCTION
+        $("#cancelar_transferencia").on("click", cancelarTransFunc);
+
         //START PAGINATION 'COBRANZAS'
-        paginadorFuncCobranzas(currentPage);
+        paginadorFuncCobranzas($("#filtro").val(), currentPage);
 
         $("#inicio_cobranzas").click(function () {
-            paginadorFuncCobranzas(1);
+            paginadorFuncCobranzas($("#filtro").val(), 1);
         });
         $("#siguiente_cobranzas").click(function () {
-            paginadorFuncCobranzas(currentPage + 1);
+            paginadorFuncCobranzas($("#filtro").val(), currentPage + 1);
         });
         $("#ultimo_cobranzas").click(function () {
-            paginadorFuncCobranzas(pageCount);
+            paginadorFuncCobranzas($("#filtro").val(), pageCount);
         });
         $("#anterior_cobranzas").click(function () {
-            paginadorFuncCobranzas(currentPage - 1)
+            paginadorFuncCobranzas($("#filtro").val(), currentPage - 1)
         });
 
         //START PAGINATION 'PAGOS'
-        paginadorFuncPagos(currentPage);
+        paginadorFuncPagos($("#filtro").val(), currentPage);
 
         $("#inicio_pagos").click(function () {
-            paginadorFuncPagos(1);
+            paginadorFuncPagos($("#filtro").val(), 1);
         });
         $("#siguiente_pagos").click(function () {
-            paginadorFuncPagos(currentPage + 1);
+            paginadorFuncPagos($("#filtro").val(), currentPage + 1);
         });
         $("#ultimo_pagos").click(function () {
-            paginadorFuncPagos(pageCount);
+            paginadorFuncPagos($("#filtro").val(), pageCount);
         });
         $("#anterior_pagos").click(function () {
-            paginadorFuncPagos(currentPage - 1)
+            paginadorFuncPagos($("#filtro").val(), currentPage - 1)
         });
+
+        //Filter Last Name and First Name from Student
+        $("#filtro").on('input', function () {
+            paginadorFuncCobranzas($("#filtro").val(), 1)
+            paginadorFuncPagos($("#filtro").val(), 1)
+        });
+
 
         //START PAGINATION 'ENTRADAS'
         paginadorFuncEntradas(currentPage);
@@ -779,72 +808,125 @@ else
 
     });
 
-</script>
 
-<script>
+    var valTimeout;
+
     // MODAL 'INPUT - OUTPUT'
+    var isEntriesOutputsLoading = false;
+
     var entradas_salidasFunc = function () {
-        var envio = {
-            OperacionId: $("#Operaciones").val(),
-            OperacionDenominacion: $("#Operaciones option:selected").text(),
-            PersonalId: $("#idPersonal").val(),
-            PersonalNombres: $("#txtdatos").val(),
-            Total: $("#importe").val(),
-            Descripcion: $("#descripcion").val()
-        }
 
-        $("#realizar_operacion").prop('disabled',true);
+        if (!isEntriesOutputsLoading) {
+            isEntriesOutputsLoading = true;
 
-        $.ajax({
-            url: '@Url.Action("EgresosIngresos","Pagos")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-
-                $("#realizar_operacion").prop('disabled',false);
-                //Update Cards 'Caja Diario' (Outputs and final balance)
-
-                if (rm.result[0] == "ENTRADAS OTROS") {
-                    $("#inicial_caja").text(rm.result[1]);
-                    $("#entradas_caja").text(rm.result[2]);
-                    $("#total_caja").text(rm.result[4]);
-                    $("#neto_caja").text(rm.result[5]);
-                }
-                else if (rm.result[0] == "SALIDAS OTROS") {
-                    $("#inicial_caja").text(rm.result[1]);
-                    $("#salidas_caja").text(rm.result[3]);
-                    $("#total_caja").text(rm.result[4]);
-                    $("#neto_caja").text(rm.result[5]);
-                }
-                else { // PAGO DE SERVICIOS
-                    $("#inicial_caja").text(rm.result[1]);
-                    $("#salidas_caja").text(rm.result[3]);
-                    $("#total_caja").text(rm.result[4]);
-                    $("#neto_caja").text(rm.result[5]);
-                }
-
-            //Clear fields
-                $("#Operaciones").val('').prop('defaultSelected');
-                $("#idPersonal").val(''),
-                $("#txtdatos").val(''),
-                $("#busqueda").val(''),
-                $("#descripcion").val(''),
-                $("#importe").val('')
-
-            // Refresh again pagination
-                paginadorFuncPagos(currentPage);
-                paginadorFuncEntradas(currentPage);
-                paginadorFuncSalidas(currentPage);
-
-            },
-            error: function () {
-                $("#realizar_operacion").attr('data-target', 'modal4');
+            var envio = {
+                PersonalFiltro: $("#busqueda").val(),
+                OperacionId: $("#Operaciones").val(),
+                OperacionDenominacion: $("#Operaciones option:selected").text(),
+                PersonalId: $("#idPersonal").val(),
+                Total: $("#importe").val(),
+                Descripcion: $("#descripcion").val()
             }
 
-        });
+            $("#realizar_operacion").prop('disabled',true);
+
+            $.ajax({
+                url: '@Url.Action("EgresosIngresos","Pagos")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (rm) {
+
+                    try {
+                        if (rm.response == false) {
+                            $("#div_mensaje_operacion").show();
+                            $("#div_mensaje_operacion").css("background-color","#F94040");
+                            $("#txt_mensaje_operacion").text(rm.message);
+
+                            if($("#busqueda").val() == ""){
+                                //Clear Fields txtdatos and idPersonal
+                                $("#idPersonal").val(''),
+                                $("#txtdatos").val('')
+                            }
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_operacion").fadeOut();
+                            }, 2500);
+                            
+                        }
+                        else {
+
+                            $("#div_mensaje_operacion").show();
+                            $("#div_mensaje_operacion").css("background-color","#27EF37");
+                            $("#txt_mensaje_operacion").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_operacion").fadeOut();
+                            }, 2500);
+
+                            //Update Cards 'Caja Diario' (Outputs and final balance)
+
+                            if (rm.result[0] == "ENTRADAS OTROS") {
+                                $("#inicial_caja").text(rm.result[1]);
+                                $("#entradas_caja").text(rm.result[2]);
+                                $("#total_caja").text(rm.result[4]);
+                                $("#neto_caja").text(rm.result[5]);
+                            }
+                            else if (rm.result[0] == "SALIDAS OTROS") {
+                                $("#inicial_caja").text(rm.result[1]);
+                                $("#salidas_caja").text(rm.result[3]);
+                                $("#total_caja").text(rm.result[4]);
+                                $("#neto_caja").text(rm.result[5]);
+                            }
+                            else { // PAGO DE SERVICIOS
+                                $("#inicial_caja").text(rm.result[1]);
+                                $("#salidas_caja").text(rm.result[3]);
+                                $("#total_caja").text(rm.result[4]);
+                                $("#neto_caja").text(rm.result[5]);
+                            }
+
+                            //Clear fields
+                            $("#Operaciones").val('').prop('defaultSelected');
+                            $("#idPersonal").val(''),
+                            $("#txtdatos").val(''),
+                            $("#busqueda").val(''),
+                            $("#descripcion").val(''),
+                            $("#importe").val('')
+
+                            // Refresh again pagination
+                            paginadorFuncPagos(currentPage);
+                            paginadorFuncEntradas(currentPage);
+                            paginadorFuncSalidas(currentPage);
+                        }
+
+                    }
+                    catch (e) {
+                        alert("La operación ya fue realizada");
+                    }
+
+                },
+                complete: function () {
+                    isEntriesOutputsLoading = false;
+                    $("#realizar_operacion").prop('disabled',false);
+
+                }
+
+            });
+
+        }
+        else {
+            console.log("Entries and Outputs operations was alredy completed");
+        }
     }
 
     function moduloCobroFunc() {
@@ -864,13 +946,10 @@ else
                 dataType: 'json',
                 success: function (response) {
                     //WE RECOVER AND SEND THE DATA TO THE MODAL
-                    console.log(response);
                     $("#num_cobranzaId").val(response.Id);
                     $("#num_matricula").val(response.MatriculaId);
                     $("#num_id").val(response.AlumnoId);
                     $("#txt_alumno").val(response.AlumnoNombres);
-                    $("#txt_serie").val(response.Serie);
-                    $("#txt_numero").val(response.Numero);
                     $("#num_importe").val(response.Total);
                     $("#txt_descripcion").val(response.Descripcion);
 
@@ -881,30 +960,84 @@ else
         });
     }
 
+    var isChargeLoading = false;
+
     function guardarCobroFun() {
         $("#realizar_cobranza").on("click", function () {
-            var matricula_id;
-            if ($("#num_matricula").val() == "") {
-                matricula_id = 0;
-            }
-            else {
-                matricula_id = $("#num_matricula").val();
-            }
+            if (!isChargeLoading) {
+                isChargeLoading = true;
+
+                var comprobante;
+
+                if ($("#boleta").prop("checked")) {
+                    comprobante = "BL";
+                }
+                else if ($("#factura").prop("checked")) {
+                    comprobante = "FT";
+                }
+                else {
+                    comprobante = "NO DEFINIDO";
+                }
+
+                var envio = {
+                    CuentaPorCobrarId: $("#num_cobranzaId").val(),
+                    TipoComprobante: comprobante
+                }
+
+                $("#realizar_cobranza").prop('disabled',true);
+                $.ajax({
+                    url: '@Url.Action("GuardarCobro","Pagos")',
+                    data: JSON.stringify(envio),
+                    type: 'POST',
+                    async: false,//this makes the ajax-call blocking
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function (rm) {
+                        try {
+
+                            if (rm.response == true) {
+                                //Update Cards 'Caja Diario' (Entries and final balance)
+                                $("#inicial_caja").text(rm.result[0]);
+                                $("#entradas_caja").text(rm.result[1]);
+                                $("#total_caja").text(rm.result[2]);
+                                $("#neto_caja").text(rm.result[3]);
+
+                                //$(`#porCobrar_${rm.result[4]}`).remove();
+
+                                paginadorFuncCobranzas($("#filtro").val(),currentPage);
+                                paginadorFuncPagos($("#filtro").val(),currentPage);
+                                paginadorFuncEntradas(currentPage);
+                            }
+
+                        } catch (e) {
+                            console.log("Este pago ya fue registrado.");
+                        }
+                    },
+                    complete: function () {
+                        isChargeLoading = false;
+                    }
+                });
+            } else console.log("Payment operation was already completed");
+        });
+    }
+
+    var isTransferLoading = false;
+
+    //ACTION SAVE TRANSFER OF BALANCES FROM CAJA TO BÓVEDA
+    function guardarTransferenciaFunc() {
+
+        if (!isTransferLoading) {
+            isTransferLoading = true;
+
             var envio = {
-                CuentaPorCobrarId: $("#num_cobranzaId").val(),
-                MatriculaId: matricula_id,
-                AlumnoId: $("#num_id").val(),
-                Serie: $("#txt_serie").val(),
-                Numero: $("#txt_numero").val(),
-                Total: $("#num_importe").val(),
-                Descripcion: $("#txt_descripcion").val()
+                OperacionId: $("#id_operacion").val(),
+                OperacionDenominacion: $("#trans_operacion").val(),
+                Importe: $("#transf_importe").val(),
+                Descripcion: $("#transf_descripcion").val()
             }
 
-            console.log(envio);
-
-            $("#realizar_cobranza").prop('disabled',true);
             $.ajax({
-                url: '@Url.Action("GuardarCobro","Pagos")',
+                url: '@Url.Action("TransferirSaldos","Pagos")',
                 data: JSON.stringify(envio),
                 type: 'POST',
                 async: false,//this makes the ajax-call blocking
@@ -912,22 +1045,65 @@ else
                 dataType: 'json',
                 success: function (rm) {
 
-                    //Update Cards 'Caja Diario' (Entries and final balance)
-                    $("#inicial_caja").text(rm.result[0]);
-                    $("#entradas_caja").text(rm.result[1]);
-                    $("#total_caja").text(rm.result[2]);
-                    $("#neto_caja").text(rm.result[3]);
+                    try {
+                        if (rm.response == false) {
+                            $("#div_mensaje").show();
+                            $("#div_mensaje").css("background-color", "#F94040");
+                            $("#mensaje").text(rm.message);
 
-                    $(`#porCobrar_${rm.result[4]}`).remove();
-                    paginadorFuncCobranzas(currentPage);
-                    paginadorFuncPagos(currentPage);
-                    paginadorFuncEntradas(currentPage);
-                    
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+
+                            $("#div_mensaje").show();
+                            $("#div_mensaje").css("background-color", "#27EF37");
+                            $("#mensaje").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje").fadeOut();
+                            }, 2500);
+
+                            $("#salidas_caja").text(rm.result[0]);
+                            $("#total_caja").text(rm.result[1]);
+                            $("#neto_caja").text(rm.result[2]);
+                            $("#transf_total_caja").val(rm.result[1]);
+
+                            // CLEAR AMOUNT AND DESCRIPTION FIELDS
+                            $("#transf_importe").val("");
+                            $("#transf_descripcion").val("");
+                        }
+                    }
+                    catch (e) {
+                        alert("La transferencia ya fue realizada");
+                    }
+                },
+                complete: function () {
+                    isTransferLoading = false;
                 }
             });
+        }
+        else {
+            console.log("Transfer operation was already completed");
+        }
 
-        });
+    }
 
+    //ACTION BUTTON 'CANCEL TRANSFERRING'
+    var cancelarTransFunc = function () {
+        var reset = 0;
+        $("#ListadoOperaciones").val('').prop('defaultSelected');
+        $("#transf_importe").val('');
+        $("#transf_descripcion").val('');
     }
 
     //CLOSE OF THE BOX ASSIGNMENT FOR THE USER IN SESSION
@@ -942,7 +1118,7 @@ else
             dataType: 'json',
             success: function () {
                 $("#principal").hide();
-                $("#no_asignado").show();
+                $("#no_asignado_front").show();
                 $("#cerrar_caja").prop('disabled',false);
             }
         });
@@ -951,8 +1127,9 @@ else
 </script>
 <script>
     //PAGINATION 'CUENTAS POR COBRAR'
-    var paginadorFuncCobranzas = function (pagina) {
+    var paginadorFuncCobranzas = function (nombres, pagina) {
         var envio = {
+            nombres: nombres,
             pagina: pagina > 0 ? pagina : 1
         }
         $.ajax({
@@ -1059,8 +1236,9 @@ else
 </script>
 <script>
     //PAGINATION 'CAJA MOVIMIENTO'
-    var paginadorFuncPagos = function (pagina) {
+    var paginadorFuncPagos = function (nombres, pagina) {
         var envio = {
+            nombres: nombres,
             pagina: pagina > 0 ? pagina : 1
         }
         $.ajax({
@@ -1105,7 +1283,7 @@ else
         const currentPageLength = paginatorPayload.Listado.length
         const chunkSize = paginatorPayload.RegistrosPorPagina
 
-   
+
         const itemsUntilCurrentPage = (currentPage - 1) * chunkSize + currentPageLength
         const maxSkip = (totalPages - 1) * chunkSize
 
@@ -1145,6 +1323,19 @@ else
             var getMinute = mydate.getMinutes();
             var standardDate = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
 
+            var accion = "<td style='padding:0'></td>";
+
+            if (item.IndComprobante == true && item.TipoComprobante == 1) {
+                accion = `<td style="padding:0">
+                                    <a href="Pagos/Boleta/${item.Id}"><i class="material-icons center">assignment</i></a>
+                                </td>`
+            }
+            if (item.IndComprobante == true && item.TipoComprobante == 2) {
+                accion = `<td style="padding:0">
+                                    <a href="Pagos/Factura/${item.Id}"><i class="material-icons center">assignment</i></a>
+                                </td>`
+            }
+
             $(id).append(
                 `<tr>
                         <td style="padding:0">${item.Id}</td>
@@ -1153,7 +1344,7 @@ else
                         <td style="padding:0">${item.PersonaNombres}</td>
                         <td style="padding:0">${item.Descripcion}</td>
                         <td style="padding:0">${item.Total}</td>
-                        <td style="padding:0">${item.EstadoDenominacion}</td>
+                        ${accion}
                         </tr>`
             )
 

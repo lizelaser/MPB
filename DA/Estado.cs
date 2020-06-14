@@ -17,19 +17,16 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Estado()
         {
-            this.Matricula = new HashSet<Matricula>();
-            this.CajaMovimiento = new HashSet<CajaMovimiento>();
             this.CuentasPorCobrar = new HashSet<CuentasPorCobrar>();
+            this.CajaMovimiento = new HashSet<CajaMovimiento>();
         }
     
         public int Id { get; set; }
         public string Denominacion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Matricula> Matricula { get; set; }
+        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimiento> CajaMovimiento { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
     }
 }

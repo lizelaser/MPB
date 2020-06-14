@@ -13,9 +13,11 @@ namespace Web.Controllers
         [NoLogin]
         public ActionResult Index()
         {
+
             return View();
         }
         [HttpPost]
+        [Recaptcha(Name = "Captcha")]
         public JsonResult Autenticar(UsuarioVm u)
         {
             var rm = new Comun.ResponseModel();
@@ -35,7 +37,7 @@ namespace Web.Controllers
                     AddSesion(usuario.Id, ref rm);
                     Session["UsuarioId"] = usuario.Id;
                     Session["Rol"] = usuario.Rol.Codigo;
-                    Session["UsuarioRol"] = usuario.Correo + " - " + usuario.Rol.Denominacion;
+                    Session["UsuarioRol"] = usuario.Nombre + " - " + usuario.Rol.Denominacion;
                     Session["mnu"] = Constante.Menu.Listar(usuario.Rol.Codigo);
                     rm.SetResponse(true);
                     rm.href = Url.Action("Index", "Home");

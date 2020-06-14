@@ -11,6 +11,7 @@ using Web.Models;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_horario_todo)]
     public class HorarioController : Controller
     {
         private DAEntities db = new DAEntities();

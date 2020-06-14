@@ -1,95 +1,98 @@
 ﻿@model DA.Personal
 
-<div class="row">
-    <div class="col s12">
-        <div id="validations" class="card card-tabs">
-            <div class="card-content">
-                <div class="card-title">
-                    <div class="row">
-                        <div class="col s8 m6 l10">
-                            <h4 class="card-title">
-                                <a href="@Url.Action("Index","Personal")"><i class="material-icons left">keyboard_backspace</i></a>
-                                @if (Model.Id == 0)
-                                {
-                                    <text>Nuevo Personal</text>
-                                }
-                                else
-                                {
-                                    <text>Editar Personal</text>
-                                }
-                            </h4>
+
+@if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_personal_todo))
+{
+    <div class="row">
+        <div class="col s12">
+            <div id="validations" class="card card-tabs">
+                <div class="card-content">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class="col s8 m6 l10">
+                                <h4 class="card-title">
+                                    <a href="@Url.Action("Index","Personal")"><i class="material-icons left">keyboard_backspace</i></a>
+                                    @if (Model.Id == 0)
+                                    {
+                                        <text>Nuevo Personal</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Editar Personal</text>
+                                    }
+                                </h4>
+                            </div>
                         </div>
                     </div>
+                    <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Personal")">
+                        <div class="row">
+                            <input name="Id" type="hidden" value="@Model.Id">
+                            <div class="input-field col s12 m2">
+                                <label for="cdni">DNI*</label>
+                                <input id="cdni" name="Dni" type="text" required value="@Model.Dni" autofocus>
+                            </div>
+
+                            <div class="input-field col s12 m3">
+                                <label for="cpaterno">Apellido Paterno*</label>
+                                <input id="cpaterno" name="Paterno" type="text" required value="@Model.Paterno">
+                            </div>
+                            <div class="input-field col s12 m3">
+                                <label for="cmaterno">Apellido Materno*</label>
+                                <input id="cmaterno" name="Materno" type="text" required value="@Model.Materno">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="cnombre">Nombre*</label>
+                                <input id="cnombre" name="Nombres" type="text" required value="@Model.Nombres">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="cemail">Correo Electronico*</label>
+                                <input id="cemail" type="email" name="Correo" value="@Model.Correo">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="ccelular">Celular</label>
+                                <input id="ccelular" name="Celular" type="text" value="@Model.Celular" maxlength="20">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="cnacimiento">Fecha Nacimiento</label>
+                                <input id="cnacimiento" name="Nacimiento" @*class="datepicker"*@ type="date" value="@Model.Nacimiento" placeholder="dd/mm/aaaa">
+                            </div>
+                            <div class="input-field col s12">
+                                <label for="cdireccion">Direccion</label>
+                                <input id="cdireccion" name="Direccion" type="text" value="@Model.Direccion">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="chonorario">Honorario</label>
+                                <input id="chonorario" name="Honorario" type="number" value="@Model.Honorario">
+                            </div>
+
+
+                            <div class="col s12 m4">
+                                <label for="tnc_select">Estado </label>
+                                <p>
+                                    <label>
+                                        <input type="checkbox" name="activo" @if (Model.Estado) { <text> checked </text> } />                                 <span>Activo</span>
+                                    </label>
+                                </p>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <button data-ajax="true" class="btn right blue" type="submit">
+                                    Guardar
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
-                <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Personal")">
-                    <div class="row">
-                        <input name="Id" type="hidden" value="@Model.Id">
-                        <div class="input-field col s12 m2">
-                            <label for="cdni">DNI*</label>
-                            <input id="cdni" name="Dni" type="text" required value="@Model.Dni" autofocus>
-                        </div>
-
-                        <div class="input-field col s12 m3">
-                            <label for="cpaterno">Apellido Paterno*</label>
-                            <input id="cpaterno" name="Paterno" type="text" required value="@Model.Paterno">
-                        </div>
-                        <div class="input-field col s12 m3">
-                            <label for="cmaterno">Apellido Materno*</label>
-                            <input id="cmaterno" name="Materno" type="text" required value="@Model.Materno">
-                        </div>
-                        <div class="input-field col s12 m4">
-                            <label for="cnombre">Nombre*</label>
-                            <input id="cnombre" name="Nombres" type="text" required value="@Model.Nombres">
-                        </div>
-                        <div class="input-field col s12 m4">
-                            <label for="cemail">Correo Electronico*</label>
-                            <input id="cemail" type="email" name="Correo" value="@Model.Correo">
-                        </div>
-                        <div class="input-field col s12 m4">
-                            <label for="ccelular">Celular</label>
-                            <input id="ccelular" name="Celular" type="text" value="@Model.Celular" maxlength="20">
-                        </div>
-                        <div class="input-field col s12 m4">
-                            <label for="cnacimiento">Fecha Nacimiento</label>
-                            <input id="cnacimiento" name="Nacimiento" @*class="datepicker"*@ type="date" value="@Model.Nacimiento" placeholder="dd/mm/aaaa">
-                        </div>
-                        <div class="input-field col s12">
-                            <label for="cdireccion">Direccion</label>
-                            <input id="cdireccion" name="Direccion" type="text" value="@Model.Direccion">
-                        </div>
-                        <div class="input-field col s12 m4">
-                            <label for="chonorario">Honorario</label>
-                            <input id="chonorario" name="Honorario" type="number" value="@Model.Honorario">
-                        </div>
-
-
-                        <div class="col s12 m4">
-                            <label for="tnc_select">Estado </label>
-                            <p>
-                                <label>
-                                    <input type="checkbox" name="activo" @if (Model.Estado) { <text> checked </text> } />                                 <span>Activo</span>
-                                </label>
-                            </p>
-                        </div>
-
-                        <div class="input-field col s12">
-                            <button data-ajax="true" class="btn right blue" type="submit">
-                                Guardar
-                                <i class="material-icons right">send</i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
             </div>
         </div>
     </div>
+}
 
-
-</div>
 
 @section   scripts{
     <script>
-       
+
     </script>
 }

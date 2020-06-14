@@ -17,28 +17,28 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Matricula()
         {
-            this.MatriculaDetalle = new HashSet<MatriculaDetalle>();
             this.CuentasPorCobrar = new HashSet<CuentasPorCobrar>();
+            this.MatriculaDetalle = new HashSet<MatriculaDetalle>();
         }
     
         public int Id { get; set; }
         public int CondicionEstudioId { get; set; }
         public int AlumnoId { get; set; }
         public int PeridoId { get; set; }
-        public int EstadoId { get; set; }
         public System.DateTime Fecha { get; set; }
         public Nullable<decimal> Monto { get; set; }
         public bool IndPagoMatricula { get; set; }
         public bool IndPagoUnico { get; set; }
         public string Observacion { get; set; }
+        public Nullable<int> EspecialidadId { get; set; }
+        public string Proceso { get; set; }
     
         public virtual Alumno Alumno { get; set; }
         public virtual CondicionEstudio CondicionEstudio { get; set; }
-        public virtual Estado Estado { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
         public virtual Periodo Periodo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatriculaDetalle> MatriculaDetalle { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
     }
 }

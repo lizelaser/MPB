@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_personal_todo)]
     public class PersonalController : Controller
     {
         private DAEntities db = new DAEntities();

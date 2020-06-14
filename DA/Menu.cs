@@ -17,13 +17,14 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Menu()
         {
-            this.Menu_Rol = new HashSet<Menu_Rol>();
+            this.PermisoDenegadoRol = new HashSet<PermisoDenegadoRol>();
         }
     
         public int Id { get; set; }
         public string Denominacion { get; set; }
+        public string DesCorta { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Menu_Rol> Menu_Rol { get; set; }
+        public virtual ICollection<PermisoDenegadoRol> PermisoDenegadoRol { get; set; }
     }
 }

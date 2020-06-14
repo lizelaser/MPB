@@ -10,6 +10,7 @@ using Web.Models;
 namespace Web.Controllers.Direccion
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_periodo_todo)]
     public class PeriodoController : Controller
     {
         private DAEntities db = new DAEntities();

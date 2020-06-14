@@ -11,6 +11,7 @@ using Web.Models;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_usuario_todo)]
     public class UsuarioController : Controller
     {
         private DAEntities db = new DAEntities();

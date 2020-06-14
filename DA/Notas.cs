@@ -23,7 +23,7 @@ namespace DA
         public string Observacion { get; set; }
     
         public virtual Alumno Alumno { get; set; }
-        public virtual Curso Curso { get; set; }
         public virtual Periodo Periodo { get; set; }
+        public virtual Curso Curso { get; set; }
     }
 }

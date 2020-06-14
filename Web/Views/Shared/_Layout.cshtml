@@ -1,5 +1,7 @@
 ﻿@{
     string empresa = Web.Controllers.ComunController.ObtenerEmpresa();
+    var rol = Session["Rol"];
+    string rol_codigo = Convert.ToString(rol);
     List<string> menu = Session["mnu"] as List<string>;
 }
 
@@ -34,7 +36,20 @@
                     </div>
                     <ul class="navbar-list right">
                         <li class="hide-on-med-and-down"><a class="waves-effect waves-block waves-light toggle-fullscreen" href="javascript:void(0);"><i class="material-icons">settings_overscan</i></a></li>
-                        <li><a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);" data-target="profile-dropdown"><span class="avatar-status avatar-online"><img src="~/app-assets/images/avatar/avatar-7.png" alt="avatar"><i></i></span></a></li>
+                        <li>
+                            <a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);" data-target="profile-dropdown">
+                                <span class="avatar-status avatar-online">
+                                    @if (rol_codigo == "SA")
+                                    {<img src="~/app-assets/images/avatar/avatar-7.png" alt="avatar"><i></i>}
+                                    @if (rol_codigo == "SE")
+                                    {<img src="~/app-assets/images/avatar/avatar-11.png" alt="avatar"><i></i>}
+                                    @if (rol_codigo == "CO")
+                                    {<img src="~/app-assets/images/avatar/avatar-1.png" alt="avatar"><i></i>}
+                                    @if (rol_codigo == "DI")
+                                    {<img src="~/app-assets/images/avatar/avatar-18.png" alt="avatar"><i></i>}
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                     <!-- profile-dropdown-->
                     <ul class="dropdown-content" id="profile-dropdown">
@@ -49,7 +64,7 @@
     </header>
 
     <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light sidenav-active-square">
-        <div class="brand-sidebar">
+        <div class="brand-sidebar"style="background-color:#7229DA;">
             <h1 class="logo-wrapper">
                 <a class="brand-logo darken-1" href="@Url.Action("Index","Home")">
                     <img src="~/app-assets/images/logo/materialize-logo-color.png" alt="MBP" />
@@ -61,181 +76,378 @@
         <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="menu-accordion">
 
 
+            <li class="bold">
+                <a class="waves-effect waves-cyan " href="@Url.Action("Index","Home")">
+                    <i class="material-icons">palette</i>
+                    <span class="menu-title" data-i18n="">Dashboard</span>
+                </a>
+            </li>
 
-            @foreach (var item in menu)
+            @if (rol_codigo == "SA")
             {
-                if (menu.Contains(item))
-                {
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Administración</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[8]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[5]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[9]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[0]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[1]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[2]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[4]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[3]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[10])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[10]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Operaciones</div>
 
-                    <li class="bold">
-                        <div class="collapsible-header"><i class="material-icons">image_aspect_ratio</i>Configuracion</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[6]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[7])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[7]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Reportes</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesAlumno","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Alumno</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Personal</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalMatriculas","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Matriculas</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalDeudas","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Cuentas Por Cobrar</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+            }
+            @if (rol_codigo == "SE")
+            {
 
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[0]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[11])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[11]</span>
-                                </a>
-                            </span>
-                        </div>
-                    </li>
-                    <li class="bold">
-                        <div class="collapsible-header"><i class="material-icons">image_aspect_ratio</i>Mantemientos</div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[1]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[2]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[6]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[7])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[7]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[8]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[12])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[12]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[13])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[13]</span>
-                                </a>
-                            </span>
-                        </div>
-                    </li>
-                    <li class="bold">
-                        <div class="collapsible-header"><i class="material-icons">image_aspect_ratio</i>Operaciones</div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[3]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[5]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[4]</span>
-                                </a>
-                            </span>
-                        </div>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons" style="">library_books</i><span>Mantemientos</span></div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[0]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[1]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Operaciones</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[2]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[4]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[3]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
 
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[9]</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[10])">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">@menu[10]</span>
-                                </a>
-                            </span>
-                        </div>
-                    </li>
-                    <li class="bold">
-                        <div class="collapsible-header"><i class="material-icons">image_aspect_ratio</i>Reportes</div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesAlumno","Reportes")">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Alumno</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Personal</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesIngreso","Reportes")">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Ingresos</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesEgreso","Reportes")">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Egresos</span>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="collapsible-body">
-                            <span style="padding-left:20px">
-                                <a class="waves-effect waves-cyan " href="@Url.Action("ReportesDeudas","Reportes")">
-                                    <i class="material-icons">image_aspect_ratio</i>
-                                    <span class="menu-title" data-i18n="">Deudas</span>
-                                </a>
-                            </span>
-                        </div>
-                    </li>
-                    break;
-                }
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Reportes</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesAlumno","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Alumno</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Personal</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesIngreso","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Ingresos Caja</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("ReportesEgreso","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Egresos Caja</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalMatriculas","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Matriculas</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalDeudas","Reportes")">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">Cuentas Por Cobrar</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+            }
+            @if (rol_codigo == "CO")
+            {
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[0]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[1]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[3]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[2]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[4]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+            }
 
+            @if (rol_codigo == "DI")
+            {
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Administración</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[6]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[5]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[7])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[7]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[0]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
+                <li class="bold">
+                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[1]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[2]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[4]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[3]</span>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapsible-body">
+                        <span style="padding-left:20px">
+                            <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
+                                <i class="material-icons">library_books</i>
+                                <span class="menu-title" data-i18n="">@menu[8]</span>
+                            </a>
+                        </span>
+                    </div>
+                </li>
             }
 
         </ul>

@@ -31,12 +31,9 @@ namespace DA
         public virtual DbSet<Boveda> Boveda { get; set; }
         public virtual DbSet<CajaDiario> CajaDiario { get; set; }
         public virtual DbSet<CondicionEstudio> CondicionEstudio { get; set; }
-        public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Especialidad> Especialidad { get; set; }
         public virtual DbSet<Estado> Estado { get; set; }
         public virtual DbSet<Horario> Horario { get; set; }
-        public virtual DbSet<Menu> Menu { get; set; }
-        public virtual DbSet<Menu_Rol> Menu_Rol { get; set; }
         public virtual DbSet<Notas> Notas { get; set; }
         public virtual DbSet<Operacion> Operacion { get; set; }
         public virtual DbSet<Periodo> Periodo { get; set; }
@@ -46,14 +43,18 @@ namespace DA
         public virtual DbSet<TipoPersonal> TipoPersonal { get; set; }
         public virtual DbSet<ValorTabla> ValorTabla { get; set; }
         public virtual DbSet<ConceptoPago> ConceptoPago { get; set; }
-        public virtual DbSet<Matricula> Matricula { get; set; }
-        public virtual DbSet<MatriculaDetalle> MatriculaDetalle { get; set; }
         public virtual DbSet<BovedaMovimiento> BovedaMovimiento { get; set; }
-        public virtual DbSet<CajaMovimiento> CajaMovimiento { get; set; }
         public virtual DbSet<CajaMovimientoDetalle> CajaMovimientoDetalle { get; set; }
         public virtual DbSet<Caja> Caja { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
+        public virtual DbSet<Menu> Menu { get; set; }
+        public virtual DbSet<PermisoDenegadoRol> PermisoDenegadoRol { get; set; }
         public virtual DbSet<CuentasPorCobrar> CuentasPorCobrar { get; set; }
         public virtual DbSet<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
+        public virtual DbSet<MatriculaDetalle> MatriculaDetalle { get; set; }
+        public virtual DbSet<TipoComprobante> TipoComprobante { get; set; }
+        public virtual DbSet<CajaMovimiento> CajaMovimiento { get; set; }
+        public virtual DbSet<Matricula> Matricula { get; set; }
+        public virtual DbSet<Curso> Curso { get; set; }
     }
 }

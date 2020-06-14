@@ -22,7 +22,7 @@ namespace DA
         public decimal Descuento { get; set; }
         public decimal Importe { get; set; }
     
-        public virtual CajaMovimiento CajaMovimiento { get; set; }
         public virtual ConceptoPago ConceptoPago { get; set; }
+        public virtual CajaMovimiento CajaMovimiento { get; set; }
     }
 }

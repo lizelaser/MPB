@@ -24,16 +24,16 @@ namespace DA
         public Nullable<int> MatriculaId { get; set; }
         public int EstadoId { get; set; }
         public int AlumnoId { get; set; }
-        public string Numero { get; set; }
-        public string Serie { get; set; }
         public System.DateTime Fecha { get; set; }
         public decimal Total { get; set; }
         public string Descripcion { get; set; }
+        public Nullable<int> CajaMovimientoId { get; set; }
+        public Nullable<System.DateTime> FechaVencimiento { get; set; }
     
         public virtual Alumno Alumno { get; set; }
         public virtual Estado Estado { get; set; }
-        public virtual Matricula Matricula { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
+        public virtual Matricula Matricula { get; set; }
     }
 }

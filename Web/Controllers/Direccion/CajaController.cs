@@ -10,6 +10,7 @@ using Web.Models;
 namespace Web.Controllers
 {
     [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_caja_todo)]
     public class CajaController : Controller
     {
         private DAEntities db = new DAEntities();

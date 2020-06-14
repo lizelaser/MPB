@@ -81,16 +81,23 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositorio.cs" />
     <Compile Include="RolBL.cs" />
+    <Compile Include="RolesMenu.cs" />
     <Compile Include="UsuarioBL.cs" />
     <Compile Include="ValorTablaBL.cs" />
     <Compile Include="Vm\AlumnoVm.cs" />
+    <Compile Include="Vm\BovedaMovimientoVm.cs" />
     <Compile Include="Vm\CajaDiarioVm.cs" />
+    <Compile Include="Vm\CajaMovimientoDetalleVm.cs" />
     <Compile Include="Vm\CuentasPorCobrarVm.cs" />
     <Compile Include="Vm\CursoVm.cs" />
+    <Compile Include="Vm\EspecialidadCursoVm.cs" />
     <Compile Include="Vm\HorarioVm.cs" />
+    <Compile Include="Vm\MatriculaDetalleVm.cs" />
     <Compile Include="Vm\MatriculaVm.cs" />
     <Compile Include="Vm\CajaMovimientoVm.cs" />
+    <Compile Include="Vm\MenuVm.cs" />
     <Compile Include="Vm\PersonalVm.cs" />
+    <Compile Include="Vm\RolVm.cs" />
     <Compile Include="Vm\UsuarioViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

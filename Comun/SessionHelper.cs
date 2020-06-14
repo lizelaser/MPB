@@ -46,5 +46,7 @@ namespace Comun
             cookie.Value = FormsAuthentication.Encrypt(newTicket);
             HttpContext.Current.Response.Cookies.Add(cookie);
         }
+
+
     }
 }

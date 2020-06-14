@@ -19,6 +19,7 @@
     <link rel="stylesheet" type="text/css" href="~/app-assets/css/themes/vertical-modern-menu-template/style.css">
     <link rel="stylesheet" type="text/css" href="~/app-assets/css/pages/login.css">
     <link rel="stylesheet" type="text/css" href="~/app-assets/css/custom/custom.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcSa_gUAAAAAOGCDZaXyVnULY-__BLNfS5woymD"></script>
 </head>
 <body class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 1-column login-bg  blank-page blank-page" data-open="click" data-menu="vertical-modern-menu" data-col="1-column" onload="window.history.forward ();">
     <div class="row">
@@ -26,7 +27,8 @@
             <div class="container">
                 <div id="login-page" class="row">
                     <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">
-                        <form id="form1" class="login-form" method="post" action='@Url.Action("Autenticar","Login")'>
+                        <form id="form1" class="login-form" method="post" action='@Url.Action("Autenticar", "Login")'>
+                            @Html.ValidationMessage("Captcha")
                             <div class="row">
                                 <div class="input-field col s12">
                                     <h5 class="ml-4">@empresa</h5>
@@ -104,6 +106,12 @@
                 }
             });            
         }
+
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LcSa_gUAAAAAOGCDZaXyVnULY-__BLNfS5woymD', { action: 'Login' }).then(function (token) {
+            });
+        });
+
     </script>
 </body>
 </html>

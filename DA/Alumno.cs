@@ -19,9 +19,9 @@ namespace DA
         {
             this.Alumno_Especialidad = new HashSet<Alumno_Especialidad>();
             this.Notas = new HashSet<Notas>();
-            this.Matricula = new HashSet<Matricula>();
-            this.CajaMovimiento = new HashSet<CajaMovimiento>();
             this.CuentasPorCobrar = new HashSet<CuentasPorCobrar>();
+            this.CajaMovimiento = new HashSet<CajaMovimiento>();
+            this.Matricula = new HashSet<Matricula>();
         }
     
         public int Id { get; set; }
@@ -36,16 +36,17 @@ namespace DA
         public bool Estado { get; set; }
         public Nullable<System.DateTime> FechaReg { get; set; }
         public Nullable<System.DateTime> FechaMod { get; set; }
+        public string Codigo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Alumno_Especialidad> Alumno_Especialidad { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Notas> Notas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Matricula> Matricula { get; set; }
+        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimiento> CajaMovimiento { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
+        public virtual ICollection<Matricula> Matricula { get; set; }
     }
 }

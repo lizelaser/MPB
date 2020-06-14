@@ -18,6 +18,7 @@ namespace DA
         public Caja()
         {
             this.CajaDiario = new HashSet<CajaDiario>();
+            this.TipoComprobante = new HashSet<TipoComprobante>();
         }
     
         public int Id { get; set; }
@@ -26,5 +27,7 @@ namespace DA
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaDiario> CajaDiario { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TipoComprobante> TipoComprobante { get; set; }
     }
 }

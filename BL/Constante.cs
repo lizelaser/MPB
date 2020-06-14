@@ -16,22 +16,14 @@ namespace BL
             public const string Coordinador = "CO";
             public const string Direccion = "DI";
         }
-        public static class ValorTabla
-        {
-            // sincronizado con la base de datos
-            public const int TipoPersonal = 1;
-            public const int Aulas = 2;
-            public const int MaterialAcademico = 3;
-            public const int TipoEstudio = 4;
-            public const int EstadoMatriculaPago = 5;
-        }
+
         public static class Menu {
             public static List<string> Listar(string rol)
             {
-                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno", "Matricula", "Pagos", "CuentasPorCobrar" ,"Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
-                var mnuSecretaria = new List<string> {"Usuario","Personal","Alumno","Matricula","Pagos", "CuentasPorCobrar", "Curso","Especialidad","Caja", "CajaDiario","Boveda","Periodo", "Aula", "Horario" };
-                var mnuCoordinador = new List<string> {"Usuario", "Personal", "Alumno", "Matricula","Pagos", "CuentasPorCobrar", "Curso", "Especialidad", "Caja", "CajaDiario", "Boveda", "Periodo", "Aula", "Horario" };
-                var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno", "Matricula", "Pagos", "CuentasPorCobrar", "Curso", "Especialidad", "Caja", "CajaDiario", "Boveda", "Periodo", "Aula", "Horario" };
+                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno","Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
+                var mnuSecretaria = new List<string> {"Personal","Alumno","Matricula","Pagos", "CuentasPorCobrar"};
+                var mnuCoordinador = new List<string> {"Personal", "Alumno","Curso", "Especialidad","Horario" };
+                var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno","Curso", "Especialidad", "Caja", "Periodo", "Aula", "Horario" };
                 switch (rol)
                 {
                     case Rol.Administrador: return mnuAdministrador;

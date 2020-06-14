@@ -18,8 +18,8 @@ namespace DA
         public Curso()
         {
             this.Horario = new HashSet<Horario>();
-            this.Notas = new HashSet<Notas>();
             this.MatriculaDetalle = new HashSet<MatriculaDetalle>();
+            this.Notas = new HashSet<Notas>();
         }
     
         public int Id { get; set; }
@@ -32,13 +32,18 @@ namespace DA
         public int Cuotas { get; set; }
         public string Duracion { get; set; }
         public Nullable<int> TotalHoras { get; set; }
+        public Nullable<int> HorasTeoria { get; set; }
+        public Nullable<int> HorasPractica { get; set; }
+        public Nullable<int> Ciclo { get; set; }
+        public string ReqCurso { get; set; }
+        public Nullable<decimal> ReqCredito { get; set; }
     
         public virtual Especialidad Especialidad { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Horario> Horario { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Notas> Notas { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatriculaDetalle> MatriculaDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Notas> Notas { get; set; }
     }
 }

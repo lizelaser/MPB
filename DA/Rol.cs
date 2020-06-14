@@ -17,8 +17,8 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Rol()
         {
-            this.Menu_Rol = new HashSet<Menu_Rol>();
             this.Usuario = new HashSet<Usuario>();
+            this.PermisoDenegadoRol = new HashSet<PermisoDenegadoRol>();
         }
     
         public int Id { get; set; }
@@ -26,8 +26,8 @@ namespace DA
         public string Codigo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Menu_Rol> Menu_Rol { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuario> Usuario { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PermisoDenegadoRol> PermisoDenegadoRol { get; set; }
     }
 }

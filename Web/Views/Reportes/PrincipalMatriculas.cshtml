@@ -1,0 +1,228 @@
+﻿
+@{
+    ViewBag.Title = "PrincipalMatriculas";
+}
+
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .tabs {
+        border: none;
+        background-color: transparent;
+    }
+
+    .tabs li {
+        border: 1px solid #ccc;
+        border-bottom: none;
+        background-color: #E0EAF4;
+        color: #000000;
+    }
+</style>
+
+<div class="row" style="margin: 20px;" id="principal">
+    <div class="row" id="contenedor">
+        <div class="col s12">
+            <ul class="tabs align-center s12 m12">
+                <li class="tab col s12 m4 active" id="reporte"><a id="linkReporte" href="#test1"><strong>REPORTES MATRICULA</strong></a></li>
+                <li class="tab col s12 m4 active" id="consulta"><a id="linkConsulta" href="#test2"><strong>CONSULTAR MATRÍCULAS</strong></a></li>
+            </ul>
+            <div class="col s12" style="border: 1px solid #ccc;">
+                <div id="test1">
+                    <div class="card card-tabs">
+                        <div class="card-content" style="">
+                            <div class="row" id="divFiltro">
+                                <p style="font-weight:bold; text-decoration:underline; margin-left:20px;">LISTADO DE MATRICULADOS</p>
+                                <br />
+                                <div class="col s12 m5">
+                                    <select class="browser-default">
+                                        <option selected disabled>SELECCIONE OPCION</option>
+                                        <option value="1">CURSO</option>
+                                        <option value="2">ESPECIALIDAD</option>
+                                    </select>
+                                </div>
+                                <div class="col s12 m5">
+                                    <a href="@Url.Action("ReportesMatricula","Reportes")" class="btn btn-small red">
+                                        <i><span class="material-icons">picture_as_pdf</span>Generar</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="test2">
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card-content">
+                                <ul class="collapsible">
+                                    <li class="active">
+                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>MATRICULAS</div>
+                                        <div class="collapsible-body">
+                                            <div class="row">
+                                                <div class="col s12 m12">
+                                                    <table class="bordered" id="tblMatricula">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Fecha</th>
+                                                                <th>Alumno</th>
+                                                                <th>Monto</th>
+                                                                <th>Observacion</th>
+                                                                <th>Accion</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbd_matriculas">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s12 m12 l12">
+                                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                                        <div class="col-md-12 center text-center">
+                                                            <div id="Encontrado">
+                                                                <span>
+                                                                    <label id="TotalRegistros"></label> registros encontrados
+                                                                </span>
+                                                                <span>&nbsp;|&nbsp;</span>
+                                                                <span>
+                                                                    Página <label id="PaginaActual"></label> de
+                                                                    <label id="TotalPaginas"></label>
+                                                                </span>
+                                                            </div>
+                                                            <div class="row" id="NoEncontrado">
+                                                                <span>&nbsp;|&nbsp;</span>
+                                                                <span>No hay resultados de la búsqueda</span>
+                                                                <span>&nbsp;|&nbsp;</span>
+                                                            </div>
+                                                            <div>
+                                                                <button class="btn btn-small blue" id="inicio_matriculas"><<</button>
+                                                                <span></span>
+                                                                <button class="btn btn-small blue" id="anterior_matriculas">Anterior</button>
+
+                                                                <button class="btn btn-small blue" id="siguiente_matriculas">Siguiente</button>
+                                                                <span></span>
+                                                                <button class="btn btn-small blue" id="ultimo_matriculas">>></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
+    </script>
+}
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/paginador/paginador.js"></script>
+
+<script>
+    var currentPage = 1;
+    var pageCount = 0;
+
+    $(document).ready(function () {
+        //START PAGINATION 'MATRICULAS'
+        paginadorFunc(currentPage);
+
+        $("#inicio_matriculas").click(function () {
+            paginadorFunc(1);
+        });
+        $("#siguiente_matriculas").click(function () {
+            paginadorFunc(currentPage + 1);
+        });
+        $("#ultimo_matriculas").click(function () {
+            paginadorFunc(pageCount);
+        });
+        $("#anterior_matriculas").click(function () {
+            paginadorFunc(currentPage - 1)
+        });
+    });
+</script>
+<script>
+    //PAGINATION MATRICULA TABLE
+    var paginadorFunc = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("Tabla","Reportes")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                console.log(rm.result.Listado);
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+
+                if (Listado.length > 0) {
+                    $("#NoEncontrado").hide();
+                    $("#TotalRegistros").html(TotalRegistros);
+                    $("#PaginaActual").html(PaginaActual);
+                    $("#TotalPaginas").html(TotalPaginas);
+                    $("#tbd_matriculas").empty();
+                    fillPaginator("#tbd_matriculas", Listado)
+                }
+                else {
+                    $("#Encontrado").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'matriculas')
+            }
+        });
+    }
+
+
+    function fillPaginator(id, list) {
+        list.forEach(function (item, index) {
+            var date = new Date(parseInt((item.Fecha).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var standardDate = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            const imprimir = `<td style="padding:0">
+                                <a href="FichaMatricula/${item.Id}"><i class="material-icons center">assignment</i></a>
+                            </td>`
+
+
+            fillTable(id,
+                { keyword: 'matricula', id: item.Id },
+                { attributes: ['hidden'], value: item.Id },
+                standardDate,
+                item.AlumnoNombres,
+                item.Monto,
+                item.Observacion,
+                { isExtra:true, value:imprimir}
+            )
+        });
+    }
+
+
+</script>
+

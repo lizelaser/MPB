@@ -10,6 +10,8 @@ using Web.Models;
 
 namespace Web.Controllers
 {
+    [Autenticado]
+    [PermisoAttribute(Permiso = RolesMenu.menu_cajadiario_todo)]
     public class CajaDiarioController : Controller
     {
         private DAEntities db = new DAEntities();
@@ -39,7 +41,7 @@ namespace Web.Controllers
                 var UsuariosDisponibles = (from p in db.Personal join
                                            u in db.Usuario
                                            on p.Id equals u.PersonalId
-                                           where u.IndUso.Equals(false)
+                                           where u.IndUso.Equals(false) && u.Rol.Denominacion.Equals("Secretaria")
                                            select new{ Id = u.Id, Usuario = p.Paterno + " " + p.Materno + ", " + p.Nombres }).ToList();
 
                 SelectList usuarios = new SelectList(UsuariosDisponibles, "Id", "Usuario");
@@ -197,102 +199,127 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AsignarCaja(int CajaId, string CajaDenominacion, int UsuarioId, decimal SaldoInicial)
+        public ActionResult AsignarCaja(int ? CajaId, string CajaDenominacion, int ? UsuarioId, string UsuarioNombres, decimal ? SaldoInicial)
         {
             var rm = new Comun.ResponseModel();
-            decimal entradas = 0;
-            decimal salidas = 0;
-            decimal saldoFinal = SaldoInicial + entradas - salidas;
 
             try
             {
-                if (CajaId != 0 && UsuarioId != 0) // Condición para verificar haya seleccionado al usuario y su caja correspondiente
+
+                // -- Datos de la bóveda actual -- //
+                Boveda boveda = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
+                int BovedaId = boveda.Id;
+                decimal BovedaSaldoInicial = boveda.SaldoInicial;
+                decimal BovedaEntradas = (boveda.Entradas).Value;
+                decimal SalidasBoveda = (boveda.Salidas).Value;
+                SalidasBoveda = SalidasBoveda + Convert.ToDecimal(SaldoInicial);
+                decimal SaldoFinalBoveda = BovedaSaldoInicial + BovedaEntradas - SalidasBoveda;
+
+                if (CajaId == null || CajaDenominacion == "SELECCIONE CAJA")
                 {
-                    // -- Datos de la bóveda actual -- //
-                    Boveda boveda = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
-                    int BovedaId = boveda.Id;
-                    decimal BovedaSaldoInicial = boveda.SaldoInicial;
-                    decimal BovedaEntradas = (boveda.Entradas).Value;
-                    decimal SalidasBoveda = (boveda.Salidas).Value;
-                    SalidasBoveda = SalidasBoveda + Convert.ToDecimal(SaldoInicial);
-                    decimal SaldoFinalBoveda = BovedaSaldoInicial + BovedaEntradas - SalidasBoveda;
-
-                    //Asignamos Caja
-                    CajaDiario cajadiario = new CajaDiario();
-                    cajadiario.CajaId = CajaId;
-                    cajadiario.UsuarioId = UsuarioId;
-                    cajadiario.SaldoInicial = SaldoInicial;
-                    cajadiario.Entradas = entradas;
-                    cajadiario.Salidas = salidas;
-                    cajadiario.SaldoFinal = saldoFinal;
-                    cajadiario.FechaInicio = DateTime.Now;
-                    cajadiario.IndCierre = false;
-                    cajadiario.IndBoveda = false;
-
-                    // Guardamos la caja diario finalmente
-                    CajaDiarioBL.Crear(cajadiario);
-
-                    //Recuperamos el Id de la caja diario
-                    int CajaDiarioId = cajadiario.Id;
-
-                    //Asignamos la operación correspondiente con asignaciones de caja
-                    int OperacionId = (from o in db.Operacion where o.Denominacion == "TRANSFERENCIA EGRESO BOVEDA" select o.Id).SingleOrDefault();
-
-                    //Guardamos la asignación de caja en bóveda movimiento siempre y cuando saldo inicial sea diferente de 0.00 soles
-                    if (SaldoInicial!=0)
-                    {
-                        BovedaMovimiento movimiento = new BovedaMovimiento();
-                        movimiento.BovedaId = BovedaId;
-                        movimiento.CajaDiarioId = CajaDiarioId;
-                        movimiento.OperacionId = OperacionId;
-                        movimiento.Fecha = DateTime.Now;
-                        movimiento.Glosa = "INGRESO A " + CajaDenominacion;
-                        movimiento.Importe = Convert.ToDecimal(SaldoInicial);
-                        BovedaMovimientoBL.Crear(movimiento);
-                    }
-
-                    //Actualizamos los IndUso de la caja y usuario correspondientes
-                    Caja caja = new Caja();
-                    caja.Id = CajaId;
-                    caja.IndUso = true;
-                    CajaBL.ActualizarParcial(caja,x=>x.IndUso);
-
-                    Usuario usuario = new Usuario();
-                    usuario.Id = UsuarioId;
-                    usuario.IndUso = true;
-                    UsuarioBL.ActualizarParcial(usuario,x=>x.IndUso);
-
-                    //Actualizamos el Saldo Final de la Bóveda actual
-                    Boveda actual = new Boveda();
-                    actual.Id = BovedaId;
-                    actual.Salidas = SalidasBoveda;
-                    actual.SaldoFinal = SaldoFinalBoveda;
-                    BovedaBL.ActualizarParcial(actual, x => x.Salidas, x => x.SaldoFinal);
-
-                    //Recover data that send from asignación de caja to view
-                    Usuario Usuario = UsuarioBL.Obtener(UsuarioId);
-                    var MontoTotal = (from b in db.Boveda where b.IndCierre.Equals(false) select b.SaldoFinal).SingleOrDefault();
-
-                    var datos = new string[9];
-                    datos[0] = Convert.ToString(cajadiario.CajaId);
-                    datos[1] = Convert.ToString(cajadiario.UsuarioId);
-                    datos[2] = Convert.ToString(cajadiario.Id);
-                    datos[3] = CajaDenominacion;
-                    datos[4] = Usuario.Nombre;
-                    datos[5] = Convert.ToString(cajadiario.FechaInicio);
-                    datos[6] = Convert.ToString(cajadiario.SaldoInicial);
-                    datos[7] = Convert.ToString(cajadiario.SaldoFinal);
-                    datos[8] = Convert.ToString(MontoTotal.Value);
-
-                    rm.SetResponse(true);
-                    rm.result = datos;
-                    
+                    rm.message = "SELECCIONE UNA CAJA";
+                    rm.SetResponse(false, rm.message);
                 }
-
+                else if (UsuarioId == null || UsuarioNombres == "SELECCIONE USUARIO")
+                {
+                    rm.message = "SELECCIONE UN USUARIO";
+                    rm.SetResponse(false, rm.message);
+                }
+                else if (SaldoInicial == null || SaldoInicial < 0)
+                {
+                    rm.message = "EL SALDO INICIAL NO DEBE SER NULO NI NEGATIVO";
+                    rm.SetResponse(false, rm.message);
+                }
                 else
                 {
-                    rm.SetResponse(false);
+                    var caja_seleccionada = (from c in db.Caja where c.Id == CajaId.Value select c).SingleOrDefault();
+                    var usuario_seleccionado = (from u in db.Usuario where u.Id == UsuarioId.Value select u).SingleOrDefault();
+
+
+                    if (SaldoInicial > SaldoFinalBoveda)
+                    {
+                        rm.message = "EL SALDO INICIAL DEBE SER MENOR AL TOTAL EN BÓVEDA";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else{
+
+                        if (usuario_seleccionado.IndUso == true || caja_seleccionada.IndUso == true)
+                        {
+                            rm.message = "LA CAJA O USUARIO YA ESTÁN ASIGNADOS";
+                            rm.SetResponse(false, rm.message);
+                        }
+                        else
+                        {
+                            //Asignamos Caja
+                            CajaDiario cajadiario = new CajaDiario();
+                            cajadiario.CajaId = CajaId.Value;
+                            cajadiario.UsuarioId = UsuarioId.Value;
+                            cajadiario.SaldoInicial = SaldoInicial.Value;
+                            cajadiario.Entradas = 0;
+                            cajadiario.Salidas = 0;
+                            cajadiario.SaldoFinal = SaldoInicial.Value;
+                            cajadiario.FechaInicio = DateTime.Now;
+                            cajadiario.IndCierre = false;
+                            cajadiario.IndBoveda = false;
+
+                            // Guardamos la caja diario finalmente
+                            CajaDiarioBL.Crear(cajadiario);
+
+                            //Recuperamos el Id de la caja diario
+                            int CajaDiarioId = cajadiario.Id;
+
+                            //Asignamos la operación correspondiente con asignaciones de caja
+                            int OperacionId = (from o in db.Operacion where o.Denominacion == "TRANSFERENCIA EGRESO BOVEDA" select o.Id).SingleOrDefault();
+
+                            //Guardamos la asignación de caja en bóveda movimiento siempre y cuando saldo inicial sea diferente de 0.00 soles, sino sólo registramos la caja diario
+                            if (SaldoInicial != 0)
+                            {
+                                BovedaMovimiento movimiento = new BovedaMovimiento();
+                                movimiento.BovedaId = BovedaId;
+                                movimiento.CajaDiarioId = CajaDiarioId;
+                                movimiento.OperacionId = OperacionId;
+                                movimiento.Fecha = DateTime.Now;
+                                movimiento.Glosa = "APERTURA DE " + CajaDenominacion;
+                                movimiento.Importe = Convert.ToDecimal(SaldoInicial);
+                                BovedaMovimientoBL.Crear(movimiento);
+                            }
+
+                            //Actualizamos los IndUso de la caja y usuario correspondientes
+                            Caja caja = new Caja();
+                            caja.Id = CajaId.Value;
+                            caja.IndUso = true;
+                            CajaBL.ActualizarParcial(caja, x => x.IndUso);
+
+                            Usuario usuario = new Usuario();
+                            usuario.Id = UsuarioId.Value;
+                            usuario.IndUso = true;
+                            UsuarioBL.ActualizarParcial(usuario, x => x.IndUso);
+
+                            //Actualizamos las Salidas y el Saldo Final de la Bóveda actual
+                            Boveda actual = new Boveda();
+                            actual.Id = BovedaId;
+                            actual.Salidas = SalidasBoveda;
+                            actual.SaldoFinal = SaldoFinalBoveda;
+                            BovedaBL.ActualizarParcial(actual, x => x.Salidas, x => x.SaldoFinal);
+
+                            //Recover data that send from asignación de caja to view
+                            Usuario Usuario = UsuarioBL.Obtener(UsuarioId.Value);
+                            var MontoTotal = (from b in db.Boveda where b.IndCierre.Equals(false) select b.SaldoFinal).SingleOrDefault();
+
+                            var datos = new string[9];
+                            datos[0] = Convert.ToString(cajadiario.CajaId);
+                            datos[1] = Convert.ToString(cajadiario.UsuarioId);
+                            datos[2] = Convert.ToString(MontoTotal.Value);
+
+                            rm.message = "ASIGNACIÓN REALIZADA CON ÉXITO";
+                            rm.SetResponse(true, rm.message);
+                            rm.result = datos;
+
+                        }
+
+                    }
                 }
+
             }
             catch (Exception ex)
             {
@@ -326,7 +353,7 @@ namespace Web.Controllers
                 EntradasBoveda = EntradasBoveda + Convert.ToDecimal(SaldoFinal);
                 decimal SaldoFinalBoveda = BovedaSaldoInicial + EntradasBoveda - BovedaSalidas;
 
-                // -- Operacion Ingreso Ajuste Boveda para el cierre de cajas --//
+                // -- Operacion Transferencia Ingreso Boveda para el cierre de cajas --//
                 Operacion operacionIngresoAjusteBoveda = (from o in db.Operacion where o.Denominacion == "TRANSFERENCIA INGRESO BOVEDA" select o).SingleOrDefault();
 
                 //Actualizamos el Saldo Final de la Bóveda actual
@@ -410,6 +437,198 @@ namespace Web.Controllers
                 rm.SetResponse(false,ex.Message);
             }
             return Json(rm,JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ObtenerMovimiento(int nro)
+        {
+            var movimiento = CajaMovimientoBL.Buscar(nro);
+
+
+            List<CajaMovimientoVm> datos = new List<CajaMovimientoVm>();
+
+            foreach (var item in movimiento)
+            {
+
+                if (item.PersonalId!=null && item.AlumnoId==null)
+                {
+                    datos = movimiento.Select(S => new CajaMovimientoVm
+                    {
+                        Id = S.Id,
+                        CajaDiarioId = S.CajaDiarioId,
+                        AlumnoId = S.AlumnoId,
+                        PersonalId = S.PersonalId,
+                        PersonaNombres = S.Personal.Paterno + " " + S.Personal.Materno + " " + S.Personal.Nombres,
+                        OperacionId = S.OperacionId,
+                        OperacionDenominacion = S.Operacion.Denominacion,
+                        EstadoId = S.EstadoId,
+                        EstadoDenominacion = S.Estado.Denominacion,
+                        Fecha = S.Fecha,
+                        Total = S.Total,
+                        Descripcion = S.Descripcion,
+                        IndEntrada = S.IndEntrada
+
+                    }).ToList();
+                }
+                else
+                {
+                    datos = movimiento.Select(S => new CajaMovimientoVm
+                    {
+                        Id = S.Id,
+                        CajaDiarioId = S.CajaDiarioId,
+                        AlumnoId = S.AlumnoId,
+                        PersonalId = S.PersonalId,
+                        PersonaNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
+                        OperacionId = S.OperacionId,
+                        OperacionDenominacion = S.Operacion.Denominacion,
+                        EstadoId = S.EstadoId,
+                        EstadoDenominacion = S.Estado.Denominacion,
+                        Fecha = S.Fecha,
+                        Total = S.Total,
+                        Descripcion = S.Descripcion,
+                        IndEntrada = S.IndEntrada
+
+                    }).ToList();
+                }
+
+            }
+
+            return Json(datos);
+        }
+
+        [HttpPatch]
+        public ActionResult AnularMovimiento(int ? Id)
+        {
+            var rm = new Comun.ResponseModel();
+
+            try
+            {
+                //State canceled
+                int estado_anulado = (from e in db.Estado where e.Denominacion.Equals("ANULADO") select e.Id).SingleOrDefault();
+                
+                if (Id == null)
+                {
+                    rm.message = "EL NRO DE MOVIMIENTO NO DEBE SER NULO";
+                    rm.SetResponse(false, rm.message);
+                }
+                else
+                {
+                    //Movement Box to cancel
+                    var movimiento_caja = (from mc in db.CajaMovimiento where mc.Id == Id.Value select mc).SingleOrDefault();
+                    
+                    if (movimiento_caja.EstadoId == estado_anulado)
+                    {
+                        rm.message = "ESTE MOVIMIENTO YA FUE ANULADO";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else
+                    {
+                        int cajadiario_id = movimiento_caja.CajaDiarioId;
+
+                        //Daily cash associated with movement to cancel
+                        var caja_diario = (from cd in db.CajaDiario where cd.Id == cajadiario_id select cd).SingleOrDefault();
+                        var saldo_inicial = caja_diario.SaldoInicial;
+                        var entradas = caja_diario.Entradas;
+                        var salidas = caja_diario.Salidas;
+                        var saldo_final = caja_diario.SaldoFinal;
+
+                        if (caja_diario.IndCierre == true)
+                        {
+                            rm.message = "LA CAJA ASOCIADA AL MOVIMIENTO ESTÁ CERRADA";
+                            rm.SetResponse(false, rm.message);
+                        }
+                        else
+                        {
+                            if (movimiento_caja.AlumnoId != null) // Movement associated to student
+                            {
+
+                                //Recover 'pendiente' state for associated account receivable
+                                var estado_pendiente = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e).SingleOrDefault();
+
+                                //Recover 'cuenta por cobrar' associated to movement
+                                var cuenta_por_cobrar = (from cc in db.CuentasPorCobrar where cc.CajaMovimientoId == Id.Value select cc).SingleOrDefault();
+
+                                //Update account receivable associated to movement
+                                CuentasPorCobrar cobranza = new CuentasPorCobrar();
+                                cobranza.Id = cuenta_por_cobrar.Id;
+                                cobranza.EstadoId = estado_pendiente.Id;
+                                cobranza.CajaMovimientoId = null;
+                                CuentasPorCobrarBL.ActualizarParcial(cobranza, x => x.EstadoId, x => x.CajaMovimientoId);
+
+                                //Update movement of box
+                                CajaMovimiento movimiento = new CajaMovimiento();
+                                movimiento.Id = Id.Value;
+                                movimiento.EstadoId = estado_anulado;
+                                CajaMovimientoBL.ActualizarParcial(movimiento, x => x.EstadoId);
+
+                                //Update daily cash associated to movement to cancel according if is an output or entrie
+                                CajaDiario diario = new CajaDiario();
+
+                                //Recover fields of movement that which are necessary for update daily cash
+                                decimal importe = (movimiento_caja.Total).Value;
+
+                                if (movimiento_caja.IndEntrada == true)
+                                {
+                                    diario.Id = cajadiario_id;
+                                    diario.Entradas = entradas - Convert.ToDecimal(importe);
+                                    diario.SaldoFinal = (saldo_final - Convert.ToDecimal(importe));
+                                    CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+
+                                }
+                                else
+                                {
+                                    diario.Id = cajadiario_id;
+                                    diario.Salidas = salidas - Convert.ToDecimal(importe);
+                                    diario.SaldoFinal = (saldo_final + Convert.ToDecimal(importe));
+                                    CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
+                                }
+
+                            }
+                            else // Movement associated to personal
+                            {
+                                //Update movement of box
+                                CajaMovimiento movimiento = new CajaMovimiento();
+                                movimiento.Id = Id.Value;
+                                movimiento.EstadoId = estado_anulado;
+                                CajaMovimientoBL.ActualizarParcial(movimiento, x => x.EstadoId);
+
+                                //Update daily cash associated to movement to cancel according if is an output or entrie
+                                CajaDiario diario = new CajaDiario();
+
+                                //Recover fields of movement that which are necessary for cancel operation
+                                decimal importe = (movimiento_caja.Total).Value;
+
+                                if (movimiento_caja.IndEntrada == true)
+                                {
+                                    diario.Id = cajadiario_id;
+                                    diario.Entradas = entradas - Convert.ToDecimal(importe);
+                                    diario.SaldoFinal = (saldo_final - Convert.ToDecimal(importe));
+                                    CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+
+                                }
+                                else
+                                {
+                                    diario.Id = cajadiario_id;
+                                    diario.Salidas = salidas - Convert.ToDecimal(importe);
+                                    diario.SaldoFinal = (saldo_final + Convert.ToDecimal(importe));
+                                    CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
+                                }
+
+                            }
+
+                            rm.message = "OPERACIÓN REALIZADA CON ÉXITO";
+                            rm.SetResponse(true,rm.message);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false, ex.Message);
+            }
+
+            return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
     }

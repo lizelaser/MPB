@@ -1,9 +1,12 @@
 ﻿@{
-    Web.Models.Paginador<DA.Boveda> ListadoBovedas = ViewBag.ListadoBovedas;
-    Web.Models.Paginador<DA.BovedaMovimiento> ListadoBovedasMovimiento = ViewBag.ListadoBovedasMovimiento;
-    Web.Models.Paginador<DA.CajaDiario> ListadoCajasDiario = ViewBag.ListadoCajasDiario;
+    List<DA.Boveda> ListadoBovedas = ViewBag.ListadoBovedas;
+    List<DA.BovedaMovimiento> ListadoBovedasMovimiento = ViewBag.ListadoBovedasMovimiento;
+    List<DA.CajaDiario> ListadoCajasDiario = ViewBag.ListadoCajasDiario;
     List<DA.Boveda> bovedaActual = ViewBag.BovedaActual;
-    DA.Boveda BovedaAbierta = ViewBag.Cards;
+    DA.Boveda actual = ViewBag.Cards;
+
+    string egreso_ajuste_boveda = ViewBag.OperacionDenominacion;
+    int egreso_ajuste_boveda_id = ViewBag.OperacionId;
 }
 
 <style>
@@ -12,22 +15,12 @@
         font-weight: bold;
     }
 
-    .modal #modal1 {
+    #modal1 {
         position: absolute;
         width: 400px;
     }
 
-    .modal #modal2 {
-        position: absolute;
-        width: 800px;
-    }
-
-    .modal #modal3 {
-        position: absolute;
-        width: 800px;
-    }
-
-    .modal #modal4 {
+    #modal2, #modal3, #modal4 {
         position: absolute;
         width: 800px;
     }
@@ -35,9 +28,24 @@
     .modal-footer {
         background-color: #E5EAEE;
     }
-    .cardBoveda{
-        font-weight:bold;
-        color:#323E6A;
+
+    .cardBoveda {
+        font-weight: bold;
+        color: #323E6A;
+    }
+
+    .contenedor_mensaje{
+        background-color:#F94040;
+        color:white; 
+        height:50px;
+    }
+    .cabecera {
+        margin-top:-10px;
+    }
+
+    .modal-content {
+        background-color: #A7BBCE;
+        height: 60px;
     }
 
     #pie {
@@ -45,92 +53,98 @@
     }
 </style>
 
-<div class="row">
-    <div class="col s12 m12">
-        <div class="card-content">
-            <ul class="collapsible">
-                <li class="active">
-                    <div class="collapsible-header"><i class="material-icons">account_balance</i>BOVEDA OFICINA PRINCIPAL FECHA INICIO OPERACION @DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second hrs</div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="col s12 m3">
-                                <div class="card">
-                                    <div class="card-content black-text">
-                                        <span class="card-title center-align">SALDO INICIAL S/.</span>
-                                        <p style="text-align:center" id="cardInicial" class="cardBoveda">
-                                            @BovedaAbierta.SaldoInicial
-                                        </p>
+@if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_boveda_todo))
+{
+    <div class="row">
+        <div class="col s12 m12">
+            <div class="card-content">
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header"><i class="material-icons">account_balance</i>BOVEDA OFICINA PRINCIPAL FECHA INICIO OPERACION @DateTime.Now.Year/@DateTime.Now.Month/@DateTime.Now.Day @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second hrs</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m3">
+                                    <div class="card">
+                                        <div class="card-content black-text">
+                                            <span class="card-title center-align">SALDO INICIAL S/.</span>
+                                            <p style="text-align:center" id="cardInicial" class="cardBoveda">
+                                                @actual.SaldoInicial
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col s12 m3">
-                                <div class="card">
-                                    <div class="card-content black-text">
-                                        <span class="card-title center-align">ENTRADAS S/.</span>
-                                        <p style="text-align:center" id="cardEntradas" class="cardBoveda">
-                                            @BovedaAbierta.Entradas
-                                        </p>
+                                <div class="col s12 m3">
+                                    <div class="card">
+                                        <div class="card-content black-text">
+                                            <span class="card-title center-align">ENTRADAS S/.</span>
+                                            <p style="text-align: center" id="cardEntradas" class="cardBoveda">
+                                                @actual.Entradas
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col s12 m3">
-                                <div class="card">
-                                    <div class="card-content black-text">
-                                        <span class="card-title center-align">SALIDAS S/.</span>
-                                        <p style="text-align: center " id="cardSalidas" class="cardBoveda">
-                                            @BovedaAbierta.Salidas
-                                        </p>
+                                <div class="col s12 m3">
+                                    <div class="card">
+                                        <div class="card-content black-text">
+                                            <span class="card-title center-align">SALIDAS S/.</span>
+                                            <p style="text-align: center " id="cardSalidas" class="cardBoveda">
+                                                @actual.Salidas
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col s12 m3">
-                                <div class="card">
-                                    <div class="card-content black-text">
-                                        <span class="card-title center-align">SALDO FINAL S/.</span>
-                                        <p style="text-align:center" id="cardFinal" class="cardBoveda">
-                                            @BovedaAbierta.SaldoFinal
-                                        </p>
+                                <div class="col s12 m3">
+                                    <div class="card">
+                                        <div class="card-content black-text">
+                                            <span class="card-title center-align">SALDO FINAL S/.</span>
+                                            <p style="text-align:center" id="cardFinal" class="cardBoveda">
+                                                @actual.SaldoFinal
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <div id="pie">
-                        <button id="btnTransferencia" data-target="modal3" class="btn modal-trigger btn-small blue left" href="@Url.Action("Transferencia","Boveda")">TRANSFERENCIA</button>
-                        &nbsp;
-                        <!-- Modal Trigger Apertura -->
-                        @if (bovedaActual.Count == 0)
-                        {
-                            <button id="btnApertura" data-target="modal1" class="btn modal-trigger btn-small blue left">ABRIR BOVEDA</button>
-                            <button id="btnCierre" data-target="modal2" class="btn modal-trigger btn-small blue left" style="display: none;">CERRAR BOVEDA</button>
-                        }
-                        &nbsp;
-                        <!-- Modal Trigger Cierre -->
-                        @if (bovedaActual.Count > 0)
-                        {
-                            <button id="btnApertura" data-target="modal1" class="btn modal-trigger btn-small blue left" style="display: none;">ABRIR BOVEDA</button>
-                            <button id="btnCierre" data-target="modal2" class="btn modal-trigger btn-small blue left">CERRAR BOVEDA</button>
-                        }
-                        &nbsp;
-                        <button id="btnEntradasSalidas" data-target="modal4" class="btn modal-trigger btn-small blue left" href="@Url.Action("Transferencia","Boveda")">ENTRADAS/SALIDAS</button>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div id="pie">
+                            <button id="btnTransferencia" data-target="modal3" class="btn modal-trigger btn-small blue left" href="@Url.Action("Transferencia","Boveda")">TRANSFERENCIA</button>
+                            &nbsp;
+                            <!-- Modal Trigger Apertura -->
+                            @if (bovedaActual.Count == 0)
+                            {
+                                <button id="btnApertura" data-target="modal1" class="btn modal-trigger btn-small blue left">ABRIR BOVEDA</button>
+                                <button id="btnCierre" data-target="modal2" class="btn modal-trigger btn-small blue left" style="display: none;">CERRAR BOVEDA</button>
+                            }
+                            &nbsp;
+                            <!-- Modal Trigger Cierre -->
+                            @if (bovedaActual.Count > 0)
+                            {
+                                <button id="btnApertura" data-target="modal1" class="btn modal-trigger btn-small blue left" style="display: none;">ABRIR BOVEDA</button>
+                                <button id="btnCierre" data-target="modal2" class="btn modal-trigger btn-small blue left">CERRAR BOVEDA</button>
+                            }
+                            &nbsp;
+                            <button id="btnEntradasSalidas" data-target="modal4" class="btn modal-trigger btn-small blue left" href="@Url.Action("Transferencia","Boveda")">ENTRADAS/SALIDAS</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 
-<!--Start Modals-->
-<!-- Modal Structure Apertura -->
-<div id="modal1" class="modal center-block">
-    <div class="modal-content">
-        <h5 class="cabecera" style="font-weight:bold; color:#334D81">Aperturar Bóveda</h5>
+    <!--Start Modals-->
+    <!-- Modal Structure Apertura -->
+    <div id="modal1" class="modal center-block">
+        <div class="modal-content">
+            <h5 class="cabecera">APERTURA BOVEDA</h5>
+        </div>
         <div class="col s12">
             <div id="validations" class="card card-tabs">
+                <div class="card-content contenedor_mensaje" id="div_mensaje_asignar" hidden>
+                    <p id="txt_mensaje_asignar" style="margin-top:-10px;"></p>
+                </div>
                 <div class="card-content">
                     <div class="form-group">
                         <div class="row">
@@ -140,31 +154,35 @@
                             </div>
                             <div class="input-field col s12 m12">
                                 <label for="saldoApertura" style="font-weight:bold">SALDO INICIAL:</label>
-                                <input type="text" name="saldoApertura" id="saldoApertura" value="" />
+                                <input type="number" step="0.01" name="saldoApertura" id="saldoApertura" value="0.00" min="0" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="modal-footer">
+            <a href="#principal" class="btn-small blue right" style="margin-right:10px;" id="apertura">Guardar</a>
+            &nbsp;
+            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:10px;">Cancelar</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="apertura">Guardar</a>
-        &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
-    </div>
-</div>
-<!--Modal Structure Cierre-->
-<div id="modal2" class="modal center-block">
-    <div class="modal-content">
-        <h5 class="cabecera" style="font-weight:bold; color:#334D81">Cierre Bóveda</h5>
-        <div class="col s12">
+
+    <!--Modal Structure Cierre-->
+    <div id="modal2" class="modal center-align">
+        <div class="modal-content">
+            <h5 class="cabecera">CIERRE BOVEDA</h5>
+        </div>
+        <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">
+                <div class="card-content contenedor_mensaje" id="div_mensaje_cierre" hidden>
+                    <p id="txt_mensaje_cierre" style="margin-top:-10px;"></p>
+                </div>
                 <div class="card-content">
                     <div class="form-group">
                         <div class="row">
                             <div class="input-field col s12 m6">
-                                <input type="text" name="Id" id="Id" hidden />
+                                <input type="number" name="Id" id="Id" hidden />
                                 <label for="fechaInicial" style="font-weight:bold">FECHA DE APERTURA:</label>
                                 <input type="text" name="fechaInicial" id="fechaInicial" value="@DateTime.Now.Day/@DateTime.Now.Month/@DateTime.Now.Year @DateTime.Now.Hour:@DateTime.Now.Minute:@DateTime.Now.Second" readonly />
                             </div>
@@ -193,55 +211,63 @@
                 </div>
             </div>
         </div>
+        <div class="modal-footer">
+            <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="cierre">Guardar</a>
+            &nbsp;
+            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="cierre">Guardar</a>
-        &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
-    </div>
-</div>
 
-<!--Modal Structure Transferencia-->
-<div id="modal3" class="modal center-block">
-    <div class="modal-content">
-        <h5 class="cabecera" style="font-weight:bold; color:#334D81">TRANSFERENCIA</h5>
-        <div class="col s12">
+    <!--Modal Structure TRANSFERENCIA-->
+    <div id="modal3" class="modal center-align">
+        <div class="modal-content">
+            <h5 class="cabecera">TRANSFERENCIAS</h5>
+        </div>
+        <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">
+                <div class="card-content contenedor_mensaje" id="div_mensaje_transferencia" hidden>
+                    <p id="txt_mensaje_transferencia" style="margin-top:-10px;"></p>
+                </div>
                 <div class="card-content">
                     <div class="form-group">
                         <div class="row">
                             <div class="input-field col s12 m6">
-                                @Html.DropDownList("ListaOperaciones", ViewBag.ListaOperaciones as SelectList, "SELECCIONE OPERACION", htmlAttributes: new { @class = "browser-default" })
+                                @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
                             </div>
                             <div class="input-field col s12 m6">
-                                @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "CAJAS ABIERTAS", htmlAttributes: new { @class = "browser-default" })
+                                <label for="OTransferencia" style="font-weight:bold">OPERACION</label>
+                                <input type="number" id="operacion_id" value="@egreso_ajuste_boveda_id" hidden />
+                                <input type="text" id="OTransferencia" style="font-weight:bold;" name="OTransferencia" value="@egreso_ajuste_boveda" readonly />
                             </div>
                             <div class="input-field col s12 m6">
-                                <label for="GTransferencia" style="font-weight:bold">GLOSA:</label>
-                                <input type="text" name="GTransferencia" id="GTransferencia" value="" />
+                                <label for="ITransferencia" style="font-weight:bold">IMPORTE*:</label>
+                                <input type="number" step="0.01" name="ITransferencia" id="ITransferencia" value="0.00" min="0" />
                             </div>
                             <div class="input-field col s12 m6">
-                                <label for="ITransferencia" style="font-weight:bold">IMPORTE:</label>
-                                <input type="text" name="ITransferencia" id="ITransferencia" value="0.00" />
+                                <label for="GTransferencia" style="font-weight:bold">GLOSA*:</label>
+                                <input type="text" name="GTransferencia" id="GTransferencia" placeholder="..." />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="modal-footer">
+            <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="transferencia">Guardar</a>
+            &nbsp;
+            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarT">Cancelar</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="transferencia">Guardar</a>
-        &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarT">Cancelar</a>
-    </div>
-</div>
-<!--Modal Structure EGRESO-INGRESO-->
-<div id="modal4" class="modal center-block">
-    <div class="modal-content">
-        <h5 class="cabecera" style="font-weight:bold; color:#334D81">EGRESO-INGRESO</h5>
-        <div class="col s12">
+    <!--Modal Structure EGRESO-INGRESO-->
+    <div id="modal4" class="modal center-align">
+        <div class="modal-content">
+            <h5 class="cabecera">EGRESO-INGRESO</h5>
+        </div>
+        <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">
+                <div class="card-content contenedor_mensaje" id="div_mensaje_entradasalida" hidden>
+                    <p id="txt_mensaje_entradasalida" style="margin-top:-10px;"></p>
+                </div>
                 <div class="card-content">
                     <div class="form-group">
                         <div class="row">
@@ -250,7 +276,7 @@
                             </div>
                             <div class="input-field col s12 m6">
                                 <label for="IEntradasSalidas" style="font-weight:bold">IMPORTE:</label>
-                                <input type="text" name="IEntradasSalidas" id="IEntradasSalidas" value="0.00" />
+                                <input type="number" step="0.01" min="0" name="IEntradasSalidas" id="IEntradasSalidas" value="0.00" />
                             </div>
                             <div class="input-field col s12 m12">
                                 <label for="GEntradasSalidas" style="font-weight:bold">GLOSA:</label>
@@ -261,381 +287,303 @@
                 </div>
             </div>
         </div>
+        <div class="modal-footer">
+            <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="egreso_ingreso">Guardar</a>
+            &nbsp;
+            <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarEI">Cancelar</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="egreso_ingreso">Guardar</a>
-        &nbsp;
-        <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelarEI">Cancelar</a>
-    </div>
-</div>
 
-<!--Fin Modals-->
+    <!--Fin Modals-->
 
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div class="card-content">
-            <ul class="collapsible">
-                <li class="active">
-                    <div class="collapsible-header"><i class="material-icons">account_balance</i>BOVEDA</div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <table class="bordered" id="tblBoveda">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>SaldoInicial</th>
-                                            <th>Entradas</th>
-                                            <th>Salidas</th>
-                                            <th>SaldoFinal</th>
-                                            <th>FechaIniOperacion</th>
-                                            <th>FechaFinOperacion</th>
-                                            <th>Cierre</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tr_prueba">
-
-                                        @for (var i = 0; i < ListadoBovedas.Listado.Count(); i++)
-                                        {
-                                            var item = ListadoBovedas.Listado[i];
-                                            string id = i == 0 && !item.IndCierre ? "Cerrar" : "";
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card-content">
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header"><i class="material-icons">account_balance</i>BOVEDA</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <table class="bordered" id="tblBoveda">
+                                        <thead>
                                             <tr>
-                                                <td style="padding:0" id="@(id + "_id")">@item.Id</td>
-                                                <td style="padding:0" id="@(id + "_si")">@item.SaldoInicial</td>
-                                                <td style="padding:0" id="@(id + "_en")">@item.Entradas</td>
-                                                <td style="padding:0" id="@(id + "_sa")">@item.Salidas</td>
-                                                <td style="padding:0" id="@(id + "_sf")">@item.SaldoFinal</td>
-                                                <td style="padding:0" id="@(id + "_fi")">@item.FechaInicio</td>
-                                                <td style="padding:0" id="@(id + "_ff")">@item.FechaFin</td>
-                                                <td style="padding:0" id="@(id + "_ic")" class="Indicador">@item.IndCierre</td>
+                                                <th>ID</th>
+                                                <th>SaldoInicial</th>
+                                                <th>Entradas</th>
+                                                <th>Salidas</th>
+                                                <th>SaldoFinal</th>
+                                                <th>FechaIniOperacion</th>
+                                                <th>FechaFinOperacion</th>
+                                                <th>Cierre</th>
                                             </tr>
-                                        }
+                                        </thead>
+                                        <tbody id="tbd_bovedas">
 
-                                    </tbody>
-                                </table>
+                                            @for (var i = 0; i < ListadoBovedas.Count(); i++)
+                                            {
+                                                var item = ListadoBovedas[i];
+                                                string id = i == 0 && !item.IndCierre ? "Cerrar" : "";
+                                                <tr>
+                                                    <td style="padding:0" id="@(id + "_id")">@item.Id</td>
+                                                    <td style="padding:0" id="@(id + "_si")">@item.SaldoInicial</td>
+                                                    <td style="padding:0" id="@(id + "_en")">@item.Entradas</td>
+                                                    <td style="padding:0" id="@(id + "_sa")">@item.Salidas</td>
+                                                    <td style="padding:0" id="@(id + "_sf")">@item.SaldoFinal</td>
+                                                    <td style="padding:0" id="@(id + "_fi")">@item.FechaInicio</td>
+                                                    <td style="padding:0" id="@(id + "_ff")">@item.FechaFin</td>
+                                                    <td style="padding:0" id="@(id + "_ic")" class="Indicador">@item.IndCierre</td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12 l12">
-                                <div id="bordered-table" class="card card card-default scrollspy">
-                                    <div class="col-md-12 center text-center">
-                                        @if (ListadoBovedas.Listado.Count() > 0)
-                                        {
-                                            <span>
-                                                <strong>@ListadoBovedas.TotalRegistros</strong> registros encontrados
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span>
-                                                Página <strong>@(ListadoBovedas.PaginaActual)</strong> de
-                                                <strong>@ListadoBovedas.TotalPaginas</strong>
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
-                                        else
-                                        {
-                                            <span>No hay resultados para esta búsqueda</span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
+                            <div class="row">
+                                <div class="col s12 m12 l12">
+                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                        <div class="col-md-12 center text-center">
+                                            <div id="EncontradoBovedas">
+                                                <span>
+                                                    <label id="TotalRegistrosBovedas"></label> registros encontrados
+                                                </span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>
+                                                    Página <label id="PaginaActualBovedas"></label> de
+                                                    <label id="TotalPaginasBovedas"></label>
+                                                </span>
+                                            </div>
+                                            <div class="row" id="NoEncontradoBovedas">
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>No hay resultados de la búsqueda</span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small blue" id="inicio_bovedas"><<</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="anterior_bovedas">Anterior</button>
 
-                                        @if (ListadoBovedas.PaginaActual > 1)
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = ListadoBovedas.PaginaActual - 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                        }
-                                        <span></span>
-                                        @if (ListadoBovedas.PaginaActual < ListadoBovedas.TotalPaginas)
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedas.PaginaActual + 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedas.TotalPaginas },
-                                                            new { @class = "btn btn-small blue" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedas.TotalPaginas - 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedas.TotalPaginas },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                        }
+                                                <button class="btn btn-small blue" id="siguiente_bovedas">Siguiente</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="ultimo_bovedas">>></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div class="card-content">
-            <ul class="collapsible">
-                <li class="active">
-                    <div class="collapsible-header"><i class="material-icons">account_balance</i>MOVIMIENTOS BOVEDA</div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <table class="bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>CAJADIARIO N°</th>
-                                            <th>FECHA</th>
-                                            <th>OPERACION</th>
-                                            <th>GLOSA</th>
-                                            <th>IMPORTE</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbd_Movimiento">
-                                        @foreach (var item in ListadoBovedasMovimiento.Listado)
-                                        {
-
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card-content">
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header"><i class="material-icons">account_balance</i>MOVIMIENTOS BOVEDA</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <table class="bordered">
+                                        <thead>
                                             <tr>
-                                                <td style="padding:0">@item.Id</td>
-                                                @if (item.CajaDiarioId != null)
-                                                {
-                                                    <td style="padding:0">@item.CajaDiarioId</td>
-                                                }
-                                                else
-                                                {
-                                                    <td style="padding:0">0</td>
-                                                }
-                                                <td style="padding:0">@item.Fecha</td>
-                                                <td style="padding:0">@item.Operacion.Denominacion</td>
-                                                <td style="padding:0">@item.Glosa</td>
-                                                <td style="padding:0">@item.Importe</td>
+                                                <th>ID</th>
+                                                <th>CAJADIARIO N°</th>
+                                                <th>FECHA</th>
+                                                <th>OPERACION</th>
+                                                <th>GLOSA</th>
+                                                <th>IMPORTE</th>
                                             </tr>
-                                        }
+                                        </thead>
+                                        <tbody id="tbd_movimientos">
+                                            @foreach (var item in ListadoBovedasMovimiento)
+                                            {
 
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12 l12">
-                                <div id="bordered-table" class="card card card-default scrollspy">
-                                    <div class="col-md-12 center text-center">
-                                        @if (ListadoBovedasMovimiento.Listado.Count() > 0)
-                                        {
-                                            <span>
-                                                <strong>@ListadoBovedasMovimiento.TotalRegistros</strong> registros encontrados
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span>
-                                                Página <strong>@(ListadoBovedasMovimiento.PaginaActual)</strong> de
-                                                <strong>@ListadoBovedasMovimiento.TotalPaginas</strong>
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
-                                        else
-                                        {
-                                            <span>No hay resultados para esta búsqueda</span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
-
-                                        @if (ListadoBovedasMovimiento.PaginaActual > 1)
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = ListadoBovedasMovimiento.PaginaActual - 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                        }
-                                        <span></span>
-                                        @if (ListadoBovedasMovimiento.PaginaActual < ListadoBovedasMovimiento.TotalPaginas)
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedasMovimiento.PaginaActual + 1 },
-                                                            new { @class = "btn btn-small blue" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas },
-                                                            new { @class = "btn btn-small blue" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas - 1 },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoBovedasMovimiento.TotalPaginas },
-                                                            new { @class = "btn btn-small blue disabled" })
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col s12 m12 l12">
-        <div class="card-content">
-            <ul class="collapsible">
-                <li class="active">
-                    <div class="collapsible-header"><i class="material-icons">account_balance</i>SALDOS CAJA DIARIO</div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="col s12 m12">
-                                <table class="bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>NRO</th>
-                                            <th>CAJA</th>
-                                            <th>RESPONSABLE</th>
-                                            <th>SALDOINICIAL</th>
-                                            <th>SALDOFINAL</th>
-                                            <th>F.INICIO</th>
-                                            <th>F.FIN</th>
-                                            <th>CERRADO</th>
-                                            <th>BOVEDA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbd_CajaDiario">
-                                        @foreach (var item in ListadoCajasDiario.Listado)
-                                        {
-                                            string[] aux = item.Caja.Denominacion.Split(' ');
-                                            var IdCaja = string.Join("_", aux);
-                                            var dynamicId = "Final" + string.Join("_", aux);
-                                            <tr>
-                                                <td style="padding:0">@item.Id</td>
-                                                @if (item.IndCierre == false && item.IndBoveda == false)
-                                                {
-                                                    <td style="padding:0" id="@IdCaja">@item.Caja.Denominacion</td>
-                                                }
-                                                else
-                                                {
-                                                    <td style="padding:0">@item.Caja.Denominacion</td>
-                                                }
-                                                <td style="padding:0">@item.Usuario.Nombre</td>
-                                                <td style="padding:0">@item.SaldoInicial</td>
-                                                @if (item.IndCierre == false && item.IndBoveda == false)
-                                                {
-                                                    <td style="padding:0" id="@dynamicId">@item.SaldoFinal</td>
-                                                }
-                                                else
-                                                {
-                                                    <td style="padding:0">@item.SaldoFinal</td>
-                                                }
-                                                <td style="padding:0">@item.FechaInicio</td>
-                                                <td style="padding:0">@item.FechaFin</td>
-                                                <td style="padding:0">
-                                                    @if (item.IndCierre)
+                                                <tr>
+                                                    <td style="padding:0">@item.Id</td>
+                                                    @if (item.CajaDiarioId != null)
                                                     {
-                                                        <text>SI</text>
+                                                        <td style="padding:0">@item.CajaDiarioId</td>
                                                     }
                                                     else
-                                                    {<text>NO</text>}
-                                                </td>
-                                                <td style="padding:0">
-                                                    @if (item.IndBoveda)
                                                     {
-                                                        <text>SI</text>
+                                                        <td style="padding:0">0</td>
                                                     }
-                                                    else
-                                                    {<text>NO</text>}
-                                                </td>
+                                                    <td style="padding:0">@item.Fecha</td>
+                                                    <td style="padding:0">@item.Operacion.Denominacion</td>
+                                                    <td style="padding:0">@item.Glosa</td>
+                                                    <td style="padding:0">@item.Importe</td>
+                                                </tr>
+                                            }
 
-
-                                            </tr>
-                                        }
-
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m12 l12">
-                                <div id="bordered-table" class="card card card-default scrollspy">
-                                    <div class="col-md-12 center text-center">
-                                        @if (ListadoCajasDiario.Listado.Count() > 0)
-                                        {
-                                            <span>
-                                                <strong>@ListadoCajasDiario.TotalRegistros</strong> registros encontrados
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span>
-                                                Página <strong>@(ListadoCajasDiario.PaginaActual)</strong> de
-                                                <strong>@ListadoCajasDiario.TotalPaginas</strong>
-                                            </span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
-                                        else
-                                        {
-                                            <span>No hay resultados para esta búsqueda</span>
-                                            <span>&nbsp;|&nbsp;</span>
-                                        }
+                            <div class="row">
+                                <div class="col s12 m12 l12">
+                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                        <div class="col-md-12 center text-center">
+                                            <div id="EncontradoMovimientos">
+                                                <span>
+                                                    <label id="TotalRegistrosMovimientos"></label> registros encontrados
+                                                </span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>
+                                                    Página <label id="PaginaActualMovimientos"></label> de
+                                                    <label id="TotalPaginasMovimientos"></label>
+                                                </span>
+                                            </div>
+                                            <div class="row" id="NoEncontradoMovimientos">
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>No hay resultados de la búsqueda</span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small blue" id="inicio_movimientos"><<</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="anterior_movimientos">Anterior</button>
 
-                                        @if (ListadoCajasDiario.PaginaActual > 1)
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = ListadoCajasDiario.PaginaActual - 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("<<", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
-                                            <span></span>
-                                            @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
-                                        }
-                                        <span></span>
-                                        @if (ListadoCajasDiario.PaginaActual < ListadoCajasDiario.TotalPaginas)
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasDiario.PaginaActual + 1 },
-                                                            new { @class = "btn btn-sm btn-default" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasDiario.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("Siguiente", "Index", new { pagina = ListadoCajasDiario.TotalPaginas - 1 },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
-                                            <span></span>
-                                            @Html.ActionLink(">>", "Index", new { pagina = ListadoCajasDiario.TotalPaginas },
-                                                            new { @class = "btn btn-sm btn-default disabled" })
-                                        }
+                                                <button class="btn btn-small blue" id="siguiente_movimientos">Siguiente</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="ultimo_movimientos">>></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-</div>
+
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card-content">
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header"><i class="material-icons">account_balance</i>SALDOS CAJA DIARIO</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m12">
+                                    <table class="bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>NRO</th>
+                                                <th>CAJA</th>
+                                                <th>RESPONSABLE</th>
+                                                <th>SALDOINICIAL</th>
+                                                <th>SALDOFINAL</th>
+                                                <th>F.INICIO</th>
+                                                <th>F.FIN</th>
+                                                <th>CERRADO</th>
+                                                <th>BOVEDA</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbd_cajas">
+                                            @foreach (var item in ListadoCajasDiario)
+                                            {
+                                                string[] aux = item.Caja.Denominacion.Split(' ');
+                                                var IdCaja = string.Join("_", aux);
+                                                var dynamicId = "Final" + string.Join("_", aux);
+                                                <tr>
+                                                    <td style="padding:0">@item.Id</td>
+                                                    @if (item.IndCierre == false && item.IndBoveda == false)
+                                                    {
+                                                        <td style="padding:0" id="@IdCaja">@item.Caja.Denominacion</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="padding:0">@item.Caja.Denominacion</td>
+                                                    }
+                                                    <td style="padding:0">@item.Usuario.Nombre</td>
+                                                    <td style="padding:0">@item.SaldoInicial</td>
+                                                    @if (item.IndCierre == false && item.IndBoveda == false)
+                                                    {
+                                                        <td style="padding:0" id="@dynamicId">@item.SaldoFinal</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="padding:0">@item.SaldoFinal</td>
+                                                    }
+                                                    <td style="padding:0">@item.FechaInicio</td>
+                                                    <td style="padding:0">@item.FechaFin</td>
+                                                    <td style="padding:0">
+                                                        @if (item.IndCierre)
+                                                        {
+                                                            <text>SI</text>
+                                                        }
+                                                        else
+                                                        {<text>NO</text>}
+                                                    </td>
+                                                    <td style="padding:0">
+                                                        @if (item.IndBoveda)
+                                                        {
+                                                            <text>SI</text>
+                                                        }
+                                                        else
+                                                        {<text>NO</text>}
+                                                    </td>
+
+
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m12 l12">
+                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                        <div class="col-md-12 center text-center">
+                                            <div id="EncontradoCajas">
+                                                <span>
+                                                    <label id="TotalRegistrosCajas"></label> registros encontrados
+                                                </span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>
+                                                    Página <label id="PaginaActualCajas"></label> de
+                                                    <label id="TotalPaginasCajas"></label>
+                                                </span>
+                                            </div>
+                                            <div class="row" id="NoEncontradoCajas">
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <span>No hay resultados de la búsqueda</span>
+                                                <span>&nbsp;|&nbsp;</span>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small blue" id="inicio_cajas"><<</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="anterior_cajas">Anterior</button>
+
+                                                <button class="btn btn-small blue" id="siguiente_cajas">Siguiente</button>
+                                                <span></span>
+                                                <button class="btn btn-small blue" id="ultimo_cajas">>></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+}
+
+
 
 @section Scripts{
     <script src="~/app-assets/js/vendors.min.js"></script>
@@ -645,32 +593,90 @@
             $('.modal').modal();
         });
     </script>
-    <script>
-        $(document).ready(function () {
-            $("#btnDisponibles").click(function () {
-                $.ajax({
-                    url: '@Url.Action("CajasDisponibles","Boveda")',
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (response) {
-                        console.log(response);
-                    }
-                });
 
-            });
-
-        });
-    </script>
 }
 
 <script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/paginador/paginador.js"></script>
 <script>
+
+    //We iniatilized variables that use in the pagination (currentaPage, pageCount )
+    var currentPage = 1;
+    var pageCount = 0;
+
+    $(document).ready(function () {
+
+        $("#apertura").click(aperturafunc);
+        $("#cierre").click(cierreFunc);
+        $("#transferencia").click(transfereciaFunc);
+        $("#egreso_ingreso").click(entradas_salidasFunc);
+        $("#cancelarT").click(limpiarModal);
+        $("#cancelarEI").click(limpiarModal);
+
+
+        //START PAGINATION 'BOVEDA MOVIMIENTO'
+        paginadorFuncBovedas(currentPage);
+
+        $("#inicio_bovedas").click(function () {
+            paginadorFuncBovedas(1);
+        });
+        $("#siguiente_bovedas").click(function () {
+            paginadorFuncBovedas(currentPage + 1);
+        });
+        $("#ultimo_bovedas").click(function () {
+            paginadorFuncBovedas(pageCount);
+        });
+        $("#anterior_bovedas").click(function () {
+            paginadorFuncBovedas(currentPage - 1)
+        });
+
+        //START PAGINATION 'BOVEDA MOVIMIENTO'
+        paginadorFuncMovimientos(currentPage);
+
+        $("#inicio_movimientos").click(function () {
+            paginadorFuncMovimientos(1);
+        });
+        $("#siguiente_movimientos").click(function () {
+            paginadorFuncMovimientos(currentPage + 1);
+        });
+        $("#ultimo_movimientos").click(function () {
+            paginadorFuncMovimientos(pageCount);
+        });
+        $("#anterior_movimientos").click(function () {
+            paginadorFuncMovimientos(currentPage - 1)
+        });
+
+        //START PAGINATION 'CAJAS DIARIO'
+        paginadorFuncCajasDiario(currentPage);
+
+        $("#inicio_cajas").click(function () {
+            paginadorFuncCajasDiario(1);
+        });
+        $("#siguiente_cajas").click(function () {
+            paginadorFuncCajasDiario(currentPage + 1);
+        });
+        $("#ultimo_cajas").click(function () {
+            paginadorFuncCajasDiario(pageCount);
+        });
+        $("#anterior_cajas").click(function () {
+            paginadorFuncCajasDiario(currentPage - 1)
+        });
+
+    });
+
+    var valTimeout;
+
+    var isOpeningLoading = false;
+
     var aperturafunc = function () {
+
+        if (!isOpeningLoading) {
+            isOpeningLoading = true;
             var envio = {
-                FechaInicio: $("#fechaApertura").val(),
                 SaldoInicial: $("#saldoApertura").val()
             }
-            //console.log(envio)
+
+            $("#apertura").prop('disabled',true);
             $.ajax({
                 url: '@Url.Action("Apertura","Boveda")',
                 data: JSON.stringify(envio),
@@ -679,39 +685,87 @@
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function (rm) {
-                    //console.log(rm.result[0]);
-                    $("#tr_prueba").prepend(
-                        `<tr>
-                         <td style="padding:0" id="Cerrar_id">${rm.result[0]}</td>
-                         <td style="padding:0" id="Cerrar_si">${rm.result[2]}</td>
-                         <td style="padding:0" id="Cerrar_en">0.00</td>
-                         <td style="padding:0" id="Cerrar_sa">0.00</td>
-                         <td style="padding:0" id="Cerrar_sf">${rm.result[2]}</td>
-                         <td style="padding:0" id="Cerrar_fi">${rm.result[1]}</td>
-                         <td style="padding:0" id="Cerrar_ff"></td>
-                         <td style="padding:0" id="Cerrar_ic" class="Indicador">False</td>
-                         </tr>`
-                    )//Enviar row a la tabla boveda
-                    // Cambiar nombre al boton
-                    //$("#btnApertura").html("CERRAR BOVEDA")
-                    // Cambiar el data-target
-                    //$("#btnApertura").attr('data-target', 'modal2')
-                    $("#btnApertura").hide()
-                    $('#btnCierre').show()
+
+                    try{
+                        if (rm.response == false) {
+
+                            $("#div_mensaje_asignar").show();
+                            $("#div_mensaje_asignar").css("background-color", "#F94040");
+                            $("#txt_mensaje_asignar").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_asignar").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+
+                            $("#div_mensaje_asignar").show();
+                            $("#div_mensaje_asignar").css("background-color", "#27EF37");
+                            $("#txt_mensaje_asignar").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_asignar").fadeOut();
+                            }, 2500);
+
+                            //Save changes and we call again data with 'Boveda' pagination
+                            paginadorFuncBovedas(currentPage);
+
+                            //Enviar row a la tabla boveda
+                            // Cambiar nombre al boton
+                            //$("#btnApertura").html("CERRAR BOVEDA")
+                            // Cambiar el data-target
+                            //$("#btnApertura").attr('data-target', 'modal2')
+                            $("#btnApertura").hide()
+                            $('#btnCierre').show()
+                        }
+                    }
+                    catch (e) {
+                        alert("La bóveda ya fue aperturada");
+                    }
+                },
+                complete: function () {
+                    isOpeningLoading = false;
                 }
             });
-    }
-    var cierreFunc = function () {
-        var envio = {
-            Id: $("#Id").val(),
-            FechaInicio: $("#fechaInicial").val(),
-            FechaFin: $("#fechaCierre").val(),
-            SaldoInicial: $("#saldoInicial").val(),
-            SaldoFinal: $("#saldoFinal").val(),
-            Entradas: $("#entradas").val(),
-            Salidas: $("#salidas").val()
         }
-        console.log(envio)
+        else {
+            console.log("The opening operation was alredy completed");
+        }
+    }
+
+    $("#btnCierre").click(function () {
+
+        //Mandar datos al modal cierre
+        $("#Id").val($("#actual_id").html());
+        $("#fechaInicial").val($("#actual_fi").html());
+        $("#entradas").val($("#actual_en").html());
+        $("#salidas").val($("#actual_sa").html());
+        $("#saldoInicial").val($("#actual_si").html());
+        $("#saldoFinal").val($("#actual_sf").html());
+    });
+
+    var isClosingLoading = false;
+
+
+    var cierreFunc = function () {
+
+        if (!isClosingLoading) {
+
+            isClosingLoading = true;
+
+        var envio = {
+            BovedaId: $("#Id").val()
+        }
+
+        $("#cierre").prop('disabled',true);
         $.ajax({
             url: '@Url.Action("Cierre","Boveda")',
             data: JSON.stringify(envio),
@@ -720,156 +774,247 @@
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function (rm) {
-                $("#Cerrar_en").html(rm.result[4])
-                $("#Cerrar_sa").html(rm.result[5])
-                $("#Cerrar_ff").html(rm.result[1])
-                $("#Cerrar_ic").html(rm.result[6])
 
-                $("#Cerrar_id").attr("id", "")
-                $("#Cerrar_si").attr("id", "")
-                $("#Cerrar_en").attr("id", "")
-                $("#Cerrar_sa").attr("id", "")
-                $("#Cerrar_sf").attr("id", "")
-                $("#Cerrar_fi").attr("id", "")
-                $("#Cerrar_ff").attr("id", "")
-                $("#Cerrar_ic").attr("id", "")
+                try {
+                    if (rm.response == false) {
+                        $("#div_mensaje_cierre").show();
+                        $("#div_mensaje_cierre").css("background-color", "#F94040");
+                        $("#txt_mensaje_cierre").text(rm.message);
 
-                $("#btnApertura").show()
-                $('#btnCierre').hide()
+                        if (valTimeout) {
+                            clearTimeout(valTimeout);
+                        }
+
+                        valTimeout = setTimeout(() => {
+                            $("#div_mensaje_cierre").fadeOut();
+                        }, 2500);
+                    }
+                    else {
+
+                        $("#div_mensaje_cierre").show();
+                        $("#div_mensaje_cierre").css("background-color", "#27EF37");
+                        $("#txt_mensaje_cierre").text(rm.message);
+
+                        if (valTimeout) {
+                            clearTimeout(valTimeout);
+                        }
+
+                        valTimeout = setTimeout(() => {
+                            $("#div_mensaje_cierre").fadeOut();
+                        }, 2500);
+
+                        //Save changes and we call again data with 'Boveda' pagination
+                        paginadorFuncBovedas(currentPage);
+
+                        //Clear fields from close modal
+                        $("#Id").val("");
+                        $("#fechaInicial").val("");
+                        $("#entradas").val("");
+                        $("#salidas").val("");
+                        $("#saldoInicial").val("");
+                        $("#saldoFinal").val("");
+
+                    }
+                }
+                catch (e) {
+                    alert("La bóveda ya fue cerrada");
+                }
+
+                //$("#btnApertura").show()
+                //$('#btnCierre').hide()
 
                 // TODO: eliminar filas si son mas de 5 registros
+            },
+            complete: function () {
+                isClosingLoading = false;
+                $("#cierre").prop('disabled',false);
             }
         });
+
+        }
+        else {
+            console.log("The closing operation was alredy completed");
+        }
     };
 
+    var isTransferLoading = false;
+
     var transfereciaFunc = function () {
-        var envio = {
-            OperacionId: $("#ListaOperaciones").val(),
-            OperacionDenominacion: $("#ListaOperaciones option:selected").text(),
-            CajaDiarioId: $("#CajasDisponibles").val(),
-            CajaDenominacion: $("#CajasDisponibles option:selected").text(),
-            Glosa: $("#GTransferencia").val(),
-            Importe: $("#ITransferencia").val()
-        }
-        console.log(envio);
 
-        $.ajax({
-            url: '@Url.Action("Transferencia","Boveda")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-                console.log(rm.result);
-                if ($("#tbd_Movimiento tr").length == 5) {
-                    $("#tbd_Movimiento tr:last").remove();
-                    $("#tbd_Movimiento").prepend(
-                        `<tr>
-                             <td style="padding:0">${rm.result[0]}</td>
-                             <td style="padding:0">${rm.result[1]}</td>
-                             <td style="padding:0">${rm.result[2]}</td>
-                             <td style="padding:0">${rm.result[3]}</td>
-                             <td style="padding:0">${rm.result[4]}</td>
-                             <td style="padding:0">${rm.result[5]}</td>
-                             </tr>`);
-                }
-                else {
-                $("#tbd_Movimiento").prepend(
-                    `<tr>
-                         <td style="padding:0">${rm.result[0]}</td>
-                         <td style="padding:0">${rm.result[1]}</td>
-                         <td style="padding:0">${rm.result[2]}</td>
-                         <td style="padding:0">${rm.result[3]}</td>
-                         <td style="padding:0">${rm.result[4]}</td>
-                         <td style="padding:0">${rm.result[5]}</td>
-                         </tr>`);
-                }
+        if (!isTransferLoading) {
 
-                //Actualizamos las salidas y el saldo final de la bóveda
-                $("#Cerrar_sa").html(rm.result[7]);
-                $("#Cerrar_sf").html(rm.result[8]);
-                $(`#Final${rm.result[10]}`).html(rm.result[9])
+            isTransferLoading = true;
 
-                //Actualizamos los Cards
-                $("#cardEntradas").text(`${rm.result[6]}`);
-                $("#cardSalidas").text(`${rm.result[7]}`);
-                $("#cardFinal").text(`${rm.result[8]}`);
-
-                //Actualizamos el saldo final de las CajasDiario
-
-
-                //Refrescamos modal
-                $("#ListaOperaciones").val('').prop('defaultSelected');
-                $("#CajasDisponibles").val('').prop('defaultSelected');
-                $("#GTransferencia").val("");
-                $("#ITransferencia").val("0.00");
-                
+            var envio = {
+                CajaDiarioId: $("#CajasDisponibles").val(),
+                CajaDenominacion: $("#CajasDisponibles option:selected").text(),
+                Glosa: $("#GTransferencia").val(),
+                Importe: $("#ITransferencia").val()
             }
 
-        });
+            $("#transferencia").prop('disabled',true);
+
+            $.ajax({
+                url: '@Url.Action("Transferencia","Boveda")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (rm) {
+
+                    try {
+                        if (rm.response == false) {
+                            $("#div_mensaje_transferencia").show();
+                            $("#div_mensaje_transferencia").css("background-color", "#F94040");
+                            $("#txt_mensaje_transferencia").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_transferencia").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+
+                            $("#div_mensaje_transferencia").show();
+                            $("#div_mensaje_transferencia").css("background-color", "#27EF37");
+                            $("#txt_mensaje_transferencia").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_transferencia").fadeOut();
+                            }, 2500);
+
+                            //Update 'Caja Diario' table and 'Boveda Movimiento' calling again to the database
+
+                            paginadorFuncBovedas(currentPage);
+                            paginadorFuncMovimientos(currentPage);
+                            paginadorFuncCajasDiario(currentPage);
+
+                            //Actualizamos los Cards
+                            $("#cardEntradas").text(`${rm.result[0]}`);
+                            $("#cardSalidas").text(`${rm.result[1]}`);
+                            $("#cardFinal").text(`${rm.result[2]}`);
+
+                            var num = 0;
+                            //Refrescamos modal
+                            $("#CajasDisponibles").val('').prop('defaultSelected');
+                            $("#GTransferencia").val("");
+                            $("#ITransferencia").val(num.toFixed(2));
+
+                        }
+
+                    }
+                    catch (e) {
+                        alert("La transferencia ya fue realizada");
+                    }
+
+                },
+                complete: function () {
+                    isTransferLoading = false;
+                    $("#transferencia").prop('disabled',false);
+                }
+
+            });
+
+        }
+        else {
+            console.log("Transfer operation was alredy completed");
+        }
     }
 
+    var isInputOutputLoading = false;
+
     var entradas_salidasFunc = function () {
-        var envio = {
-            OperacionId: $("#Operaciones").val(),
-            OperacionDenominacion: $("#Operaciones option:selected").text(),
-            Glosa: $("#GEntradasSalidas").val(),
-            Importe: $("#IEntradasSalidas").val()
-        }
-        console.log(envio);
 
-        $.ajax({
-            url: '@Url.Action("EntradasSalidas","Boveda")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-                if ($("#tbd_Movimiento tr").length == 5) {
-                    $("#tbd_Movimiento tr:last").remove();
-                    $("#tbd_Movimiento").prepend(
-                        `<tr>
-                             <td style="padding:0">${rm.result[0]}</td>
-                             <td style="padding:0">0</td>
-                             <td style="padding:0">${rm.result[1]}</td>
-                             <td style="padding:0">${rm.result[2]}</td>
-                             <td style="padding:0">${rm.result[3]}</td>
-                             <td style="padding:0">${rm.result[4]}</td>
-                             </tr>`);
-                }
-                else {
-                    $("#tbd_Movimiento").prepend(
-                        `<tr>
-                             <td style="padding:0">${rm.result[0]}</td>
-                             <td style="padding:0">0</td>
-                             <td style="padding:0">${rm.result[1]}</td>
-                             <td style="padding:0">${rm.result[2]}</td>
-                             <td style="padding:0">${rm.result[3]}</td>
-                             <td style="padding:0">${rm.result[4]}</td>
-                             </tr>`);
-                }
-                //Actualizamos los datos de la boveda
-                if (`${rm.result[2]}` == "TRANSFERENCIA CUENTA BANCARIA" || `${rm.result[2]}` == "EGRESO AJUSTE BOVEDA") {
-                    $("#Cerrar_sa").html(`${rm.result[6]}`);
-                    $("#Cerrar_sf").html(`${rm.result[7]}`);
-                }
-                else {
-                    $("#Cerrar_en").html(`${rm.result[5]}`);
-                    $("#Cerrar_sf").html(`${rm.result[7]}`);
-                }
-                $("#cardEntradas").text(`${rm.result[5]}`);
-                $("#cardSalidas").text(`${rm.result[6]}`);
-                $("#cardFinal").text(`${rm.result[7]}`);
+        if (!isInputOutputLoading) {
 
-                //Refrescar
-                $("#Operaciones").val('').prop('defaultSelected');
-                $("#IEntradasSalidas").val("0.00");
-                $("#GEntradasSalidas").val("");
+            isInputOutputLoading = true;
+
+            var envio = {
+                OperacionId: $("#Operaciones").val(),
+                OperacionDenominacion: $("#Operaciones option:selected").text(),
+                Glosa: $("#GEntradasSalidas").val(),
+                Importe: $("#IEntradasSalidas").val()
             }
 
-        });
+            $("#egreso_ingreso").prop('disabled', true);
+            $.ajax({
+                url: '@Url.Action("EntradasSalidas","Boveda")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (rm) {
+                    try {
+                        if (rm.response == false) {
+
+                            $("#div_mensaje_entradasalida").show();
+                            $("#div_mensaje_entradasalida").css("background-color", "#F94040");
+                            $("#txt_mensaje_entradasalida").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_entradasalida").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+
+                            $("#div_mensaje_entradasalida").show();
+                            $("#div_mensaje_entradasalida").css("background-color", "#27EF37");
+                            $("#txt_mensaje_entradasalida").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_entradasalida").fadeOut();
+                            }, 2500);
+
+                            //Update cards (entries, outputs, final balance) of current vault
+
+                            $("#cardEntradas").text(`${rm.result[0]}`);
+                            $("#cardSalidas").text(`${rm.result[1]}`);
+                            $("#cardFinal").text(`${rm.result[2]}`);
+
+                            //Update 'Boveda Movimiento' table, 'Boveda' table calling again to the database
+                            paginadorFuncMovimientos(currentPage);
+                            paginadorFuncBovedas(currentPage);
+
+                            //Refrescar
+                            num = 0;
+                            $("#Operaciones").val('').prop('defaultSelected');
+                            $("#IEntradasSalidas").val(num.toFixed(2));
+                            $("#GEntradasSalidas").val("");
+                        }
+                    }
+                    catch (e) {
+                        alert("Las entrada y/o salida ya fue realizado");
+                    }
+
+                },
+                complete: function () {
+                    isInputOutputLoading = false;
+                    $("#egreso_ingreso").prop('disabled', false);
+                }
+
+            });
+
+        }
+        else {
+            console.log("Input Output operation was alredy completed");
+        }
     }
 
     var limpiarModal = function () {
@@ -886,25 +1031,278 @@
         return obj.flag;
     }).includes(false) */
 
-    $(document).ready(function () {
-        $("#apertura").click(aperturafunc);
-        $("#cierre").click(cierreFunc);
-        $("#transferencia").click(transfereciaFunc);
-        $("#egreso_ingreso").click(entradas_salidasFunc);
-        $("#cancelarT").click(limpiarModal);
-        $("#cancelarEI").click(limpiarModal);
+</script>
 
-        $("#btnCierre").click(function () {
+<script>
+    //PAGINATION 'BOVEDAS'
+    var paginadorFuncBovedas = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("TablaBovedas","Boveda")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                //console.log(rm.result);
 
-            //Mandar datos al modal cierre
-            $("#Id").val($("#Cerrar_id").html());
-            $("#fechaInicial").val($("#Cerrar_fi").html());
-            $("#entradas").val($("#Cerrar_en").html());
-            $("#salidas").val($("#Cerrar_sa").html());
-            $("#saldoInicial").val($("#Cerrar_si").html());
-            $("#saldoFinal").val($("#Cerrar_sf").html());
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+                if (Listado.length > 0) {
+                    $("#NoEncontradoBovedas").hide();
+                    $("#TotalRegistrosBovedas").html(TotalRegistros);
+                    $("#PaginaActualBovedas").html(PaginaActual);
+                    $("#TotalPaginasBovedas").html(TotalPaginas);
+                    $("#tbd_bovedas").empty();
+                    fillPaginatorBovedas("#tbd_bovedas", Listado)
+                }
+                else {
+                    $("#EncontradoBovedas").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'bovedas')
+            }
         });
-    });
+    }
 
+    function fillPaginatorBovedas(id, list) {
+        list.forEach(function (item, index) {
+            //Convert data format from asp.net json to datetime (javascript)
+            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            var fecha_fin;
+            if (item.FechaFin != null) {
+                //Convert data format from asp.net json to datetime (javascript)
+                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+                var mydate = new Date(datetime);
+                var getMonth = mydate.getMonth() + 1;
+                var getDay = mydate.getDate();
+                var getYear = mydate.getFullYear();
+                var getHour = mydate.getHours();
+                var getMinute = mydate.getMinutes();
+                fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+            }
+            else {
+                fecha_fin = '';
+            }
+
+            var ind_cierre;
+            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
+
+
+            var ind;
+            if (index == 0 && !item.IndCierre) {
+                ind = 'actual'
+                $("#cardInicial").text((item.SaldoInicial).toFixed(2));
+                $("#cardEntradas").text((item.Entradas).toFixed(2));
+                $("#cardSalidas").text(item.Salidas.toFixed(2));
+                $("#cardFinal").text(item.SaldoFinal.toFixed(2));
+
+            } else {
+                ind = ''
+            }
+
+            $(id).append(
+                `<tr>
+                        <td style="padding:0" id="${ind}_id">${item.Id}</td>
+                        <td style="padding:0" id="${ind}_si">${item.SaldoInicial}</td>
+                        <td style="padding:0" id="${ind}_en">${item.Entradas}</td>
+                        <td style="padding:0" id="${ind}_sa">${item.Salidas}</td>
+                        <td style="padding:0" id="${ind}_sf">${item.SaldoFinal}</td>
+                        <td style="padding:0" id="${ind}_fi">${fecha_inicio}</td>
+                        <td style="padding:0" id="${ind}_ff">${fecha_fin}</td>
+                        <td style="padding:0" id="${ind}_ic">${ind_cierre}</td>
+                        </tr>`
+            )
+
+        });
+
+    }
+</script>
+
+<script>
+    //PAGINATION 'MOVIMIENTOS'
+    var paginadorFuncMovimientos = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("TablaMovimientos","Boveda")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                //console.log(rm.result);
+
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+                if (Listado.length > 0) {
+                    $("#NoEncontradoMovimientos").hide();
+                    $("#TotalRegistrosMovimientos").html(TotalRegistros);
+                    $("#PaginaActualMovimientos").html(PaginaActual);
+                    $("#TotalPaginasMovimientos").html(TotalPaginas);
+                    $("#tbd_movimientos").empty();
+                    fillPaginatorMovimientos("#tbd_movimientos", Listado)
+                }
+                else {
+                    $("#EncontradoMovimientos").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'movimientos')
+            }
+        });
+    }
+
+    function fillPaginatorMovimientos(id, list) {
+        list.forEach(function (item, index) {
+            var date = new Date(parseInt((item.Fecha).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            var caja_diarioId;
+
+            if (item.CajaDiarioId != null) { caja_diarioId = item.CajaDiarioId } else { caja_diarioId = 0 }
+
+            $(id).append(
+                `<tr>
+                        <td style="padding:0">${item.Id}</td>
+                        <td style="padding:0">${caja_diarioId}</td>
+                        <td style="padding:0">${fecha}</td>
+                        <td style="padding:0">${item.OperacionDenominacion}</td>
+                        <td style="padding:0">${item.Glosa}</td>
+                        <td style="padding:0">${item.Importe}</td>
+                        </tr>`
+            )
+
+        });
+
+    }
+</script>
+
+<script>
+    //PAGINATION 'CAJA DIARIO'
+    var paginadorFuncCajasDiario = function (pagina) {
+        var envio = {
+            pagina: pagina > 0 ? pagina : 1
+        }
+        $.ajax({
+            url: '@Url.Action("TablaCajaDiario","Boveda")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: false,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (rm) {
+                //console.log(rm.result);
+
+                var Listado = rm.result.Listado;
+                var PaginaActual = rm.result.PaginaActual;
+                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+                var TotalPaginas = rm.result.TotalPaginas;
+                var TotalRegistros = rm.result.TotalRegistros;
+
+                pageCount = rm.result.TotalPaginas;
+                currentPage = rm.result.PaginaActual;
+
+                if (Listado.length > 0) {
+                    $("#NoEncontradoCajas").hide();
+                    $("#TotalRegistrosCajas").html(TotalRegistros);
+                    $("#PaginaActualCajas").html(PaginaActual);
+                    $("#TotalPaginasCajas").html(TotalPaginas);
+                    $("#tbd_cajas").empty();
+                    fillPaginatorCajas("#tbd_cajas", Listado)
+                }
+                else {
+                    $("#EncontradoCajas").hide();
+                }
+
+                deshabilitarBotones(rm.result, 'cajas')
+            }
+        });
+    }
+
+    function fillPaginatorCajas(id, list) {
+        list.forEach(function (item, index) {
+            //Convert data format from asp.net json to datetime (javascript)
+            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+            var mydate = new Date(date);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+            var fecha_fin;
+            if (item.FechaFin != null) {
+                //Convert data format from asp.net json to datetime (javascript)
+                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+                var mydate = new Date(datetime);
+                var getMonth = mydate.getMonth() + 1;
+                var getDay = mydate.getDate();
+                var getYear = mydate.getFullYear();
+                var getHour = mydate.getHours();
+                var getMinute = mydate.getMinutes();
+                fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+            }
+            else {
+                fecha_fin = '';
+            }
+
+
+            var ind_cierre;
+            var ind_boveda;
+            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
+            if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO' }
+
+
+            $(id).append(
+                `<tr>
+                        <td style="padding:0">${item.Id}</td>
+                        <td style="padding:0">${item.CajaDenominacion}</td>
+                        <td style="padding:0">${item.UsuarioNombre}</td>
+                        <td style="padding:0">${item.SaldoInicial}</td>
+                        <td style="padding:0">${item.SaldoFinal}</td>
+                        <td style="padding:0">${fecha_inicio}</td>
+                        <td style="padding:0">${fecha_fin}</td>
+                        <td style="padding:0">${ind_cierre}</td>
+                        <td style="padding:0">${ind_boveda}</td>
+                        </tr>`
+            )
+
+        });
+
+    }
 </script>
 

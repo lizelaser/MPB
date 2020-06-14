@@ -1,0 +1,213 @@
+﻿@model List<BL.MatriculaDetalleVm>
+@{
+    Layout = null;
+
+    string periodo = ViewBag.Periodo;
+    string alumno = ViewBag.Alumno;
+    DateTime fecha = ViewBag.Fecha;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ReportesMatricula</title>
+
+    <link rel="stylesheet" href="~/Bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="~/Bootstrap/Site.css" />
+
+    <style>
+        /* SOLUCIONA PROBLEMA DE SOLAPAMIENTO EN TABLAS <table /> */
+        thead {
+            display: table-header-group;
+            background-color: #E0EAF4;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+        .head_ficha{
+            background-color: #FFFFFF;
+        }
+        .body_ficha{
+            background-color: #E0EAF4;
+        }
+        .head_ficha td{
+            text-align:center;
+        }
+        .body_ficha td{
+            text-align:center;
+        }
+    </style>
+</head>
+<body style="padding: 0px; margin: 0px;">
+    <div class="container">
+        <div class="row">
+            <br />
+            <h4 style="font-weight:bold;text-align:center;">FICHA DE MATRICULA</h4>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <table class="table table-bordered" style="margin-left:-14px;">
+                    <thead class="head_ficha">
+                        <tr>
+                            <td>
+                                @periodo
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="body_ficha">
+                        <tr>
+                            <td>
+                                PERIODO
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-6">
+                <table class="table table-bordered">
+                    <thead class="head_ficha">
+                        <tr>
+                            <td>
+                                @alumno
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="body_ficha">
+                        <tr>
+                            <td>
+                                NOMBRES Y APELLIDOS
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-3">
+                <table class="table table-bordered" style="margin-left:14px;">
+                    <thead class="head_ficha">
+                        <tr>
+                            <td>
+                                @fecha.ToString("dd-MM-yyyy")
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="body_ficha">
+                        <tr>
+                            <td>
+                                FECHA
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            N° &nbsp;
+                        </th>
+                        <th>
+                            Codigo
+                        </th>
+                        <th>
+                            Curso o Asignatura
+                        </th>
+                        <th>
+                            H.T
+                        </th>
+                        <th>
+                            H.P
+                        </th>
+                        <th>
+                            H.Total
+                        </th>
+                        <th>
+                            Créditos
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                @{
+                    var _count = 0;
+                }
+
+                @foreach (var item in Model)
+                {
+                    _count++;
+                    <tr>
+                        <td>
+                            @_count
+                        </td>
+                        <td>
+                            @item.CodigoCurso
+                        </td>
+                        <td>
+                            @item.CursoDenominacion
+                        </td>
+                        <td>
+                            @item.HorasTeoria
+                        </td>
+                        <td>
+                            @item.HorasPractica
+                        </td>
+                        <td class="total_horas">
+                            @item.TotalHoras
+                        </td>
+                        <td class="creditos">
+                            @item.Creditos
+                        </td>
+                    </tr>
+                }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>TOTAL</td>
+                        <td id="total_horas"></td>
+                        <td id="creditos"></td>
+                    </tr>
+
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+
+        sumarHorasFun();
+        sumarCreditosFun();
+
+    });
+
+    function sumarHorasFun() {
+        var sum_horas = 0;
+        $('.total_horas').each(function () {
+            sum_horas += parseFloat($(this).text());
+        });
+
+        $("#total_horas").html(sum_horas);
+    }
+    function sumarCreditosFun() {
+        var sum_creditos = 0;
+        $('.creditos').each(function () {
+            sum_creditos += parseFloat($(this).text());
+        });
+
+        $("#creditos").html(sum_creditos.toFixed(2));
+    }
+</script>

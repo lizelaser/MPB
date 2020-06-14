@@ -1,0 +1,35 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FooterPDF</title>
+    <link rel="stylesheet" href="~/Bootstrap/bootstrap.css"/>
+    <link rel="stylesheet" href="~/Bootstrap/Site.css" />
+</head>
+<body style="padding: 0px; margin: 0px;">
+    <div class="text-center">
+        <strong>
+            Página <span id='page'></span> de
+            <span id='topage'></span>
+        </strong>
+
+        <script>
+            var vars = {};
+            var x = window.location.search.substring(1).split('&');
+            for (var i in x) {
+                var z = x[i].split('=', 2);
+                vars[z[0]] = unescape(z[1]);
+            }
+            document.getElementById('page').innerHTML = vars.page;
+            document.getElementById('topage').innerHTML = vars.topage;
+        </script>
+
+    </div>
+</body>
+</html>

@@ -1,672 +1,933 @@
 ﻿
 @{
-    Web.Models.Paginador<DA.CajaDiario> ListadoCajasAsignadas = ViewBag.ListadoCajasAsignadas;
-    Web.Models.Paginador<DA.CajaDiario> ListadoCajasDiario = ViewBag.ListadoCajasDiario;
+
     decimal monto = ViewBag.MontoTotal;
 }
 
 <style>
-    #modal1{
+    #modal1 {
         position: absolute;
-        width:800px;
+        width: 800px;
     }
-    #modal2{
-        position:absolute;
-        width:400px;
+
+    #modal2 {
+        position: absolute;
+        width: 400px;
     }
-    .modal-content{
+
+    .modal-content {
         background-color: #A7BBCE;
     }
-    .modal-footer{
+
+    .modal-footer {
         background-color: #E5EAEE;
     }
-    .cabecera{
+
+    .cabecera {
         background-color: #A7BBCE;
     }
-    .collapsible-header{
+
+    .collapsible-header {
         background-color: #E0EAF4;
         font-weight: bold;
     }
-
+    .contenedor_mensaje {
+        background-color: #F94040;
+        color: white;
+        height: 50px;
+    }
 </style>
 
-<div class="row" id="principal">
-    <div class="row" id="contenedor">
-        <div class="row">
-            <div class="col s12 m12 l12">
-                <div class="card-content">
-                    <ul class="collapsible">
-                        <li class="active">
-                            <div class="collapsible-header"><i class="material-icons">business</i>CAJAS ASIGNADAS</div>
-                            <div class="collapsible-body">
-                                <div class="row">
-                                    <div class="col s12 m12">
-                                        <table class="bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>CAJA</th>
-                                                    <th>CAJERO</th>
-                                                    <th>FECHA INICIO</th>
-                                                    <th>FECHA FIN</th>
-                                                    <th>SALDO INICIAL</th>
-                                                    <th>ENTRADAS</th>
-                                                    <th>SALIDAS</th>
-                                                    <th>SALDO FINAL</th>
-                                                    <th>CIERRE</th>
-                                                    <th hidden>BOVEDA</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbd_asignadas">
-                                            </tbody>
-                                        </table>
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+
+@if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_cajadiario_todo))
+{
+    <div class="row" id="principal">
+        <div class="row" id="contenedor">
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card-content">
+                        <ul class="collapsible">
+                            <li class="active">
+                                <div class="collapsible-header"><i class="material-icons">business</i>CAJAS ASIGNADAS</div>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="col s12 m12">
+                                            <table class="bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>CAJA</th>
+                                                        <th>CAJERO</th>
+                                                        <th>FECHA INICIO</th>
+                                                        <th>FECHA FIN</th>
+                                                        <th>SALDO INICIAL</th>
+                                                        <th>ENTRADAS</th>
+                                                        <th>SALIDAS</th>
+                                                        <th>SALDO FINAL</th>
+                                                        <th>CIERRE</th>
+                                                        <th hidden>BOVEDA</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbd_asignadas">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s12 m12 l12">
-                                        <div id="bordered-table" class="card card card-default scrollspy">
-                                            <div class="col-md-12 center text-center">
-                                                <div id="EncontradoAsignadas">
-                                                    <span>
-                                                        <label id="TotalRegistrosAsignadas"></label> registros encontrados
-                                                    </span>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <span>
-                                                        Página <label id="PaginaActualAsignadas"></label> de
-                                                        <label id="TotalPaginasAsignadas"></label>
-                                                    </span>
-                                                </div>
-                                                <div class="row" id="NoEncontradoAsignadas">
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <span>No hay resultados de la búsqueda</span>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                </div>
+                                    <div class="row">
+                                        <div class="col s12 m12 l12">
+                                            <div id="bordered-table" class="card card card-default scrollspy">
+                                                <div class="col-md-12 center text-center">
+                                                    <div id="EncontradoAsignadas">
+                                                        <span>
+                                                            <label id="TotalRegistrosAsignadas"></label> registros encontrados
+                                                        </span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>
+                                                            Página <label id="PaginaActualAsignadas"></label> de
+                                                            <label id="TotalPaginasAsignadas"></label>
+                                                        </span>
+                                                    </div>
+                                                    <div class="row" id="NoEncontradoAsignadas">
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>No hay resultados de la búsqueda</span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                    </div>
 
-                                                <div>
-                                                    <button class="btn btn-small blue" id="inicio_asignadas"><<</button>
-                                                    <span></span>
-                                                    <button class="btn btn-small blue" id="anterior_asignadas">Anterior</button>
+                                                    <div>
+                                                        <button class="btn btn-small blue" id="inicio_asignadas"><<</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="anterior_asignadas">Anterior</button>
 
-                                                    <button class="btn btn-small blue" id="siguiente_asignadas">Siguiente</button>
-                                                    <span></span>
-                                                    <button class="btn btn-small blue" id="ultimo_asignadas">>></button>
+                                                        <button class="btn btn-small blue" id="siguiente_asignadas">Siguiente</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="ultimo_asignadas">>></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li>
-                            <div>
-                                <button data-target="modal1" class="btn modal-trigger btn-small blue left" id="asignar_caja">ASIGNAR CAJA</button>
-                                &nbsp;
-                                <button data-target="modal2" class="btn modal-trigger btn-small blue right" id="cerrar_caja">CERRAR CAJAS</button>
-                            </div>
-                        </li>
-                    </ul>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <div>
+                                    <button data-target="modal1" class="btn modal-trigger btn-small blue left" id="asignar_caja">ASIGNAR CAJA</button>
+                                    &nbsp;
+                                    <button data-target="modal2" class="btn modal-trigger btn-small blue right" id="cerrar_caja">CERRAR CAJAS</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!--Start Modals-->
-        <!-- Modal Structure Asignar Caja -->
-        <div id="modal1" class="modal center-align">
-            <div class="col s12 cabecera">
-                <h5>Asignar Caja</h5>
-            </div>
-            <div class="modal-content">
-
-                <div class="col s12 ">
-                    <div id="validations" class="card card-tabs">
-                        <div class="card-content">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="input-field col s12 m6">
-                                        @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
-                                    </div>
-                                    <div class="input-field col s12 m6">
-                                        @Html.DropDownList("UsuariosDisponibles", ViewBag.UsuariosDisponibles as SelectList, "SELECCIONE USUARIO", htmlAttributes: new { @class = "browser-default" })
-                                    </div>
-                                    <div class="input-field col s12 m6">
-                                        <label for="inicial" style="font-weight:bold">SALDO INICIAL*</label>
-                                        <input type="number" step="any" name="inicial" id="inicial" value="0.00" required />
-                                    </div>
-                                    <div class="input-field col s12 m6">
-                                        <label for="monto" style="font-weight:bold">MONTO TOTAL DE BÓVEDA:</label>
-                                        <input type="text" name="monto" id="monto" value="@monto" readonly />
+            <!--Start Modals-->
+            <!-- Modal Structure Asignar Caja -->
+            <div id="modal1" class="modal center-align">
+                <div class="col s12 cabecera">
+                    <h5>Asignar Caja</h5>
+                </div>
+                <div class="modal-content">
+                    <div class="col s12 ">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content contenedor_mensaje" id="div_mensaje_asignar" hidden>
+                                <p id="txt_mensaje_asignar" style="margin-top:-10px;"></p>
+                            </div>
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="input-field col s12 m6">
+                                            @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
+                                        </div>
+                                        <div class="input-field col s12 m6">
+                                            @Html.DropDownList("UsuariosDisponibles", ViewBag.UsuariosDisponibles as SelectList, "SELECCIONE USUARIO", htmlAttributes: new { @class = "browser-default" })
+                                        </div>
+                                        <div class="input-field col s12 m6">
+                                            <label for="inicial" style="font-weight:bold">SALDO INICIAL*</label>
+                                            <input type="number" step="0.01" min="0" name="inicial" id="inicial" value="0.00" required />
+                                        </div>
+                                        <div class="input-field col s12 m6">
+                                            <label for="monto" style="font-weight:bold">MONTO TOTAL DE BÓVEDA:</label>
+                                            <input type="text" name="monto" id="monto" value="@monto" readonly />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="asignar">Guardar</a>
+                    &nbsp;
+                    <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar">Cancelar</a>
+                </div>
             </div>
-            <div class="modal-footer">
-                <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="asignar">Guardar</a>
-                &nbsp;
-                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar">Cancelar</a>
-            </div>
-        </div>
 
-        <!-- Modal Structure Cerrar Cajas -->
-        <div id="modal2" class="modal center-align">
-            <div class="col s12 cabecera">
-                <h5>MPB</h5>
-            </div>
-            <div class="modal-content">
+            <!-- Modal Structure Cerrar Cajas -->
+            <div id="modal2" class="modal center-align">
+                <div class="col s12 cabecera">
+                    <h5>MPB</h5>
+                </div>
+                <div class="modal-content">
 
-                <div class="col s12 ">
-                    <div id="validations" class="card card-tabs">
-                        <div class="card-content">
-                            <p>¿DESEA CERRAR LAS CAJAS?</p>
+                    <div class="col s12 ">
+                        <div id="validations" class="card card-tabs">
+                            <div class="card-content">
+                                <p>¿DESEA CERRAR LAS CAJAS?</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="modal-footer">
-                <button class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar" disabled>Guardar</button>
-                &nbsp;
-                <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
-            </div>
-        </div>
 
-        <!--Final Modal-->
-        <div class="row">
-            <div class="col s12 m12 l12">
-                <div class="card-content">
-                    <ul class="collapsible">
-                        <li class="active">
-                            <div class="collapsible-header"><i class="material-icons">business</i>SALDOS CAJA DIARIO</div>
-                            <div class="collapsible-body">
-                                <div class="row">
-                                    <div class="col s12 m12">
-                                        <table class="bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>CAJA</th>
-                                                    <th>RESPONSABLE</th>
-                                                    <th>SALDO INICIAL</th>
-                                                    <th>SALDO FINAL</th>
-                                                    <th>F.INICIO</th>
-                                                    <th>F.FIN</th>
-                                                    <th>CIERRE</th>
-                                                    <th>BOVEDA</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbd_cajasdiario">
-                                            </tbody>
-                                        </table>
+                <div class="modal-footer">
+                    <button class="modal-close btn-small blue right" style="margin-right:30px;" id="cerrar" disabled>Guardar</button>
+                    &nbsp;
+                    <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
+                </div>
+            </div>
+
+            <!--Final Modal-->
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card-content">
+                        <ul class="collapsible">
+                            <li class="active">
+                                <div class="collapsible-header"><i class="material-icons">business</i>SALDOS CAJA DIARIO</div>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="col s12 m12">
+                                            <table class="bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>CAJA</th>
+                                                        <th>RESPONSABLE</th>
+                                                        <th>SALDO INICIAL</th>
+                                                        <th>SALDO FINAL</th>
+                                                        <th>F.INICIO</th>
+                                                        <th>F.FIN</th>
+                                                        <th>CIERRE</th>
+                                                        <th>BOVEDA</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbd_cajasdiario">
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s12 m12 l12">
-                                        <div id="bordered-table" class="card card card-default scrollspy">
-                                            <div class="col-md-12 center text-center">
-                                                <div id="EncontradoCajasDiario">
-                                                    <span>
-                                                        <label id="TotalRegistrosCajasDiario"></label> registros encontrados
-                                                    </span>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <span>
-                                                        Página <label id="PaginaActualCajasDiario"></label> de
-                                                        <label id="TotalPaginasCajasDiario"></label>
-                                                    </span>
-                                                </div>
-                                                <div class="row" id="NoEncontradoCajasDiario">
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <span>No hay resultados de la búsqueda</span>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                </div>
+                                    <div class="row">
+                                        <div class="col s12 m12 l12">
+                                            <div id="bordered-table" class="card card card-default scrollspy">
+                                                <div class="col-md-12 center text-center">
+                                                    <div id="EncontradoCajasDiario">
+                                                        <span>
+                                                            <label id="TotalRegistrosCajasDiario"></label> registros encontrados
+                                                        </span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>
+                                                            Página <label id="PaginaActualCajasDiario"></label> de
+                                                            <label id="TotalPaginasCajasDiario"></label>
+                                                        </span>
+                                                    </div>
+                                                    <div class="row" id="NoEncontradoCajasDiario">
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>No hay resultados de la búsqueda</span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                    </div>
 
-                                                <div>
-                                                    <button class="btn btn-small blue" id="inicio_diarios"><<</button>
-                                                    <span></span>
-                                                    <button class="btn btn-small blue" id="anterior_diarios">Anterior</button>
+                                                    <div>
+                                                        <button class="btn btn-small blue" id="inicio_diarios"><<</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="anterior_diarios">Anterior</button>
 
-                                                    <button class="btn btn-small blue" id="siguiente_diarios">Siguiente</button>
-                                                    <span></span>
-                                                    <button class="btn btn-small blue" id="ultimo_diarios">>></button>
+                                                        <button class="btn btn-small blue" id="siguiente_diarios">Siguiente</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="ultimo_diarios">>></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div>
-                        </li>
-                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col s6">
-                <div class="card-content">
+            <div class="row">
+                <div class="col s6">
                     <ul class="collapsible">
                         <li>
                             <div class="collapsible-header"><i class="material-icons">delete_outline</i>ANULAR MOVIMIENTO DE CAJA</div>
                             <div class="collapsible-body">
-                                <div class="row">
-                                    <div class="col s12 m12">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="input-field col s12 m12 busqueda">
-                                                    <input class="filtro" type="text" name="filtro" placeholder="NRO. MOVIMIENTO:">
-                                                    <i class="material-icons prefix" style="margin-left:-25px;">search</i>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="input-field col s12 m6">
-                                                    <input type="text" name="Id" id="Id" hidden />
-                                                    <label for="cajadiario">Caja Diario:</label>
-                                                    <input type="text" name="cajadiario" id="cajadiario" readonly />
-                                                </div>
-                                                <div class="input-field col s12 m6">
-                                                    <label for="operacion">Operacion:</label>
-                                                    <input type="text" name="operacion" id="operacion" readonly />
-                                                </div>
-                                                <div class="input-field col s12 m6">
-                                                    <label for="alumno">Alumno:</label>
-                                                    <input type="text" name="alumno" id="alumno" readonly />
-                                                </div>
-                                                <div class="input-field col s12 m6">
-                                                    <label for="fechapago">Fecha Pago:</label>
-                                                    <input type="text" name="fechapago" id="fechapago" readonly />
-                                                </div>
-                                                <div class="input-field col s12 m12">
-                                                    <label for="importe">Importe Pago:</label>
-                                                    <input type="text" name="importe" id="importe" readonly />
-                                                </div>
+                                <div class="card-content contenedor_mensaje" id="div_mensaje_anular" hidden>
+                                    <p id="txt_mensaje_anular" style="text-align:center; font-weight:bold; margin-top:-15px; padding-top:12px;"></p>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="input-field col s12 m12 busqueda">
+                                                <input id="filtro" type="text" name="filtro" placeholder="NRO. MOVIMIENTO:">
+                                                <i class="material-icons prefix" style="margin-left:-25px;">search</i>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="input-field col s12 m6">
+                                                <input type="number" name="id_movimiento" id="id_movimiento" hidden />
+                                                <label for="cajadiario">CAJA DIARIO</label>
+                                                <input type="number" name="id_cajadiario" id="id_cajadiario" placeholder="0" readonly />
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="operacion">OPERACION</label>
+                                                <input type="text" name="operacion" id="operacion" placeholder="..." readonly />
+                                            </div>
+                                            <div class="input-field col s12 m12">
+                                                <label for="persona">PERSONA</label>
+                                                <input type="text" name="persona" id="persona" placeholder="..." readonly />
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="fecha_pago">FECHA PAGO</label>
+                                                <input type="text" name="fecha_pago" id="fecha_pago" placeholder="dd/mm/yyyy" readonly />
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="importe">IMPORTE PAGO</label>
+                                                <input type="text" name="importe" id="importe" placeholder="0.00" readonly />
+                                            </div>
+                                            <div class="input-field col s12 m12">
+                                                <label for="descripcion">DESCRIPCION</label>
+                                                <input type="text" name="descripcion" id="descripcion" placeholder="..." readonly />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <table>
+                                                <tr>
+                                                    <td><button class="btn btn-primary btn-block btn-lg blue" type="submit" id="anular_mov" disabled>Anular Movimiento</button></td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                         </li>
                     </ul>
+
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-</div>
+    <div class="row">
+        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+}
+
 
 @section Scripts{
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.collapsible').collapsible();
-            $('.modal').modal();
-        });
-    </script>
+<script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+        $('.modal').modal();
+    });
+
+</script>
+
+<script src="~/Scripts/jquery-ui/jquery-ui.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#filtro").autocomplete({
+            dataType: 'JSON',
+            source: function (request, response) {
+                jQuery.ajax({
+                    url: '/CajaDiario/ObtenerMovimiento',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        nro: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                value: item.Id,
+                                cajadiario: item.CajaDiarioId,
+                                operacion: item.OperacionDenominacion,
+                                persona: item.PersonaNombres,
+                                fecha: item.Fecha,
+                                total: item.Total,
+                                descripcion: item.Descripcion
+                            }
+                        }))
+                    }
+                })
+
+            },
+            select: function (e, ui) {
+                // Convert format date from asp.net format json to datetime (javascript)
+                var date = new Date(parseInt((ui.item.fecha).toString().substring(6)));
+                var mydate = new Date(date);
+                var getMonth = mydate.getMonth() + 1;
+                var getDay = mydate.getDate();
+                var getYear = mydate.getFullYear();
+                var getHour = mydate.getHours();
+                var getMinute = mydate.getMinutes();
+                var getSecond = mydate.getSeconds();
+                var fecha = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute + ':' + (getSecond < 10 ? '0': '') + getSecond;
+
+                // We send data from caja movimiento to fields
+                $("#id_movimiento").val(ui.item.id);
+                $("#id_cajadiario").val(ui.item.cajadiario);
+                $("#operacion").val(ui.item.operacion);
+                $("#persona").val(ui.item.persona);
+                $("#fecha_pago").val(fecha);
+                $("#importe").val(ui.item.total);
+                $("#descripcion").val(ui.item.descripcion);
+
+                // we enable button cancel movement
+
+                $("#anular_mov").prop("disabled",false);
+
+            }
+
+        })
+
+    });
+</script>
+
 }
 
 <script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
 <script src="~/Scripts/paginador/paginador.js"></script>
 <script>
+
+//Initialize variables necessaries for the pagination
+
+var currentPage = 1;
+var pageCount = 0;
+
+$(document).ready(function () {
+    $("#asignar").click(asignarfunc);
+    $("#cancelar").click(limpiarModal);
+    $("#cerrar_caja").click(moduloCierreFun);
+    $("#anular_mov").click(anularMovFunc);
+
+
+    //START PAGINATION 'CAJAS ASIGNADAS'
+    paginadorFuncAsignadas(currentPage);
+
+    $("#inicio_asignadas").click(function () {
+        paginadorFuncAsignadas(1);
+    });
+    $("#siguiente_asignadas").click(function () {
+        paginadorFuncAsignadas(currentPage + 1);
+    });
+    $("#ultimo_asignadas").click(function () {
+        paginadorFuncAsignadas(pageCount);
+    });
+    $("#anterior_asignadas").click(function () {
+        paginadorFuncAsignadas(currentPage - 1)
+    });
+
+    //START PAGINATION 'CAJAS DIARIO'
+    paginadorFuncCajasDiario(currentPage);
+
+    $("#inicio_diarios").click(function () {
+        paginadorFuncCajasDiario(1);
+    });
+    $("#siguiente_diarios").click(function () {
+        paginadorFuncCajasDiario(currentPage + 1);
+    });
+    $("#ultimo_diarios").click(function () {
+        paginadorFuncCajasDiario(pageCount);
+    });
+    $("#anterior_diarios").click(function () {
+        paginadorFuncCajasDiario(currentPage - 1)
+    });
+
+});
+
+    var valTimeout;
+
+    var isAssignmentLoading = false;
+
     var asignarfunc = function () {
-        var envio = {
-            CajaId: $("#CajasDisponibles").val(),
-            CajaDenominacion: $("#CajasDisponibles option:selected").text(),
-            UsuarioId: $("#UsuariosDisponibles").val(),
-            SaldoInicial: $("#inicial").val()
-        }
-        console.log(envio)
-        $.ajax({
-            url: '@Url.Action("AsignarCaja","CajaDiario")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-                $("#CajasDisponibles").find(`option[value=${rm.result[0]}]`).remove()
-                $("#UsuariosDisponibles").find(`option[value=${rm.result[1]}]`).remove()
 
-                //Llamamos de nuevo a los registros de nuestra base de datos
-                paginadorFuncAsignadas(currentPage);
-                paginadorFuncCajasDiario(currentPage);
-
-                // Actualizamos el monto total disponible de la bóveda
-                $("#monto").val(`${rm.result[8]}`);
-
-                //Refrescamos modal
-                var numero = 0;
-                $("#inicial").val(numero.toFixed(2));
-                $("#CajasDisponibles").val('').prop('defaultSelected');
-                $("#UsuariosDisponibles").val('').prop('defaultSelected');                
+        if (!isAssignmentLoading) {
+            isAssignmentLoading = true;
+            var envio = {
+                CajaId: $("#CajasDisponibles").val(),
+                CajaDenominacion: $("#CajasDisponibles option:selected").text(),
+                UsuarioId: $("#UsuariosDisponibles").val(),
+                UsuarioNombres: $("#UsuariosDisponibles option:selected").text(),
+                SaldoInicial: $("#inicial").val()
             }
-        });
+            //console.log(envio);
+
+            $("#asignar").prop('disabled',true);
+            $.ajax({
+                url: '@Url.Action("AsignarCaja","CajaDiario")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (rm) {
+                    console.log(rm.response);
+
+                    try {
+
+                        if (rm.response == false) {
+
+                            $("#div_mensaje_asignar").show();
+                            $("#div_mensaje_asignar").css("background-color", "#F94040");
+                            $("#txt_mensaje_asignar").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_asignar").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+
+                            $("#div_mensaje_asignar").show();
+                            $("#div_mensaje_asignar").css("background-color", "#27EF37");
+                            $("#txt_mensaje_asignar").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_asignar").fadeOut();
+                            }, 2500);
+
+                            $("#CajasDisponibles").find(`option[value=${rm.result[0]}]`).remove()
+                            $("#UsuariosDisponibles").find(`option[value=${rm.result[1]}]`).remove()
+
+                            //Llamamos de nuevo a los registros de nuestra base de datos
+                            paginadorFuncAsignadas(currentPage);
+                            paginadorFuncCajasDiario(currentPage);
+
+                            // Actualizamos el monto total disponible de la bóveda
+                            $("#monto").val(`${rm.result[2]}`);
+
+                            //Refrescamos modal
+                            var numero = 0;
+                            $("#inicial").val(numero.toFixed(2));
+                            $("#CajasDisponibles").val('').prop('defaultSelected');
+                            $("#UsuariosDisponibles").val('').prop('defaultSelected');
+                        }
+                    }
+                    catch (e) {
+                        alert("Esta caja ya fue asignada a un cajero.");
+                    }
+
+                },
+                complete: function () {
+                    isAssignmentLoading = false;
+                    $("#asignar").prop('disabled',false);
+                }
+            });
+        }
+        else {
+            console.log("Assignment operation was alredy completed");
+        }
+
     }
 
+    var isClosingLoading = false;
+
     var cerrarfunc = function () {
+        if (!isClosingLoading) {
+            isClosingLoading = true;
 
-        var sumaTotal = 0;
-        $(".Final").each(function () {
-            sumaTotal += parseFloat($(this).text());
-        });
-
-        var _CajasAsignadas = new Array();
-        $("#tbd_asignadas tr").each(function (_, value) {
-            _CajasAsignadas.push({
-                CajaDiarioId: value.childNodes[1].innerText,
-                Glosa: "CIERRE DE " + value.childNodes[3].innerText,
-                Importe: value.childNodes[17].innerText
+            var sumaTotal = 0;
+            $(".final_cajas").each(function () {
+                sumaTotal += parseFloat($(this).text());
             });
-        });
 
-        var envio = {
-            SaldoFinal: sumaTotal,
-            CajasACerrar: _CajasAsignadas
+            var _CajasAsignadas = new Array();
+            $("#tbd_asignadas tr").each(function (_, value) {
+                _CajasAsignadas.push({
+                    CajaDiarioId: value.childNodes[1].innerText,
+                    Glosa: "CIERRE DE " + value.childNodes[3].innerText,
+                    Importe: value.childNodes[17].innerText
+                });
+            });
+
+            var envio = {
+                SaldoFinal: sumaTotal,
+                CajasACerrar: _CajasAsignadas
+            }
+            //console.log(envio)
+
+            $.ajax({
+                url: '@Url.Action("CerrarCajas","CajaDiario")',
+                data: JSON.stringify(envio),
+                type: 'PATCH',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function () {
+                    try {
+                        //Llamamos de nuevo a los registros de nuestra base de datos
+                        paginadorFuncAsignadas(currentPage);
+                        paginadorFuncCajasDiario(currentPage);
+                        //Actualizamos los registros de las cajas asignadas desde el lado del cliente
+                        $("#tbd_asignadas").remove();
+                    }
+                    catch (e) {
+                        alert("Las cajas ya fueron cerradas");
+                    }
+                },
+                complete: function () {
+                    isClosingLoading = false;
+                }
+            });
         }
-        console.log(envio)
+        else {
+            console.log("Closing operation was alredy completed");
+        }
+
+    }
+
+
+var moduloCierreFun = function () {
+    $.ajax({
+        url: '@Url.Action("ModuloCierre","CajaDiario")',
+        type: 'POST',
+        async: false,//this makes the ajax-call blocking
+        contentType: 'application/json;charset=UTF-8',
+        dataType: 'json',
+        success: function (rm) {
+
+            const isDisabled = rm.result.map(function (caja) {
+                return caja.IndCierre
+            }).includes(false)
+
+            //console.log(isDisabled);
+            //console.log($("#tbd_asignadas tr").length);
+
+            if (isDisabled) {
+                $("#cerrar").prop("disabled", isDisabled)
+                
+
+            } else {
+                if ($("#tbd_asignadas tr").length == 0) {
+                    $("#cerrar").prop("disabled", true)
+                }
+                else {
+                    $("#cerrar").removeAttr('disabled');
+                    $("#cerrar").click(cerrarfunc);
+                }
+
+            }
+
+
+        }
+    });
+}
+
+var limpiarModal = function () {
+    var numero = 0;
+    $("#inicial").val(numero.toFixed(2));
+    $("#CajasDisponibles").val('').prop('defaultSelected');
+    $("#UsuariosDisponibles").val('').prop('defaultSelected');
+}
+
+
+var isCancelLoading = false;
+
+var anularMovFunc = function () {
+
+    if (!isCancelLoading) {
+        isCancelLoading = true;
+        var envio = {
+            Id: $("#id_movimiento").val()
+        }
+
+        $("#anular_mov").prop("disabled",true);
+
         $.ajax({
-            url: '@Url.Action("CerrarCajas","CajaDiario")',
+            url: '@Url.Action("AnularMovimiento","CajaDiario")',
             data: JSON.stringify(envio),
             type: 'PATCH',
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function () {
-                //console.log(rm.result);
-                $("#tbd_asignadas").remove();
-                $(".tdFalse").html("SI");
-                $(".tdFalse").attr("class","");
-            }
-        });
-
-    }
-
-
-    var moduloCierreFun = function () {
-        $.ajax({
-            url: '@Url.Action("ModuloCierre","CajaDiario")',
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
             success: function (rm) {
-                
-                const isDisabled = rm.result.map(function (caja) {
-                    return caja.IndCierre
-                }).includes(false)
 
-                console.log(isDisabled);
+                try {
 
-                if (isDisabled) {
-                    $("#cerrar").prop("disabled", isDisabled)
-                    
-                } else {
-                    $("#cerrar").removeAttr('disabled');
-                    $("#cerrar").click(cerrarfunc);
+                    if (rm.response == false) {
+                        $("#div_mensaje_anular").show();
+                        $("#div_mensaje_anular").css("background-color", "#F94040");
+                        $("#txt_mensaje_anular").text(rm.message);
+
+                        if (valTimeout) {
+                            clearTimeout(valTimeout);
+                        }
+
+                        valTimeout = setTimeout(() => {
+                            $("#div_mensaje_anular").fadeOut();
+                        }, 2500);
+                    }
+                    else {
+                        $("#div_mensaje_anular").show();
+                        $("#div_mensaje_anular").css("background-color", "#27EF37");
+                        $("#txt_mensaje_anular").text(rm.message);
+
+                        if (valTimeout) {
+                            clearTimeout(valTimeout);
+                        }
+
+                        valTimeout = setTimeout(() => {
+                            $("#div_mensaje_anular").fadeOut();
+                        }, 2500);
+
+                        //Clear fields after operation cancel movement
+                        $("#filtro").val("");
+                        $("#id_movimiento").val("");
+                        $("#ind_entrada").val("");
+                        $("#id_cajadiario").val("");
+                        $("#operacion").val("");
+                        $("#id_alumno").val("");
+                        $("#id_personal").val("");
+                        $("#persona").val("");
+                        $("#fecha_pago").val("");
+                        $("#importe").val("");
+                        $("#descripcion").val("");
+
+                        paginadorFuncAsignadas(currentPage);
+                        paginadorFuncCajasDiario(currentPage);
+
+                    }
                 }
-
-                
+                catch (e) {
+                    alert("El movimiento ya fue anulado");
+                }
+            },
+            complete: function () {
+                isCancelLoading = false;
+                $("#anular_mov").prop("disabled",false);
             }
         });
     }
-
-    var limpiarModal = function () {
-        var numero = 0;
-        $("#inicial").val(numero.toFixed(2));
-        $("#CajasDisponibles").val('').prop('defaultSelected');
-        $("#UsuariosDisponibles").val('').prop('defaultSelected');
+    else {
+        console.log("The cancel operation was alredy completed");
     }
+}
+</script>
 
-    //Initialize variables necessaries for the pagination
+<script>
+//PAGINATION 'CAJAS ASIGNADAS'
+var paginadorFuncAsignadas = function (pagina) {
+    var envio = {
+        pagina: pagina > 0 ? pagina : 1
+    }
+    $.ajax({
+        url: '@Url.Action("TablaAsignadas","CajaDiario")',
+        data: JSON.stringify(envio),
+        type: 'POST',
+        async: false,//this makes the ajax-call blocking
+        contentType: 'application/json;charset=UTF-8',
+        dataType: 'json',
+        success: function (rm) {
+            //console.log(rm.result);
+            var Listado = rm.result.Listado;
+            var PaginaActual = rm.result.PaginaActual;
+            var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+            var TotalPaginas = rm.result.TotalPaginas;
+            var TotalRegistros = rm.result.TotalRegistros;
 
-    var currentPage = 1;
-    var pageCount = 0;
+            pageCount = rm.result.TotalPaginas;
+            currentPage = rm.result.PaginaActual;
 
-    $(document).ready(function () {
-        $("#asignar").click(asignarfunc);
-        $("#cancelar").click(limpiarModal);
-        $("#cerrar_caja").click(moduloCierreFun);
 
-        //START PAGINATION 'CAJAS ASIGNADAS'
-        paginadorFuncAsignadas(currentPage);
+            if (Listado.length > 0) {
+                $("#NoEncontradoAsignadas").hide();
+                $("#TotalRegistrosAsignadas").html(TotalRegistros);
+                $("#PaginaActualAsignadas").html(PaginaActual);
+                $("#TotalPaginasAsignadas").html(TotalPaginas);
+                $("#tbd_asignadas").empty();
+                fillPaginatorAsignadas("#tbd_asignadas", Listado)
+            }
+            else {
+                $("#EncontradoAsignadas").hide();
+            }
 
-        $("#inicio_asignadas").click(function () {
-            paginadorFuncAsignadas(1);
-        });
-        $("#siguiente_asignadas").click(function () {
-            paginadorFuncAsignadas(currentPage + 1);
-        });
-        $("#ultimo_asignadas").click(function () {
-            paginadorFuncAsignadas(pageCount);
-        });
-        $("#anterior_asignadas").click(function () {
-            paginadorFuncAsignadas(currentPage - 1)
-        });
+            deshabilitarBotones(rm.result, 'asignadas')
+        }
+    });
+}
 
-        //START PAGINATION 'CAJAS DIARIO'
-        paginadorFuncCajasDiario(currentPage);
 
-        $("#inicio_diarios").click(function () {
-            paginadorFuncCajasDiario(1);
-        });
-        $("#siguiente_diarios").click(function () {
-            paginadorFuncCajasDiario(currentPage + 1);
-        });
-        $("#ultimo_diarios").click(function () {
-            paginadorFuncCajasDiario(pageCount);
-        });
-        $("#anterior_diarios").click(function () {
-            paginadorFuncCajasDiario(currentPage - 1)
-        });
 
+function fillPaginatorAsignadas(id, list) {
+    list.forEach(function (item, index) {
+        // Convert format date from asp.net format json to datetime (javascript)
+        var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+        var mydate = new Date(date);
+        var getMonth = mydate.getMonth() + 1;
+        var getDay = mydate.getDate();
+        var getYear = mydate.getFullYear();
+        var getHour = mydate.getHours();
+        var getMinute = mydate.getMinutes();
+        var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+        // Convert format date from asp.net format json to datetime (javascript)
+        var fecha_fin;
+
+        if (item.FechaFin != null) {
+            var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+            var mydate = new Date(datetime);
+            var getMonth = mydate.getMonth() + 1;
+            var getDay = mydate.getDate();
+            var getYear = mydate.getFullYear();
+            var getHour = mydate.getHours();
+            var getMinute = mydate.getMinutes();
+            var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+        }
+        else {
+            fecha_fin = '';
+        }
+
+        //We validate texts of IndCierre and IndBoveda
+        var ind_cierre;
+        var ind_boveda;
+
+        if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
+
+        if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO' }
+
+
+        $(id).append(
+            `<tr>
+                    <td style="padding:0">${item.Id}</td>
+                    <td style="padding:0">${item.CajaDenominacion}</td>
+                    <td style="padding:0">${item.UsuarioNombre}</td>
+                    <td style="padding:0">${fecha_inicio}</td>
+                    <td style="padding:0">${fecha_fin}</td>
+                    <td style="padding:0">${item.SaldoInicial}</td>
+                    <td style="padding:0">${item.Entradas}</td>
+                    <td style="padding:0">${item.Salidas}</td>
+                    <td style="padding:0" class="final_cajas">${item.SaldoFinal}</td>
+                    <td style="padding:0">${ind_cierre}</td>
+                    <td style="padding:0" hidden>${ind_boveda}</td>
+            </tr>`
+        )
 
     });
+
+}
+
 </script>
 
 <script>
-    //PAGINATION 'CAJAS ASIGNADAS'
-    var paginadorFuncAsignadas = function (pagina) {
-        var envio = {
-            pagina: pagina > 0 ? pagina : 1
-        }
-        $.ajax({
-            url: '@Url.Action("TablaAsignadas","CajaDiario")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-                console.log(rm.result);
-                var Listado = rm.result.Listado;
-                var PaginaActual = rm.result.PaginaActual;
-                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
-                var TotalPaginas = rm.result.TotalPaginas;
-                var TotalRegistros = rm.result.TotalRegistros;
-
-                pageCount = rm.result.TotalPaginas;
-                currentPage = rm.result.PaginaActual;
-
-
-                if (Listado.length > 0) {
-                    $("#NoEncontradoAsignadas").hide();
-                    $("#TotalRegistrosAsignadas").html(TotalRegistros);
-                    $("#PaginaActualAsignadas").html(PaginaActual);
-                    $("#TotalPaginasAsignadas").html(TotalPaginas);
-                    $("#tbd_asignadas").empty();
-                    fillPaginatorAsignadas("#tbd_asignadas", Listado)
-                }
-                else {
-                    $("#EncontradoAsignadas").hide();
-                }
-
-                deshabilitarBotones(rm.result, 'asignadas')
-            }
-        });
+//PAGINATION 'CAJAS DIARIO'
+var paginadorFuncCajasDiario = function (pagina) {
+    var envio = {
+        pagina: pagina > 0 ? pagina : 1
     }
+    $.ajax({
+        url: '@Url.Action("TablaCajasDiario","CajaDiario")',
+        data: JSON.stringify(envio),
+        type: 'POST',
+        async: false,//this makes the ajax-call blocking
+        contentType: 'application/json;charset=UTF-8',
+        dataType: 'json',
+        success: function (rm) {
+            //console.log(rm.result);
+            var Listado = rm.result.Listado;
+            var PaginaActual = rm.result.PaginaActual;
+            var RegistrosPorPagina = rm.result.RegistrosPorPagina;
+            var TotalPaginas = rm.result.TotalPaginas;
+            var TotalRegistros = rm.result.TotalRegistros;
+
+            pageCount = rm.result.TotalPaginas;
+            currentPage = rm.result.PaginaActual;
 
 
+            if (Listado.length > 0) {
+                $("#NoEncontradoCajasDiario").hide();
+                $("#TotalRegistrosCajasDiario").html(TotalRegistros);
+                $("#PaginaActualCajasDiario").html(PaginaActual);
+                $("#TotalPaginasCajasDiario").html(TotalPaginas);
+                $("#tbd_cajasdiario").empty();
+                fillPaginatorCajasDiario("#tbd_cajasdiario", Listado)
+            }
+            else {
+                $("#EncontradoCajasDiario").hide();
+            }
 
-    function fillPaginatorAsignadas(id, list) {
-        list.forEach(function (item, index) {
-            // Convert format date from asp.net format json to datetime (javascript)
-            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
-            var mydate = new Date(date);
+            deshabilitarBotones(rm.result, 'diarios')
+        }
+    });
+}
+
+function fillPaginatorCajasDiario(id, list) {
+    list.forEach(function (item, index) {
+
+        // Convert format date from asp.net format json to datetime (javascript)
+        var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
+        var mydate = new Date(date);
+        var getMonth = mydate.getMonth() + 1;
+        var getDay = mydate.getDate();
+        var getYear = mydate.getFullYear();
+        var getHour = mydate.getHours();
+        var getMinute = mydate.getMinutes();
+        var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
+
+        // Convert format date from asp.net format json to datetime (javascript)
+        var fecha_fin;
+
+        // We validate if the final date isn´t null
+        if (item.FechaFin != null) {
+            var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
+            var mydate = new Date(datetime);
             var getMonth = mydate.getMonth() + 1;
             var getDay = mydate.getDate();
             var getYear = mydate.getFullYear();
             var getHour = mydate.getHours();
             var getMinute = mydate.getMinutes();
-            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
-
-            // Convert format date from asp.net format json to datetime (javascript)
-            var fecha_fin;
-
-            if (item.FechaFin != null) {
-                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
-                var mydate = new Date(datetime);
-                var getMonth = mydate.getMonth() + 1;
-                var getDay = mydate.getDate();
-                var getYear = mydate.getFullYear();
-                var getHour = mydate.getHours();
-                var getMinute = mydate.getMinutes();
-                var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
-            }
-            else {
-                fecha_fin = '';
-            }
-
-            //We validate texts of IndCierre and IndBoveda
-            var ind_cierre;
-            var ind_boveda;
-
-            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
-
-            if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO' }
-
-
-            $(id).append(
-                `<tr>
-                        <td style="padding:0">${item.Id}</td>
-                        <td style="padding:0">${item.CajaDenominacion}</td>
-                        <td style="padding:0">${item.UsuarioNombre}</td>
-                        <td style="padding:0">${fecha_inicio}</td>
-                        <td style="padding:0">${fecha_fin}</td>
-                        <td style="padding:0">${item.SaldoInicial}</td>
-                        <td style="padding:0">${item.Entradas}</td>
-                        <td style="padding:0">${item.Salidas}</td>
-                        <td style="padding:0">${item.SaldoFinal}</td>
-                        <td style="padding:0">${ind_cierre}</td>
-                        <td style="padding:0" hidden>${ind_boveda}</td>
-                </tr>`
-            )
-
-        });
-
-    }
-
-</script>
-
-<script>
-    //PAGINATION 'CAJAS DIARIO'
-    var paginadorFuncCajasDiario = function (pagina) {
-        var envio = {
-            pagina: pagina > 0 ? pagina : 1
+            var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
         }
-        $.ajax({
-            url: '@Url.Action("TablaCajasDiario","CajaDiario")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: false,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (rm) {
-                console.log(rm.result);
-                var Listado = rm.result.Listado;
-                var PaginaActual = rm.result.PaginaActual;
-                var RegistrosPorPagina = rm.result.RegistrosPorPagina;
-                var TotalPaginas = rm.result.TotalPaginas;
-                var TotalRegistros = rm.result.TotalRegistros;
+        else {
+            fecha_fin = '';
+        }
 
-                pageCount = rm.result.TotalPaginas;
-                currentPage = rm.result.PaginaActual;
+        //We validate texts of IndCierre and IndBoveda
+        var ind_cierre;
+        var ind_boveda;
 
+        if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
 
-                if (Listado.length > 0) {
-                    $("#NoEncontradoCajasDiario").hide();
-                    $("#TotalRegistrosCajasDiario").html(TotalRegistros);
-                    $("#PaginaActualCajasDiario").html(PaginaActual);
-                    $("#TotalPaginasCajasDiario").html(TotalPaginas);
-                    $("#tbd_cajasdiario").empty();
-                    fillPaginatorCajasDiario("#tbd_cajasdiario", Listado)
-                }
-                else {
-                    $("#EncontradoCajasDiario").hide();
-                }
+        if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO'}
 
-                deshabilitarBotones(rm.result, 'diarios')
-            }
-        });
-    }
+        $(id).append(
+            `<tr>
+                    <td style="padding:0">${item.Id}</td>
+                    <td style="padding:0">${item.CajaDenominacion}</td>
+                    <td style="padding:0">${item.UsuarioNombre}</td>
+                    <td style="padding:0">${item.SaldoInicial}</td>
+                    <td style="padding:0">${item.SaldoFinal}</td>
+                    <td style="padding:0">${fecha_inicio}</td>
+                    <td style="padding:0">${fecha_fin}</td>
+                    <td style="padding:0">${ind_cierre}</td>
+                    <td style="padding:0">${ind_boveda}</td>
+            </tr>`
+        )
 
-    function fillPaginatorCajasDiario(id, list) {
-        list.forEach(function (item, index) {
+    });
 
-            // Convert format date from asp.net format json to datetime (javascript)
-            var date = new Date(parseInt((item.FechaInicio).toString().substring(6)));
-            var mydate = new Date(date);
-            var getMonth = mydate.getMonth() + 1;
-            var getDay = mydate.getDate();
-            var getYear = mydate.getFullYear();
-            var getHour = mydate.getHours();
-            var getMinute = mydate.getMinutes();
-            var fecha_inicio = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
-
-            // Convert format date from asp.net format json to datetime (javascript)
-            var fecha_fin;
-
-            // We validate if the final date isn´t null
-            if (item.FechaFin != null) {
-                var datetime = new Date(parseInt((item.FechaFin).toString().substring(6)));
-                var mydate = new Date(datetime);
-                var getMonth = mydate.getMonth() + 1;
-                var getDay = mydate.getDate();
-                var getYear = mydate.getFullYear();
-                var getHour = mydate.getHours();
-                var getMinute = mydate.getMinutes();
-                var fecha_fin = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
-            }
-            else {
-                fecha_fin = '';
-            }
-
-            //We validate texts of IndCierre and IndBoveda
-            var ind_cierre;
-            var ind_boveda;
-
-            if (item.IndCierre) { ind_cierre = 'SI' } else { ind_cierre = 'NO' }
-
-            if (item.IndBoveda) { ind_boveda = 'SI' } else { ind_boveda = 'NO'}
-
-            $(id).append(
-                `<tr>
-                        <td style="padding:0">${item.Id}</td>
-                        <td style="padding:0">${item.CajaDenominacion}</td>
-                        <td style="padding:0">${item.UsuarioNombre}</td>
-                        <td style="padding:0">${item.SaldoInicial}</td>
-                        <td style="padding:0">${item.SaldoFinal}</td>
-                        <td style="padding:0">${fecha_inicio}</td>
-                        <td style="padding:0">${fecha_fin}</td>
-                        <td style="padding:0">${ind_cierre}</td>
-                        <td style="padding:0">${ind_boveda}</td>
-                </tr>`
-            )
-
-        });
-
-    }
+}
 
 </script>
 

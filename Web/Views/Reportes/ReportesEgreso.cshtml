@@ -1,7 +1,110 @@
-﻿
+﻿@model IEnumerable<BL.CajaMovimientoVm>
 @{
     ViewBag.Title = "ReportesEgreso";
+    Layout = null;
 }
 
-<h2>ReportesEgreso</h2>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ReportesEgreso</title>
+
+    <link rel="stylesheet" href="~/Bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="~/Bootstrap/Site.css" />
+
+    <style>
+        /* SOLUCIONA PROBLEMA DE SOLAPAMIENTO EN TABLAS <table /> */
+        thead {
+            display: table-header-group;
+            background-color: #E0EAF4;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body style="padding: 0px; margin: 0px;">
+    <div class="container">
+        <br /><br />
+        <p>
+            TIPO REPORTE: Listado de Egresos a Caja &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            GENERADO: @DateTime.Now.Day de @DateTime.Now.ToString("MMMM") del @DateTime.Now.Year
+        </p>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        N° &nbsp;
+                    </th>
+                    <th>
+                        Operacion
+                    </th>
+                    <th>
+                        Fecha
+                    </th>
+                    <th>
+                        Persona
+                    </th>
+                    <th>
+                        Voucher Pago
+                    </th>
+                    <th>
+                        Glosa
+                    </th>
+                    <th>
+                        Importe
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            @{
+                var _count = 0;
+            }
+
+            @foreach (var item in Model)
+            {
+                _count++;
+                <tr>
+                    <td>
+                        @_count
+                    </td>
+                    <td>
+                        @item.OperacionDenominacion
+                    </td>
+                    <td>
+                        @item.Fecha
+                    </td>
+                    <td>
+                        @item.PersonaNombres
+                    </td>
+                    <td>
+                        @item.Serie - @item.Numero
+                    </td>
+                    <td>
+                        @item.Descripcion
+                    </td>
+                    <td>
+                        @item.Total
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    </div>
+
+</body>
+</html>
+
 

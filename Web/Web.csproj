@@ -67,6 +67,9 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.7.3\lib\net461\Rotativa.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
@@ -101,6 +104,16 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -112,6 +125,16 @@
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
@@ -180,7 +203,6 @@
     <Compile Include="Controllers\Direccion\BovedaController.cs" />
     <Compile Include="Controllers\Direccion\PeriodoController.cs" />
     <Compile Include="Controllers\Direccion\HorarioController.cs" />
-    <Compile Include="Controllers\Direccion\RolController.cs" />
     <Compile Include="Controllers\Secretaria\CajaDiarioController.cs" />
     <Compile Include="Controllers\Direccion\CajaController.cs" />
     <Compile Include="Controllers\Secretaria\AlumnoController.cs" />
@@ -199,6 +221,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Autorizacion.cs" />
     <Compile Include="Models\Paginador.cs" />
     <Compile Include="Models\UsuarioVm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -251,6 +274,7 @@
     <Content Include="app-assets\images\avatar\avatar-15.png" />
     <Content Include="app-assets\images\avatar\avatar-16.png" />
     <Content Include="app-assets\images\avatar\avatar-17.png" />
+    <Content Include="app-assets\images\avatar\avatar-18.png" />
     <Content Include="app-assets\images\avatar\avatar-2.png" />
     <Content Include="app-assets\images\avatar\avatar-3.png" />
     <Content Include="app-assets\images\avatar\avatar-4.png" />
@@ -259,6 +283,7 @@
     <Content Include="app-assets\images\avatar\avatar-7.png" />
     <Content Include="app-assets\images\avatar\avatar-8.png" />
     <Content Include="app-assets\images\avatar\avatar-9.png" />
+    <Content Include="app-assets\images\Bloquear.jpg" />
     <Content Include="app-assets\images\cards\applewatch.png" />
     <Content Include="app-assets\images\cards\camara.png" />
     <Content Include="app-assets\images\cards\cameras.png" />
@@ -530,6 +555,8 @@
     <Content Include="app-assets\vendors\translator\jqueryTranslator.min.js" />
     <Content Include="app-assets\vendors\vendors.min.css" />
     <Content Include="app-assets\vendors\waypoints\jquery.waypoints.min.js" />
+    <Content Include="Bootstrap\bootstrap.css" />
+    <Content Include="Bootstrap\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
@@ -540,9 +567,18 @@
     <Content Include="app-assets\fonts\material-design-icons\MaterialIcons-Regular.woff" />
     <Content Include="app-assets\fonts\material-design-icons\MaterialIcons-Regular.woff2" />
     <Content Include="app-assets\vendors\dropify\fonts\dropify.woff" />
+    <Content Include="Headers\Encabezado.html" />
+    <Content Include="Images\MPB Logo.png" />
+    <Content Include="Images\MPB reporte.png" />
     <Content Include="Images\pageLoader.gif" />
+    <Content Include="Images\sunedu logo.png" />
+    <Content Include="Rotativa\help-wkhtmltoimage.txt" />
+    <Content Include="Rotativa\help-wkhtmltopdf.txt" />
+    <Content Include="Rotativa\wkhtmltoimage.exe" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\bootstrap\bootstrap.css" />
     <Content Include="Scripts\bootstrap\bootstrap.min.css" />
+    <Content Include="Scripts\Canvas\canvasjs.min.js" />
     <Content Include="Scripts\ini.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -583,6 +619,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="App_Browsers\qt.browser" />
     <None Include="packages.config" />
     <Content Include="Views\Personal\Index.cshtml" />
     <Content Include="Views\Personal\Mantener.cshtml" />
@@ -604,14 +641,27 @@
     <Content Include="Views\Aula\Mantener.cshtml" />
     <Content Include="Views\Matricula\Registrar.cshtml" />
     <Content Include="Views\CajaDiario\Index.cshtml" />
-    <Content Include="Views\Reportes\ReportesAlumno.cshtml" />
-    <Content Include="Views\Reportes\ReportesPersonal.cshtml" />
     <Content Include="Views\Reportes\ReportesIngreso.cshtml" />
     <Content Include="Views\Reportes\ReportesEgreso.cshtml" />
     <Content Include="Views\Reportes\ReportesDeudas.cshtml" />
     <Content Include="Views\CuentasPorCobrar\Index.cshtml" />
     <Content Include="Views\Boveda\Index.cshtml" />
     <Content Include="Views\CuentasPorCobrar\Registrar.cshtml" />
+    <Content Include="Views\Home\AccesoDenegado.cshtml" />
+    <Content Include="Views\Reportes\ReportesAlumno.cshtml" />
+    <Content Include="Views\Reportes\HeaderPDF.cshtml" />
+    <Content Include="Views\Reportes\FooterPDF.cshtml" />
+    <Content Include="Views\Reportes\ReportesPersonal.cshtml" />
+    <Content Include="Views\Reportes\Index.cshtml" />
+    <Content Include="Views\Reportes\PrincipalDeudas.cshtml" />
+    <Content Include="Views\Reportes\PrincipalMatriculas.cshtml" />
+    <Content Include="Views\Reportes\ReportesMatricula.cshtml" />
+    <Content Include="Views\Reportes\HeaderInputs.cshtml" />
+    <Content Include="Views\Reportes\HeaderOutputs.cshtml" />
+    <Content Include="Views\Reportes\FichaMatricula.cshtml" />
+    <Content Include="Views\Reportes\HeaderEnrollment.cshtml" />
+    <Content Include="Views\Pagos\Boleta.cshtml" />
+    <Content Include="Views\Pagos\Factura.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj">

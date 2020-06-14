@@ -1,183 +1,582 @@
-﻿using DA;
+﻿using BL;
+using DA;
+using Rotativa;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 using System.Web.Mvc;
 using Web.Models;
 
 namespace Web.Controllers.Secretaria
 {
+
     public class ReportesController : Controller
     {
         private DAEntities db;
-        private readonly int RegistrosPorPagina = 10;
-        private List<Alumno> Alumnos;
-        private Paginador<Alumno> ListadoAlumnos;
+        private List<Matricula> Matriculas;
+        private Paginador<MatriculaVm> ListadoMatriculas;
+        private readonly int RegistrosPorPagina = 5;
 
-        public ActionResult ReportesAlumno(string dni, int pagina = 1)
+        public ReportesController()
         {
-            int TotalRegistros = 0;
+            db = new DAEntities();
+        }
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult HeaderPDF()
+        {
+            return View("HeaderPDF");
+        }
+
+        [AllowAnonymous]
+        public ActionResult FooterPDF()
+        {
+            return View("FooterPDF");
+        }
+
+        [AllowAnonymous]
+        public ActionResult HeaderEnrollment()
+        {
+            return View("HeaderEnrollment");
+        }
+
+        [AllowAnonymous]
+        public ActionResult HeaderInputs(int id)
+        {
+            var id_usuario = id;
+
+            ViewBag.NombreUsuario = (from u in db.Usuario where u.Id == id_usuario select u.Nombre).SingleOrDefault();
+
+            var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == id_usuario && ca.IndBoveda == false select ca).SingleOrDefault();
+            ViewBag.SaldoInicial = caja_asignada.SaldoInicial;
+            ViewBag.SaldoFinal = caja_asignada.SaldoFinal;
+            ViewBag.PorcentajeEntradas = decimal.Round(((100 * caja_asignada.Entradas) / caja_asignada.SaldoFinal).Value, 2);
+            ViewBag.Fecha = caja_asignada.FechaInicio;
+
+            var cajero = (from u in db.Usuario
+                          join p in db.Personal
+                          on u.PersonalId equals p.Id
+                          where u.Id == id_usuario
+                          select p.Paterno + " " + p.Materno + " " + p.Nombres).SingleOrDefault();
+            ViewBag.Cajero = cajero;
+
+            var caja = (from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault();
+            ViewBag.Caja = caja;
+
+            var estado_caja = (from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault();
+            ViewBag.Estado = estado_caja;
+
+            return View("HeaderInputs");
+        }
+
+        [AllowAnonymous]
+        public ActionResult HeaderOutputs(int id)
+        {
+            int usuario_id = id;
+
+            ViewBag.NombreUsuario = (from u in db.Usuario where u.Id == usuario_id select u.Nombre).SingleOrDefault();
+
+            var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == usuario_id && ca.IndBoveda == false select ca).SingleOrDefault();
+            ViewBag.SaldoInicial = caja_asignada.SaldoInicial;
+            ViewBag.SaldoFinal = caja_asignada.SaldoFinal;
+            ViewBag.PorcentajeSalidas = decimal.Round(((100 * caja_asignada.Salidas) / caja_asignada.SaldoFinal).Value, 2);
+            ViewBag.Fecha = caja_asignada.FechaInicio;
+
+            var cajero = (from u in db.Usuario
+                          join p in db.Personal
+                          on u.PersonalId equals p.Id
+                          where u.Id == usuario_id
+                          select p.Paterno + " " + p.Materno + " " + p.Nombres).SingleOrDefault();
+            ViewBag.Cajero = cajero;
+
+            var caja = (from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault();
+            ViewBag.Caja = caja;
+
+            var estado_caja = (from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault();
+            ViewBag.Estado = estado_caja;
+
+            return View("HeaderOutputs");
+        }
+
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult ReportesAlumno()
+        {
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesAlumno", db.Alumno.ToList())
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0"
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(30, 10, 10, 10)
+            };
+
+        }
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult ReportesPersonal()
+        {
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesPersonal", db.Personal.ToList())
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0"
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(30, 10, 10, 10)
+            };
+
+        }
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult PrincipalMatriculas()
+        {
+            return View();
+        }
+
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult ReportesMatricula()
+        {
+
+            //We recover pendient state from db
+            var estado_pagado = (from e in db.Estado where e.Denominacion.Equals("PAGADO") select e.Id).SingleOrDefault();
+
+            // We get the 'records page' from the Cuentas Por Cobrar table
+            var Matriculas = db.CuentasPorCobrar.Where(x=>x.MatriculaId!=null && x.EstadoId == estado_pagado).OrderBy(x => x.Id)
+                                             .Include(x => x.Matricula)
+                                             .Include(x => x.Alumno)
+                                             .Include(x => x.Estado)
+                                             .ToList();
+
+
+            //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
+            var SubMatriculas = Matriculas.Select(S => new CuentasPorCobrarVm
+            {
+                Id = S.Id,
+                Fecha = S.Fecha,
+                AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
+                Total = S.Total,
+            }).ToList();
+
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesMatricula", SubMatriculas)
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0 "
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(30, 10, 10, 10)
+                
+            };
+
+        }
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult FichaMatricula(int id)
+        {
+
+            var periodo_actual = (from p in db.Periodo where p.Estado == true select p.Denominacion).SingleOrDefault();
+
+
+            var matricula = (from m in db.Matricula
+                             where m.Id == id
+                             select new MatriculaVm
+                             {
+                                 Id = m.Id,
+                                 AlumnoNombres = m.Alumno.Paterno + " " + m.Alumno.Materno + " " + m.Alumno.Nombres,
+                                 PeriodoDenominacion = m.Periodo.Denominacion,
+                                 Fecha = m.Fecha
+
+                             }).SingleOrDefault();
+
+            ViewBag.Periodo = periodo_actual;
+            ViewBag.Alumno = matricula.AlumnoNombres;
+            ViewBag.Fecha = matricula.Fecha;
+
+
+            var matricula_detalles = db.MatriculaDetalle.Where(x => x.MatriculaId == id)
+                                                        .OrderBy(x => x.Id)
+                                                        .Include(x => x.Matricula)
+                                                        .Include(x => x.Curso).ToList();
+
+            //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
+            var subdetalles = matricula_detalles.Select(S => new MatriculaDetalleVm
+            {
+                Id = S.Id,
+                CodigoCurso = S.Curso.Codigo,
+                CursoDenominacion = S.Curso.Denominacion,
+                HorasTeoria = (S.Curso.HorasTeoria).Value,
+                HorasPractica = (S.Curso.HorasPractica).Value,
+                TotalHoras = (S.Curso.TotalHoras).Value,
+                Creditos = (S.Curso.Credito).Value
+
+            }).ToList();
+
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderEnrollment", "Reportes", null, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("FichaMatricula",subdetalles)
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0 "
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(30, 10, 10, 10)
+
+            };
+        }
+
+        [HttpPost]
+        public ActionResult Tabla(int pagina)
+        {
+            var rm = new Comun.ResponseModel();
+
             using (db = new DAEntities())
             {
-                // Total number of records in the student table
-                TotalRegistros = db.Alumno.Count();
-                // We get the 'records page' from the student table
-                Alumnos = db.Alumno.OrderBy(x => x.Id)
+
+                int TotalRegistros = 0;
+
+                var condicion_especialidad = (from ce in db.CondicionEstudio where ce.Denominacion.Equals("ESPECIALIDAD") select ce.Id).SingleOrDefault();
+
+                // Total number of records in Matricula table with pending status
+                TotalRegistros = db.Matricula.Where(x => x.CondicionEstudioId == condicion_especialidad).Count();
+                // We get the 'records page' from the Cuentas Por Cobrar table
+                Matriculas = db.Matricula.Where(x=>x.CondicionEstudioId == condicion_especialidad).OrderByDescending(x => x.Id)
                                                  .Skip((pagina - 1) * RegistrosPorPagina)
                                                  .Take(RegistrosPorPagina)
+                                                 .Include(x => x.Periodo)
+                                                 .Include(x => x.CondicionEstudio)
+                                                 .Include(x => x.Alumno)
                                                  .ToList();
-                if (!string.IsNullOrEmpty(dni))
+                // Total number of pages in the Cuentas por Cobrar table
+                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
+
+
+                //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
+                var SubMatriculas = Matriculas.Select(S => new MatriculaVm
                 {
-                    Alumnos = db.Alumno.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = db.Alumno.Where(x => x.Dni.Contains(dni)).Count();
+                    Id = S.Id,
+                    PeriodoDenominacion = S.Periodo.Denominacion,
+                    Fecha = S.Fecha,
+                    AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
+                    CondicionEstudioDenominacion = S.CondicionEstudio.Denominacion,
+                    Monto = S.Monto,
+                    Observacion = S.Observacion
+                }).ToList();
+
+
+                // We instantiate the 'Paging class' and assign the new values
+                ListadoMatriculas = new Paginador<MatriculaVm>()
+                {
+                    RegistrosPorPagina = RegistrosPorPagina,
+                    TotalRegistros = TotalRegistros,
+                    TotalPaginas = TotalPaginas,
+                    PaginaActual = pagina,
+                    Listado = SubMatriculas
+                };
+
+                rm.SetResponse(true);
+                rm.result = ListadoMatriculas;
+            }
+
+            //we send the pagination class to the view
+            return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult PrincipalDeudas()
+        {
+            return View();
+        }
+
+        public JsonResult BuscarAlumno(string nombres)
+        {
+            return Json(AlumnoBL.Search(nombres));
+        }
+
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
+        public ActionResult ReportesDeudas(string nombres)
+        {
+            //We recover pendient state from db
+            var estado_pendiente = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e.Id).SingleOrDefault();
+            // We get the 'records page' from the Cuentas Por Cobrar table
+            var Cobranzas = db.CuentasPorCobrar.Where(x => x.EstadoId.Equals(estado_pendiente)).OrderBy(x => x.Id)
+                                             .Include(x => x.Alumno)
+                                             .Include(x => x.Estado)
+                                             .ToList();
+
+            //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
+            var SubCobranzas = Cobranzas.Select(S => new CuentasPorCobrarVm
+            {
+                Id = S.Id,
+                MatriculaId = S.MatriculaId,
+                AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
+                Fecha = S.Fecha,
+                Total = S.Total,
+                EstadoDenominacion = S.Estado.Denominacion,
+                Descripcion = S.Descripcion
+
+            }).ToList();
+
+            if (!string.IsNullOrEmpty(nombres))
+            {
+                SubCobranzas = SubCobranzas.Where(x => x.AlumnoNombres.Contains(nombres)).OrderBy(x => x.Id).ToList();
+            }
+
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesDeudas", SubCobranzas)
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0"
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(30, 10, 10, 10)
+            };
+        }
+
+
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_entradas)]
+        public ActionResult ReportesIngreso()
+        {
+            var rm = new Comun.ResponseModel();
+
+            // RECUPERAMOS EL ID DEL USUARIO EN SESIÓN
+            var UsuarioLogeadoId = Session["UsuarioId"];
+            int UsuarioActualId = Convert.ToInt32(UsuarioLogeadoId);
+
+
+
+            db.Configuration.ProxyCreationEnabled = false;
+            db.Configuration.LazyLoadingEnabled = false;
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == UsuarioActualId && ca.IndBoveda == false select ca).SingleOrDefault();
+
+            var estado_anulado = (from e in db.Estado where e.Denominacion.Equals("ANULADO") select e).SingleOrDefault();
+            // We get the 'records page' from the caja movimiento table
+            var Entradas = db.CajaMovimiento.Where(x => x.IndEntrada == true && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
+                                                .Include(x => x.Alumno)
+                                                .Include(x => x.Personal)
+                                                .Include(x => x.Operacion)
+                                                .Include(x => x.Estado)
+                                                .ToList();
+
+            //We list 'caja movimientos' only with the required fields to avoid serialization problems
+            var SubEntradas = new List<CajaMovimientoVm>();
+
+            for (var i = 0; i < Entradas.Count; i++)
+            {
+
+                if (Entradas[i].PersonalId != null && Entradas[i].AlumnoId == null)
+                {
+                    SubEntradas.Add(new CajaMovimientoVm()
+                    {
+                        Id = Entradas[i].Id,
+                        CajaDiarioId = Entradas[i].CajaDiarioId,
+                        AlumnoId = Entradas[i].AlumnoId,
+                        PersonalId = Entradas[i].PersonalId,
+                        PersonaNombres = Entradas[i].Personal.Paterno + " " + Entradas[i].Personal.Materno + " " + Entradas[i].Personal.Nombres,
+                        OperacionId = Entradas[i].OperacionId,
+                        OperacionDenominacion = Entradas[i].Operacion.Denominacion,
+                        Serie = Entradas[i].Serie,
+                        Numero = Entradas[i].Numero,
+                        EstadoId = Entradas[i].EstadoId,
+                        EstadoDenominacion = Entradas[i].Estado.Denominacion,
+                        Fecha = Entradas[i].Fecha,
+                        Total = Entradas[i].Total,
+                        Descripcion = Entradas[i].Descripcion
+                    });
                 }
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoAlumnos = new Paginador<Alumno>()
+                //Otherwise when foreign key AlumnoId is not null and PersonalId is null
+                //to avoid navigation problems too
+                else
                 {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Alumnos
-                };
-            }
-            //we send the pagination class to the view
-            return View(ListadoAlumnos);
-        }
-
-        private List<Personal> Personales;
-        private Paginador<Personal> ListadoPersonal;
-        public ActionResult ReportesPersonal(string dni, int pagina = 1)
-        {
-            int TotalRegistros = 0;
-            using (db = new DAEntities())
-            {
-                // Total number of records in the student table
-                TotalRegistros = db.Personal.Count();
-                // We get the 'records page' from the student table
-                Personales = db.Personal.OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .ToList();
-                if (!string.IsNullOrEmpty(dni))
-                {
-                    Personales = db.Personal.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = db.Personal.Where(x => x.Dni.Contains(dni)).Count();
+                    SubEntradas.Add(new CajaMovimientoVm()
+                    {
+                        Id = Entradas[i].Id,
+                        CajaDiarioId = Entradas[i].CajaDiarioId,
+                        AlumnoId = Entradas[i].AlumnoId,
+                        PersonaNombres = Entradas[i].Alumno.Paterno + " " + Entradas[i].Alumno.Materno + " " + Entradas[i].Alumno.Nombres,
+                        PersonalId = Entradas[i].PersonalId,
+                        OperacionId = Entradas[i].OperacionId,
+                        OperacionDenominacion = Entradas[i].Operacion.Denominacion,
+                        Serie = Entradas[i].Serie,
+                        Numero = Entradas[i].Numero,
+                        EstadoId = Entradas[i].EstadoId,
+                        EstadoDenominacion = Entradas[i].Estado.Denominacion,
+                        Fecha = Entradas[i].Fecha,
+                        Total = Entradas[i].Total,
+                        Descripcion = Entradas[i].Descripcion
+                    });
                 }
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoPersonal = new Paginador<Personal>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Personales
-                };
-            }
-            //we send the pagination class to the view
-            return View(ListadoPersonal);
-        }
 
-        private List<CajaMovimiento> Ingresos;
-        private Paginador<CajaMovimiento> ListadoIngresos;
-        public ActionResult ReportesIngreso(int pagina = 1)
-        {
-            int TotalRegistros = 0;
-            using (db = new DAEntities())
+            }
+
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderInputs", "Reportes", new {id = UsuarioActualId}, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesIngreso", SubEntradas)
             {
-                // Total number of records in the student table
-                TotalRegistros = db.CajaMovimiento.Where(x=>x.IndEntrada==true).Count();
-                // We get the 'records page' from the student table
-                Ingresos = db.CajaMovimiento.Where(x => x.IndEntrada==true).OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .ToList();
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoIngresos = new Paginador<CajaMovimiento>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Ingresos
-                };
-            }
-            //we send the pagination class to the view
-            return View(ListadoIngresos);
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0 "
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(40, 10, 10, 10)
+
+            };
+
         }
 
-        private List<CajaMovimiento> Egresos;
-        private Paginador<CajaMovimiento> ListadoEgresos;
-        public ActionResult ReportesEgreso(int pagina = 1)
+        [Autenticado]
+        [PermisoAttribute(Permiso = RolesMenu.menu_reporte_salidas)]
+        public ActionResult ReportesEgreso()
         {
-            int TotalRegistros = 0;
-            using (db = new DAEntities())
+
+            // RECUPERAMOS EL ID DEL USUARIO EN SESIÓN
+            var UsuarioLogeadoId = Session["UsuarioId"];
+            int UsuarioActualId = Convert.ToInt32(UsuarioLogeadoId);
+
+
+
+            db.Configuration.ProxyCreationEnabled = false;
+            db.Configuration.LazyLoadingEnabled = false;
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == UsuarioActualId && ca.IndBoveda == false select ca).SingleOrDefault();
+
+            var estado_anulado = (from e in db.Estado where e.Denominacion.Equals("ANULADO") select e).SingleOrDefault();
+            // We get the 'records page' from the caja movimiento table
+            var Salidas = db.CajaMovimiento.Where(x => x.IndEntrada == false && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
+                                                .Include(x => x.Alumno)
+                                                .Include(x => x.Personal)
+                                                .Include(x => x.Operacion)
+                                                .Include(x => x.Estado)
+                                                .ToList();
+
+            //We list 'caja movimientos' only with the required fields to avoid serialization problems
+            var SubSalidas = new List<CajaMovimientoVm>();
+
+            for (var i = 0; i < Salidas.Count; i++)
             {
-                // Total number of records in the student table
-                TotalRegistros = db.CajaMovimiento.Where(x => x.IndEntrada == false).Count();
-                // We get the 'records page' from the student table
-                Egresos = db.CajaMovimiento.Where(x => x.IndEntrada == false).OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .ToList();
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoEgresos = new Paginador<CajaMovimiento>()
+
+                if (Salidas[i].PersonalId != null && Salidas[i].AlumnoId == null)
                 {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Egresos
-                };
+                    SubSalidas.Add(new CajaMovimientoVm()
+                    {
+                        Id = Salidas[i].Id,
+                        CajaDiarioId = Salidas[i].CajaDiarioId,
+                        AlumnoId = Salidas[i].AlumnoId,
+                        PersonalId = Salidas[i].PersonalId,
+                        PersonaNombres = Salidas[i].Personal.Paterno + " " + Salidas[i].Personal.Materno + " " + Salidas[i].Personal.Nombres,
+                        OperacionId = Salidas[i].OperacionId,
+                        OperacionDenominacion = Salidas[i].Operacion.Denominacion,
+                        Serie = Salidas[i].Serie,
+                        Numero = Salidas[i].Numero,
+                        EstadoId = Salidas[i].EstadoId,
+                        EstadoDenominacion = Salidas[i].Estado.Denominacion,
+                        Fecha = Salidas[i].Fecha,
+                        Total = Salidas[i].Total,
+                        Descripcion = Salidas[i].Descripcion
+                    });
+                }
+                //Otherwise when foreign key AlumnoId is not null and PersonalId is null
+                //to avoid navigation problems too
+                else
+                {
+                    SubSalidas.Add(new CajaMovimientoVm()
+                    {
+                        Id = Salidas[i].Id,
+                        CajaDiarioId = Salidas[i].CajaDiarioId,
+                        AlumnoId = Salidas[i].AlumnoId,
+                        PersonaNombres = Salidas[i].Alumno.Paterno + " " + Salidas[i].Alumno.Materno + " " + Salidas[i].Alumno.Nombres,
+                        PersonalId = Salidas[i].PersonalId,
+                        OperacionId = Salidas[i].OperacionId,
+                        OperacionDenominacion = Salidas[i].Operacion.Denominacion,
+                        Serie = Salidas[i].Serie,
+                        Numero = Salidas[i].Numero,
+                        EstadoId = Salidas[i].EstadoId,
+                        EstadoDenominacion = Salidas[i].Estado.Denominacion,
+                        Fecha = Salidas[i].Fecha,
+                        Total = Salidas[i].Total,
+                        Descripcion = Salidas[i].Descripcion
+                    });
+                }
+
             }
-            //we send the pagination class to the view
-            return View(ListadoEgresos);
+
+            // Define la URL de la Cabecera 
+            string _headerUrl = Url.Action("HeaderOutputs", "Reportes", new {id = UsuarioActualId}, "http");
+            // Define la URL del Pie de página
+            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+
+            return new ViewAsPdf("ReportesEgreso", SubSalidas)
+            {
+                // Establece la Cabecera y el Pie de página
+                CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
+                                 "--footer-html " + _footerUrl + " --footer-spacing 0 "
+                ,
+                PageSize = Rotativa.Options.Size.A4
+                //,FileName = "CustomersLista.pdf" // SI QUEREMOS QUE EL ARCHIVO SE DESCARGUE DIRECTAMENTE
+                ,
+                PageMargins = new Rotativa.Options.Margins(40, 10, 10, 10)
+
+            };
         }
 
-        private List<CuentasPorCobrar> Deudas;
-        private Paginador<CuentasPorCobrar> ListadoDeudas;
-        public ActionResult ReportesDeudas(int pagina = 1)
-        {
-            int TotalRegistros = 0;
-            using (db = new DAEntities())
-            {
-                // Total number of records in the student table
-                TotalRegistros = db.CuentasPorCobrar.Count();
-                // We get the 'records page' from the student table
-                Deudas = db.CuentasPorCobrar.OrderBy(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .ToList();
-
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-                // We instantiate the 'Paging class' and assign the new values
-                ListadoDeudas = new Paginador<CuentasPorCobrar>()
-                {
-                    RegistrosPorPagina = RegistrosPorPagina,
-                    TotalRegistros = TotalRegistros,
-                    TotalPaginas = TotalPaginas,
-                    PaginaActual = pagina,
-                    Listado = Deudas
-                };
-            }
-            //we send the pagination class to the view
-            return View(ListadoDeudas);
-        }
     }
 }

@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .tabs {
+        border: none;
+        background-color: transparent;
+    }
+
+    .tabs li #tipoestudio {
+        border: 1px solid #ccc;
+    }
+
+    .tabs li {
+        border: 1px solid #ccc;
+        border-bottom: none;
+        background-color: #E0EAF4;
+        color: #000000;
+    }
+</style>
+
+<div class="row" style="margin:20px;" id="principal">
+    <div class="row" id="contenedor">
+        <div class="col s12">
+            <ul class="tabs align-center s12 m12">
+                <li class="tab col s12 m2 disabled" id="reporte"><strong>REPORTES</strong></li>
+                <li class="tab col s12 m2" style=""><a class="active" href="#test1" id="linkAlumno">ALUMNO</a></li>
+                <li class="tab col s12 m2" style=""><a href="#test2" id="linkPersonal">PERSONAL</a></li>
+                <li class="tab col s12 m2" style=""><a href="#test3" id="linkMatricula">MATRICULA</a></li>
+                <li class="tab col s12 m2" style=""><a href="#test4" id="linkCuentasPorCobrar">CUENTAS POR COBRAR</a></li>
+                <li class="tab col s12 m2" style=""><a href="#test5" id="linkMovimientos">MOVIMIENTOS</a></li>
+            </ul>
+            <div class="col s12" style="border: 1px solid #ccc;">
+                <div id="test1">
+                    <a href="@Url.Action("ReportesAlumno","Reportes")" class="btn btn-small red">
+                        <i><span class="material-icons">picture_as_pdf</span>Generar</i>
+                    </a>
+                </div>
+                <div id="test2">
+                    <a href="@Url.Action("ReportesPersonal","Reportes")" class="btn btn-small red">
+                        <i><span class="material-icons">picture_as_pdf</span>Generar</i>
+                    </a>
+                </div>
+                <div id="test3">
+                </div>
+                <div id="test4">
+                </div>
+                <div id="test5">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section  Scripts{
+    <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+    <script>
+        $.fn.tabs2 = $.fn.tabs;
+        delete $.fn.tabs;
+        $(document).ready(function () {
+            $('.tabs').tabs2();
+            $('select').formSelect();
+            $('.collapsible').collapsible();
+        });
+    </script>
+}
