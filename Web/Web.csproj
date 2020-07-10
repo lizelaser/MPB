@@ -201,6 +201,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Direccion\AulaController.cs" />
     <Compile Include="Controllers\Direccion\BovedaController.cs" />
+    <Compile Include="Controllers\Direccion\NotasController.cs" />
     <Compile Include="Controllers\Direccion\PeriodoController.cs" />
     <Compile Include="Controllers\Direccion\HorarioController.cs" />
     <Compile Include="Controllers\Secretaria\CajaDiarioController.cs" />
@@ -662,6 +663,8 @@
     <Content Include="Views\Reportes\HeaderEnrollment.cshtml" />
     <Content Include="Views\Pagos\Boleta.cshtml" />
     <Content Include="Views\Pagos\Factura.cshtml" />
+    <Content Include="Views\Notas\Index.cshtml" />
+    <Content Include="Views\Notas\Registrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj">

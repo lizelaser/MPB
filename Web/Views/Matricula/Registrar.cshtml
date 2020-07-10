@@ -1078,15 +1078,15 @@
                     _MatriculaDetalle.push({ CursoId: value.firstChild.innerText })
                 });
 
-                var _CuentasPorCobrarDetalle = new Array();
-                $("#tbconceptos tbody tr").each(function (_, value) {
-                    console.log(value.childNodes)
-                    _CuentasPorCobrarDetalle.push({
-                        ConceptoPagoId: value.childNodes[1].innerText,
-                        ItemId: value.childNodes[3].innerText,
-                        Importe: value.childNodes[7].innerText
-                    })
-                });
+                //var _CuentasPorCobrarDetalle = new Array();
+                //$("#tbconceptos tbody tr").each(function (_, value) {
+                //    console.log(value.childNodes)
+                //    _CuentasPorCobrarDetalle.push({
+                //        ConceptoPagoId: value.childNodes[1].innerText,
+                //        ItemId: value.childNodes[3].innerText,
+                //        Importe: value.childNodes[7].innerText
+                //    })
+                //});
 
                 var ind_pago_unico;
                 if ($("#ind_unico").prop("checked")) {
@@ -1105,7 +1105,7 @@
                     Monto: $("#TotalEspecialidad").val(),
                     Observacion: $("#Eobservacion").val(),
                     MatriculaDetalle: _MatriculaDetalle,
-                    CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
+                    //CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
                 }
 
                 $("#Generar").prop("disabled",true);
@@ -1159,15 +1159,15 @@
                     _MatriculaDetalle.push({ CursoId: value.firstChild.innerText })
                 });
 
-                var _CuentasPorCobrarDetalle = new Array();
-                $("#tbconceptos2 tbody tr").each(function (_, value) {
-                    console.log(value.childNodes)
-                    _CuentasPorCobrarDetalle.push({
-                        ConceptoPagoId: value.childNodes[1].innerText,
-                        ItemId: value.childNodes[3].innerText,
-                        Importe: value.childNodes[7].innerText
-                    })
-                });
+                //var _CuentasPorCobrarDetalle = new Array();
+                //$("#tbconceptos2 tbody tr").each(function (_, value) {
+                //    console.log(value.childNodes)
+                //    _CuentasPorCobrarDetalle.push({
+                //        ConceptoPagoId: value.childNodes[1].innerText,
+                //        ItemId: value.childNodes[3].innerText,
+                //        Importe: value.childNodes[7].innerText
+                //    })
+                //});
 
                 var envioObjeto = {
                     CondicionEstudioId: $("#CondicionCurso").val(),
@@ -1178,7 +1178,7 @@
                     Monto: $("#TotalCurso").val(),
                     Observacion: $("#Cobservacion").val(),
                     MatriculaDetalle: _MatriculaDetalle,
-                    CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
+                    //CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
                 }
 
                 $("#Guardar").prop("disabled", true);

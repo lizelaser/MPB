@@ -25,7 +25,6 @@ namespace DA
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Alumno> Alumno { get; set; }
         public virtual DbSet<Alumno_Especialidad> Alumno_Especialidad { get; set; }
         public virtual DbSet<Aula> Aula { get; set; }
         public virtual DbSet<Boveda> Boveda { get; set; }
@@ -56,5 +55,6 @@ namespace DA
         public virtual DbSet<CajaMovimiento> CajaMovimiento { get; set; }
         public virtual DbSet<Matricula> Matricula { get; set; }
         public virtual DbSet<Curso> Curso { get; set; }
+        public virtual DbSet<Alumno> Alumno { get; set; }
     }
 }

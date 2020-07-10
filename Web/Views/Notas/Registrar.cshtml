@@ -1,0 +1,297 @@
+﻿
+@{
+    ViewBag.Title = "Registrar";
+
+    bool PeriodoDisponible = ViewBag.PeriodoDisponible;
+    string PeriodoAcademico = ViewBag.PeriodoActual;
+}
+
+
+<link href="~/Scripts/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+
+<style>
+    .collapsible-header {
+        background-color: #E0EAF4;
+        font-weight: bold;
+    }
+
+    #cabecera {
+        margin-left: 30px;
+        width: 970px;
+    }
+
+    #contenedor {
+        margin-left: 30px;
+        width: 970px;
+    }
+
+    input::-webkit-input-placeholder {
+        color: #000;
+        padding-left: 10px;
+    }
+
+    .contenedor_mensaje {
+        background-color: #F94040;
+        color: white;
+        height: 50px;
+    }
+</style>
+
+@if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_notas_todo))
+{
+    if (PeriodoDisponible)
+    {
+        <div class="row" style="margin: 20px; " id="principal">
+            <div class="row" id="contenedor">
+                <div class="col s12" id="cabecera">
+                    <ul class="collapsible">
+                        <li class="active">
+                            <div class="collapsible-header"><i class="material-icons">event_note</i>REGISTRO NOTAS SEMESTRE @PeriodoAcademico</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col s12" id="contenedor">
+                    <div id="validations" class="card card-tabs">
+                        <div class="card-content contenedor_mensaje" id="div_mensaje_registrar" hidden>
+                            <p id="txt_mensaje_registrar" style="margin-top:-10px;"></p>
+                        </div>
+                        <div class="card-content" style="">
+                            <div class="row">
+                                <div class="input-field col s12 m6 filtro">
+                                    <input type="number" name="alumno_id" id="alumno_id" hidden readonly />
+                                    <input type="text" id="alumno_nombres" name="alumno_nombres" placeholder="BUSCAR ALUMNO POR CÓDIGO" />
+                                    <i class="material-icons prefix" style="margin-left:-40px;">search</i>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <select id="especialidades" class="browser-default">
+                                        <option selected value="-1">SELECCIONE ESPECIALIDAD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <label for="txt_datos" style="font-weight:bold;">NOMBRES Y APELLIDOS</label>
+                                    <input type="text" id="txt_datos" name="txt_datos" placeholder="" />
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <input type="number" name="curso_id" id="curso_id" hidden readonly />
+                                    <select id="cursos" class="browser-default">
+                                        <option selected value="-1">SELECCIONE CURSO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <label for="nota" style="font-weight:bold;">NOTA:</label>
+                                    <input type="number" step="0.01" min="0" max="20" id="nota" name="nota" placeholder="0.00" />
+                                </div>
+                                <div class=" input-field col s12 m6">
+                                    <label for="nota" style="font-weight:bold;">OBSERVACIÓN:</label>
+                                    <input type="text" maxlength="50" id="observacion" name="observacion" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <button class="btn right blue" name="guardar" id="guardar" type="submit">
+                                        Guardar
+                                        <i class="material-icons right">send</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+@section Scripts{
+    <script src="~/app-assets/js/vendors.min.js" type="text/javascript"></script>
+    <script>
+        $.fn.tabs2 = $.fn.tabs;
+        delete $.fn.tabs;
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
+    </script>
+
+    <script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
+    <script>
+        $("#alumno_nombres").autocomplete({
+            dataType: 'JSON',
+            source: function (request, response) {
+                jQuery.ajax({
+                    url: '/Notas/BuscarAlumno',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        codigo: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                value: item.Codigo,
+                                paterno: item.Paterno,
+                                materno: item.Materno,
+                                nombres: item.Nombres
+                            }
+                        }))
+                    }
+                })
+
+            },
+            select: function (e, ui) {
+                $("#alumno_id").val(ui.item.id)
+                $("#txt_datos").val(ui.item.nombres + " " + ui.item.paterno + " " + ui.item.materno)
+
+                $("#cursos").val(-1);
+                especialidadesListadoFunc(ui.item.id)
+
+            }
+
+        });
+
+    </script>
+}
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script>
+
+    $(document).ready(function () {
+        cursosListadoFunc();
+        cursoSeleccionadoFunc();
+        guardarNotaFunc();
+    });
+
+    function especialidadesListadoFunc(id_alumno) {
+
+        var envio = {
+            id: id_alumno
+        }
+
+        $.ajax({
+            url: '@Url.Action("ListarEspecialidadPorAlumno","Notas")',
+            data: JSON.stringify(envio),
+            type: 'POST',
+            async: true,//this makes the ajax-call blocking
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+
+                var $dropdown = $('#especialidades');
+                $dropdown.empty();
+                $dropdown.append($('<option disabled selected hidden />').val('-1').text('SELECCIONE ESPECIALIDAD'));
+                for (let item of response) {
+                    $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
+                }
+
+            }
+        });
+    }
+
+    // LIST COURSES FOR EACH SPECIALITE
+    function cursosListadoFunc() {
+
+        $("#especialidades").change(function () {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ListarCursosPorEspecialidad","Notas")',
+                async: true,
+                data: { id: $("#especialidades").val(), alumno_id: $("#alumno_id").val() },
+                success: function (response) {
+
+                    var $dropdown = $('#cursos');
+                    $dropdown.empty();
+                    $dropdown.append($('<option disabled selected hidden />').val('-1').text('SELECCIONE CURSO'));
+                    for (let item of response) {
+                        $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
+                    }
+
+                }
+            });
+        });
+    }
+
+    function cursoSeleccionadoFunc() {
+        $("#cursos").change(function () {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CursoSeleccionado","Notas")',
+                async: true,
+                data: { id: $("#cursos").val()},
+                success: function (response) {
+
+                    $("#curso_id").val(response);
+
+                }
+            });
+        });
+    }
+
+    var valTimeout;
+
+    var isRegistryLoading = false;
+
+    function guardarNotaFunc() {
+        // Evento para guardar la matrícula: Condición Curso
+        $("#guardar").click(function () {
+
+            if (!isRegistryLoading) {
+                isRegistryLoading = true;
+
+                var envioObjeto = {
+                    alumno_id: $("#alumno_id").val(),
+                    curso_id: $("#curso_id").val(),
+                    nota: $("#nota").val(),
+                    observacion: $("#observacion").val()
+                }
+
+                $("#guardar").prop("disabled", true);
+                $.ajax({
+                    url: '@Url.Action("Guardar","Notas")',
+                    data: JSON.stringify(envioObjeto),
+                    type: "POST",
+                    async: true,//this makes the ajax-call blocking
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function (rm) {
+                        try {
+                            if (rm.response == false) {
+                                $("#div_mensaje_registrar").show();
+                                $("#div_mensaje_registrar").css("background-color", "#F94040");
+                                $("#txt_mensaje_registrar").text(rm.message);
+
+                                if (valTimeout) {
+                                    clearTimeout(valTimeout);
+                                }
+
+                                valTimeout = setTimeout(() => {
+                                    $("#div_mensaje_registrar").fadeOut();
+                                }, 2500);
+                            }
+                            else {
+                                window.location.href = rm.href;
+                            }
+                        }
+                        catch (e) {
+                            alert("La nota ya fue registrada");
+                        }
+                    },
+                    complete: function () {
+                        isRegistryLoading = false;
+                        $("#guardar").prop("disabled", false);
+                    }
+                });
+            }
+            else {
+                console.log("The registry was alredy completed");
+            }
+
+        });
+    }
+</script>

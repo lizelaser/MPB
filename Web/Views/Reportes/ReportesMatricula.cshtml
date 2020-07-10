@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BL.CuentasPorCobrarVm>
+﻿@model IEnumerable<BL.MatriculaVm>
 
 @{
     Layout = null;
@@ -48,19 +48,22 @@
                         N° &nbsp;
                     </th>
                     <th>
+                        Codigo
+                    </th>
+                    <th>
                         Alumno
                     </th>
                     <th>
                         Especialidad
                     </th>
                     <th>
+                        Proceso
+                    </th>
+                    <th>
                         Fecha
                     </th>
                     <th>
                         Voucher Pago
-                    </th>
-                    <th>
-                        Total
                     </th>
                 </tr>
             </thead>
@@ -78,16 +81,22 @@
                         @_count
                     </td>
                     <td>
+                        @item.AlumnoCodigo
+                    </td>
+                    <td>
                         @item.AlumnoNombres
                     </td>
                     <td>
-                        COMPUTACIÓN E INFORMÁTICA
+                        @item.EspecialidadDenominacion
+                    </td>
+                    <td>
+                        @item.Proceso
                     </td>
                     <td>
                         @item.Fecha
                     </td>
                     <td>
-                        @item.Total
+                        @item.VoucherPago
                     </td>
                 </tr>
             }

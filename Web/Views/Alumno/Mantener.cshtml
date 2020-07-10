@@ -1,7 +1,19 @@
 ﻿@model DA.Alumno
 
+@{
+}
+
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_alumno_todo))
 {
+
+    <style>
+        .contenedor_mensaje {
+            background-color: #F94040;
+            color: white;
+            height: 50px;
+        }
+    </style>
+
     <div class="row">
         <div class="col s12">
             <div id="validations" class="card card-tabs">
@@ -23,64 +35,83 @@
                             </div>
                         </div>
                     </div>
-                    <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Alumno")">
+                    <div class="col s12">
                         <div class="row">
-                            <input name="Id" type="hidden" value="@Model.Id">
+                            <div class="col s12 m12">
+                                <div class="card-content contenedor_mensaje" id="div_mensaje_alumno" style="margin-bottom:30px;" hidden>
+                                    <p id="txt_mensaje_alumno" style="text-align:center; margin-top:-10px;"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input id="id_alumno" name="Id" type="hidden" value="@Model.Id">
                             <div class="input-field col s12 m2">
-                                <label for="cdni">DNI*</label>
-                                <input id="cdni" name="Dni" type="text" required value="@Model.Dni" autofocus>
+                                <label for="dni">DNI*</label>
+                                <input id="dni" name="Dni" type="text" data-length="8" required value="@Model.Dni" autofocus>
                             </div>
                             <div class="input-field col s12 m3">
-                                <label for="cpaterno">Apellido Paterno*</label>
-                                <input id="cpaterno" name="Paterno" type="text" required value="@Model.Paterno">
+                                <label for="paterno">Apellido Paterno*</label>
+                                <input id="paterno" name="Paterno" type="text" required value="@Model.Paterno">
                             </div>
                             <div class="input-field col s12 m3">
-                                <label for="cmaterno">Apellido Materno*</label>
-                                <input id="cmaterno" name="Materno" type="text" required value="@Model.Materno">
+                                <label for="materno">Apellido Materno*</label>
+                                <input id="materno" name="Materno" type="text" required value="@Model.Materno">
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="cnombre">Nombre*</label>
-                                <input id="cnombre" name="Nombres" type="text" required value="@Model.Nombres">
+                                <label for="nombres">Nombre*</label>
+                                <input id="nombres" name="Nombres" type="text" required value="@Model.Nombres">
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="ccodigo">Código*</label>
-                                <input id="ccodigo" type="text" name="Codigo" value="@Model.Codigo">
+                                <label for="codigo">Código*</label>
+                                <input id="codigo" type="text" name="Codigo" required data-length="11" value="@Model.Codigo">
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="cemail">Correo Electronico*</label>
-                                <input id="cemail" type="email" name="Correo" value="@Model.Correo">
+                                <label for="correo">Correo Electronico</label>
+                                <input id="correo" type="email" name="Correo" value="@Model.Correo">
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="ccelular">Celular</label>
-                                <input id="ccelular" name="Celular" type="text" value="@Model.Celular" maxlength="20">
+                                <label for="celular">Celular</label>
+                                <input id="celular" name="Celular" type="text" value="@Model.Celular" maxlength="20">
                             </div>
-                            <div class="input-field col s12 m4">
-                                <label for="cnacimiento">Fecha Nacimiento</label>
-                                <input id="cnacimiento" name="Nacimiento" @*class="datepicker"*@ type="date" value="@Model.Nacimiento" placeholder="dd/mm/aaaa">
-                            </div>
-                            <div class="input-field col s12">
-                                <label for="cdireccion">Direccion</label>
-                                <input id="cdireccion" name="Direccion" type="text" value="@Model.Direccion">
+
+                            @if (Model.Nacimiento == null)
+                            {
+                                <div class="input-field col s12 m3">
+                                    <label for="nacimiento">Fecha Nacimiento</label>
+                                    <input id="nacimiento" name="Nacimiento" @*class="datepicker"*@ type="date" value="@Model.Nacimiento" placeholder="nacimiento">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="input-field col s12 m3">
+                                    <label for="nacimiento">Fecha Nacimiento</label>
+                                    <input id="nacimiento" name="Nacimiento" @*class="datepicker"*@ type="date" value="@Model.Nacimiento.Value.ToString("yyyy-MM-dd")" placeholder="nacimiento">
+                                </div>
+                            }
+
+                            <div class="input-field col s12 m6">
+                                <label for="direccion">Direccion</label>
+                                <input id="direccion" name="Direccion" type="text" value="@Model.Direccion">
                             </div>
 
 
-                            <div class="col s12 m4">
+                            <div class="col s12 m3">
                                 <label for="tnc_select">Estado </label>
                                 <p>
                                     <label>
-                                        <input type="checkbox" name="activo" @if (Model.Estado) { <text> checked </text> } /><span>Activo</span>
+                                        <input id="estado" type="checkbox" name="activo" @if (Model.Estado) { <text> checked </text> } /><span>Activo</span>
                                     </label>
                                 </p>
                             </div>
 
                             <div class="input-field col s12">
-                                <button data-ajax="true" class="btn right blue" type="submit">
+                                <button id="guardar" data-ajax="true" class="btn right blue" type="submit">
                                     Guardar
                                     <i class="material-icons right">send</i>
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
 
                 </div>
             </div>
@@ -95,3 +126,86 @@
 
     </script>
 }
+
+<script src="https://code.jquery.com/jquery-3.4.1.js" type="text/javascript"></script>
+<script>
+
+    $(document).ready(function () {
+        $("#guardar").click(guardarAlumnoFunc)
+    })
+
+    var valTimeout;
+    var isStudentRegisterLoading = false;
+
+    var guardarAlumnoFunc = function () {
+
+        if (!isStudentRegisterLoading) {
+            isStudentRegisterLoading = true
+            var estado;
+            if ($("#estado").prop("checked")) {
+                estado = true;
+            }
+            else {
+                estado = false;
+            }
+
+            var envio = {
+                idAlumno: $("#id_alumno").val(),
+                Dni: $("#dni").val(),
+                Paterno: $("#paterno").val(),
+                Materno: $("#materno").val(),
+                Nombres: $("#nombres").val(),
+                Codigo: $("#codigo").val(),
+                Correo: $("#correo").val(),
+                Celular: $("#celular").val(),
+                Nacimiento: $("#nacimiento").val(),
+                Direccion: $("#direccion").val(),
+                Estado: estado
+            }
+            console.log(envio)
+
+
+            $("#guardar").prop("disabled", true);
+
+            $.ajax({
+                url: '@Url.Action("Guardar","Alumno")',
+                data: JSON.stringify(envio),
+                type: 'POST',
+                async: false,//this makes the ajax-call blocking
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function (rm) {
+
+                    if (rm.response == false) {
+                        $("#div_mensaje_alumno").show();
+                        $("#div_mensaje_alumno").css("background-color", "#F94040");
+                        $("#txt_mensaje_alumno").text(rm.message);
+
+                        if (valTimeout) {
+                            clearTimeout(valTimeout);
+                        }
+
+                        valTimeout = setTimeout(() => {
+                            $("#div_mensaje_alumno").fadeOut();
+                        }, 2500);
+                    }
+                    else {
+                        window.location.href = rm.href;
+                    }
+                },
+                error: (error) => console.log(error),
+                complete: function () {
+                    $("#guardar").prop("disabled", false);
+                    isStudentRegisterLoading = false;
+                }
+                
+
+            });
+        }
+        else {
+            console.log("The operation was already completed");
+        }
+
+    }
+
+</script>

@@ -30,10 +30,10 @@ namespace DA
         public Nullable<int> CajaMovimientoId { get; set; }
         public Nullable<System.DateTime> FechaVencimiento { get; set; }
     
-        public virtual Alumno Alumno { get; set; }
         public virtual Estado Estado { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle { get; set; }
         public virtual Matricula Matricula { get; set; }
+        public virtual Alumno Alumno { get; set; }
     }
 }

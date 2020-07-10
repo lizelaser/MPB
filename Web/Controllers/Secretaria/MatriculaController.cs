@@ -266,12 +266,14 @@ namespace Web.Controllers
                     if (cursos[i].ReqCurso == null && cursos[i].ReqCredito == null)
                     {
                         var id_curso = cursos[i].Id;
-                        var aprobo_curso = (from n in db.Notas
+                        var aprobo_curso = (from a in db.Alumno
+                                            join n in db.Notas
+                                            on a.Id equals n.AlumnoId
                                             join c in db.Curso
                                             on n.CursoId equals c.Id
                                             join e in db.Especialidad
                                             on c.EspecialidadId equals e.Id
-                                            where n.CursoId == id_curso && n.Nota >= 11
+                                            where n.CursoId == id_curso && n.Nota >= 11 && a.Id == alumnoid
                                             select n).Any();
 
                         if (!aprobo_curso)
@@ -294,12 +296,14 @@ namespace Web.Controllers
                     {
 
                         var id_curso = cursos[i].Id;
-                        var aprobo_curso = (from n in db.Notas
+                        var aprobo_curso = (from a in db.Alumno
+                                            join n in db.Notas
+                                            on a.Id equals n.AlumnoId
                                             join c in db.Curso
                                             on n.CursoId equals c.Id
                                             join e in db.Especialidad
                                             on c.EspecialidadId equals e.Id
-                                            where n.CursoId == id_curso && n.Nota >= 11
+                                            where n.CursoId == id_curso && n.Nota >= 11 && a.Id == alumnoid
                                             select n).Any();
 
                         string[] aux = cursos[i].ReqCurso.Split(',');
@@ -307,7 +311,9 @@ namespace Web.Controllers
                         List<bool> bool_aux = new List<bool>();
                         foreach (var req in requisitos)
                         {
-                            var requisito_aprobado = (from n in db.Notas
+                            var requisito_aprobado = (from a in db.Alumno
+                                                      join n in db.Notas
+                                                      on a.Id equals n.AlumnoId
                                                       join c in db.Curso
                                                       on n.CursoId equals c.Id
                                                       where c.Codigo == req && n.Nota >= 11
@@ -382,15 +388,18 @@ namespace Web.Controllers
                 var ListadoCursos = new List<EspecialidadCursoVm>();
                 for (var i = 0; i < cursos.Count(); i++)
                 {
+                    // Evaluar si el curso es del primer semestre y puede llevarlo
                     if (cursos[i].ReqCurso == null && cursos[i].ReqCredito == null)
                     {
                         var id_curso = cursos[i].Id;
-                        var aprobo_curso = (from n in db.Notas
+                        var aprobo_curso = (from a in db.Alumno
+                                            join n in db.Notas
+                                            on a.Id equals n.AlumnoId
                                             join c in db.Curso
                                             on n.CursoId equals c.Id
                                             join e in db.Especialidad
                                             on c.EspecialidadId equals e.Id
-                                            where n.CursoId == id_curso && n.Nota >= 11
+                                            where n.CursoId == id_curso && n.Nota >= 11 && a.Id == alumnoid
                                             select n).Any();
 
                         if (!aprobo_curso)
@@ -409,16 +418,21 @@ namespace Web.Controllers
                             });
                         }
                     }
+
+                    // Evaluar si el alumno ya aprobo los requisitos de cada curso
+
                     else if (cursos[i].ReqCurso != null)
                     {
 
                         var id_curso = cursos[i].Id;
-                        var aprobo_curso = (from n in db.Notas
+                        var aprobo_curso = (from a in db.Alumno
+                                            join n in db.Notas
+                                            on a.Id equals n.AlumnoId
                                             join c in db.Curso
                                             on n.CursoId equals c.Id
                                             join e in db.Especialidad
                                             on c.EspecialidadId equals e.Id
-                                            where n.CursoId == id_curso && n.Nota >= 11
+                                            where n.CursoId == id_curso && n.Nota >= 11 && a.Id == alumnoid
                                             select n).Any();
 
                         string[] aux = cursos[i].ReqCurso.Split(',');
@@ -426,13 +440,16 @@ namespace Web.Controllers
                         List<bool> bool_aux = new List<bool>();
                         foreach (var req in requisitos)
                         {
-                            var requisito_aprobado = (from n in db.Notas
+                            var requisito_aprobado = (from a in db.Alumno
+                                                      join n in db.Notas
+                                                      on a.Id equals n.AlumnoId
                                                       join c in db.Curso
                                                       on n.CursoId equals c.Id
-                                                      where c.Codigo == req && n.Nota >= 11
+                                                      where c.Codigo == req && n.Nota >= 11 && a.Id == alumnoid
                                                       select n).Any();
                             bool_aux.Add(requisito_aprobado);
                         }
+                        // Si todos los requisitos están aprobados y el curso todavía no aprobo o no llevó
                         if (!bool_aux.Contains(false) && !aprobo_curso)
                         {
                             ListadoCursos.Add(new EspecialidadCursoVm()
@@ -467,7 +484,7 @@ namespace Web.Controllers
                                                   on n.AlumnoId equals a.Id
                                                   where n.AlumnoId == alumnoid && n.Nota >= 11
                                                   select c.Credito).Sum();
-                            if (cursos[i].ReqCredito <= total_creditos)
+                            if (cursos[i].ReqCredito!= null && cursos[i].ReqCredito <= total_creditos)
                             {
                                 ListadoCursos.Add(new EspecialidadCursoVm()
                                 {
@@ -486,7 +503,7 @@ namespace Web.Controllers
 
                     }
                 }
-                rm.result = cursos;
+                rm.result = ListadoCursos;
                 rm.SetResponse(true);
             }
             else
@@ -564,6 +581,19 @@ namespace Web.Controllers
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public ActionResult ListarEspecialidadPorAlumno(int? id)
+        {
+
+            var especialidades = (from e in db.Especialidad
+                                  join ae in db.Alumno_Especialidad on e.Id equals ae.EspecialidadId
+                                  join a in db.Alumno on ae.AlumnoId equals a.Id
+                                  where a.Id == id
+                                  select new { Id = e.Id, Denominacion = e.Denominacion }).ToList();
+
+            return Json(especialidades);
+        }
+
         public ActionResult Registrar()
         {
 
@@ -596,26 +626,14 @@ namespace Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult ListarEspecialidadPorAlumno(int ? id)
-        {
-
-            var especialidades = (from e in db.Especialidad join ae in db.Alumno_Especialidad on e.Id equals ae.EspecialidadId
-                                  join a in db.Alumno on ae.AlumnoId equals a.Id where a.Id == id select new{ Id = e.Id, Denominacion = e.Denominacion }).ToList();
-
-            return Json(especialidades);
-        }
-
 
         [HttpPost]
-        public ActionResult Registrar(int ? CondicionEstudioId, int ? PeriodoId, bool IndPagoUnico, int ? AlumnoId, int ? EspecialidadId, decimal ? Monto, string Observacion, List<MatriculaDetalle> MatriculaDetalle, List<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle)
+        public ActionResult Registrar(int ? CondicionEstudioId, int ? PeriodoId, bool IndPagoUnico, int ? AlumnoId, int ? EspecialidadId, decimal ? Monto, string Observacion, List<MatriculaDetalle> MatriculaDetalle)
         {
             var rm = new Comun.ResponseModel();
 
             int EstadoId = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e.Id).SingleOrDefault();
-            int cantidad = 1;
-            decimal descuento = 0;
-            string descripcion = "";
+
 
             try
             {
@@ -689,44 +707,6 @@ namespace Web.Controllers
 
                                         MatriculaBL.Crear(matricula);
 
-                                        //Recuperamos el id (identity) del registro guardado
-                                        int matricula_id = matricula.Id;
-
-                                        //REGISTRO CUENTAS POR COBRAR
-                                        CuentasPorCobrar cobranza = new CuentasPorCobrar();
-                                        cobranza.MatriculaId = matricula_id;
-                                        cobranza.EstadoId = EstadoId;
-                                        cobranza.AlumnoId = AlumnoId.Value;
-                                        cobranza.Fecha = DateTime.Now;
-                                        cobranza.Total = Monto.Value;
-
-                                        if (IndPagoUnico)
-                                        {
-                                            descripcion = "PAGO ÚNICO MATRÍCULA";
-                                        }
-                                        else
-                                        {
-                                            descripcion = "PAGO POR MATRÍCULA";
-                                        }
-                                        cobranza.Descripcion = descripcion;
-
-                                        CuentasPorCobrarBL.Crear(cobranza);
-
-                                        //RECOVER ID FROM ACCOUNT RECEIVABLE
-                                        var cobranza_id = cobranza.Id;
-
-                                        //REGISTRAMOS LAS CUENTAS POR COBRAR DETALLE RELACIONADOS A LOS CONCEPTOS DE PAGO
-                                        CuentasPorCobrarDetalle cuentasdetalle = new CuentasPorCobrarDetalle();
-                                        foreach (var item in CuentasPorCobrarDetalle)
-                                        {
-                                            cuentasdetalle.CuentasPorCobrarId = cobranza_id;
-                                            cuentasdetalle.ConceptoPagoId = item.ConceptoPagoId;
-                                            cuentasdetalle.ItemId = item.ItemId;
-                                            cuentasdetalle.Cantidad = cantidad;
-                                            cuentasdetalle.Descuento = descuento;
-                                            cuentasdetalle.Importe = item.Importe;
-                                            CuentasPorCobrarDetalleBL.Crear(cuentasdetalle);
-                                        }
                                     }
                                     else //CONDICIÓN CURSO
                                     {
@@ -751,38 +731,6 @@ namespace Web.Controllers
                                         }
 
                                         MatriculaBL.Crear(matricula);
-
-                                        //Recuperamos el id (identity) del registro guardado
-                                        int matricula_id = matricula.Id;
-
-                                        descripcion = "PAGO POR INSCRIPCIÓN";
-
-                                        //REGISTRO CUENTAS POR COBRAR
-                                        CuentasPorCobrar cobranza = new CuentasPorCobrar();
-                                        cobranza.MatriculaId = matricula_id;
-                                        cobranza.EstadoId = EstadoId;
-                                        cobranza.AlumnoId = AlumnoId.Value;
-                                        cobranza.Fecha = DateTime.Now;
-                                        cobranza.Total = Monto.Value;
-                                        cobranza.Descripcion = descripcion;
-
-                                        CuentasPorCobrarBL.Crear(cobranza);
-
-                                        //RECOVER ID FROM ACCOUNT RECEIVABLE
-                                        var cobranza_id = cobranza.Id;
-
-                                        //REGISTRAMOS LAS CUENTAS POR COBRAR DETALLE RELACIONADO A LOS CONCEPTOS DE PAGO
-                                        CuentasPorCobrarDetalle cuentasdetalle = new CuentasPorCobrarDetalle();
-                                        foreach (var item in CuentasPorCobrarDetalle)
-                                        {
-                                            cuentasdetalle.CuentasPorCobrarId = cobranza_id;
-                                            cuentasdetalle.ConceptoPagoId = item.ConceptoPagoId;
-                                            cuentasdetalle.ItemId = item.ItemId;
-                                            cuentasdetalle.Cantidad = cantidad;
-                                            cuentasdetalle.Descuento = descuento;
-                                            cuentasdetalle.Importe = item.Importe;
-                                            CuentasPorCobrarDetalleBL.Crear(cuentasdetalle);
-                                        }
 
                                     }
                                     rm.message = "LA MATRÍCULA SE REGISTRÓ CON ÉXITO";

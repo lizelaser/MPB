@@ -16,10 +16,10 @@
         height: 80px;
     }
 
-        .ulConcepto li {
-            margin: 10px;
-            margin-top: 20px;
-        }
+    .ulConcepto li {
+        margin: 10px;
+        margin-top: 20px;
+    }
 
     #cabecera {
         margin-left: 30px;
@@ -404,13 +404,14 @@
                 },
                 complete: function () {
                     isChargeLoading = false;
+                    $("#generar").prop("disabled", false);
                 }
 
             });
 
         }
         else {
-            console.log("Este cobranza ya fThe operation was already completed");
+            console.log("The operation was already completed");
         }
 
     }

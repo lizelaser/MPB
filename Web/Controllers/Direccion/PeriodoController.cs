@@ -2,6 +2,7 @@
 using DA;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -83,7 +84,7 @@ namespace Web.Controllers.Direccion
         }
 
         [HttpGet]
-        public ActionResult Mantener(int id=0)
+        public ActionResult Mantener(int id)
         {
             if(id==0)
             {
@@ -95,23 +96,74 @@ namespace Web.Controllers.Direccion
             }
         }
         [HttpPost]
-        public ActionResult Guardar(Periodo obj, string activo)
+        public ActionResult Guardar(int? idPeriodo, string Denominacion, string FechaInicio, string FechaFin, bool Estado)
         {
             var rm = new Comun.ResponseModel();
-            obj.Estado = string.IsNullOrEmpty(activo) ? false : true;
+
 
             try
             {
-                if (obj.Id == 0)
+                if (idPeriodo == null)
                 {
-                    obj.Estado = true;
-                    PeriodoBL.Crear(obj);
+                    rm.message = "El id del periodo es inválido o nulo";
+                    rm.SetResponse(false, rm.message);
                 }
                 else
                 {
-                    PeriodoBL.ActualizarParcial(obj, x => x.Denominacion, x => x.FechaInicio, 
-                        x => x.FechaFin, x => x.Estado);
+                    if (Denominacion == "")
+                    {
+                        rm.message = "Complete el campo Denominacion";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else
+                    {
+                        if (FechaInicio == "")
+                        {
+                            rm.message = "Seleccione fecha de inicio del periodo";
+                            rm.SetResponse(false, rm.message);
+                        }
+                        else
+                        {
+                            if (FechaFin == "")
+                            {
+                                rm.message = "Seleccione fecha de fin del periodo";
+                                rm.SetResponse(false, rm.message);
+                            }
+                            else
+                            {
+                                DateTime fecha_inicio = DateTime.ParseExact(FechaInicio, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                DateTime fecha_fin = DateTime.ParseExact(FechaFin, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                                Periodo periodo = new Periodo();
+                                if (idPeriodo == 0)
+                                {
+                                    periodo.Denominacion = Denominacion;
+                                    periodo.FechaInicio = fecha_inicio;
+                                    periodo.FechaFin = fecha_fin;
+                                    periodo.Estado = true;
+                                    PeriodoBL.Crear(periodo);
+                                }
+                                else
+                                {
+                                    periodo.Id = idPeriodo.Value;
+                                    periodo.Denominacion = Denominacion;
+                                    periodo.FechaInicio = fecha_inicio;
+                                    periodo.FechaFin = fecha_fin;
+                                    periodo.Estado = Estado;
+
+                                    PeriodoBL.ActualizarParcial(periodo, x => x.Denominacion, x => x.FechaInicio,
+                                        x => x.FechaFin, x => x.Estado);
+                                }
+
+                                rm.SetResponse(true);
+                                rm.href = Url.Action("Index", "Periodo");
+                            }
+
+                        }
+                    }
+
                 }
+
 
             }
             catch(Exception eX)

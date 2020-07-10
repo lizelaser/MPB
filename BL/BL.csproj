@@ -75,6 +75,7 @@
     <Compile Include="EstadoBL.cs" />
     <Compile Include="HorarioBL.cs" />
     <Compile Include="MatriculaBL.cs" />
+    <Compile Include="NotasBL.cs" />
     <Compile Include="OperacionBL.cs" />
     <Compile Include="PeriodoBL.cs" />
     <Compile Include="PersonalBL.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Vm\MatriculaVm.cs" />
     <Compile Include="Vm\CajaMovimientoVm.cs" />
     <Compile Include="Vm\MenuVm.cs" />
+    <Compile Include="Vm\NotasVm.cs" />
     <Compile Include="Vm\PersonalVm.cs" />
     <Compile Include="Vm\RolVm.cs" />
     <Compile Include="Vm\UsuarioViewModel.cs" />

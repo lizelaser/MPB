@@ -22,8 +22,8 @@ namespace BL
             {
                 var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno","Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
                 var mnuSecretaria = new List<string> {"Personal","Alumno","Matricula","Pagos", "CuentasPorCobrar"};
-                var mnuCoordinador = new List<string> {"Personal", "Alumno","Curso", "Especialidad","Horario" };
-                var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno","Curso", "Especialidad", "Caja", "Periodo", "Aula", "Horario" };
+                var mnuCoordinador = new List<string> {"Personal", "Alumno","Curso", "Especialidad","Horario","Notas" };
+                var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno","Curso", "Especialidad", "Caja", "Periodo", "Aula", "Horario", "Notas" };
                 switch (rol)
                 {
                     case Rol.Administrador: return mnuAdministrador;

@@ -18,7 +18,7 @@ namespace DA
         public int EspecialidadId { get; set; }
         public int AlumnoId { get; set; }
     
-        public virtual Alumno Alumno { get; set; }
         public virtual Especialidad Especialidad { get; set; }
+        public virtual Alumno Alumno { get; set; }
     }
 }

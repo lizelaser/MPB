@@ -158,38 +158,108 @@ namespace Web.Controllers.Secretaria
             return View();
         }
 
+        [HttpPost]
+        public ActionResult ListarEspecialidades()
+        {
+            var especialidades = (from e in db.Especialidad
+                                  select new { Id = e.Id, Denominacion = e.Denominacion }).ToList();
+
+            return Json(especialidades);
+
+        }
+
+        [HttpPost]
+        public ActionResult ListarCursosPorEspecialidad(int ? id)
+        {
+            var cursos = (from c in db.Curso where c.EspecialidadId == id select new { Id = c.Id, Denominacion = c.Denominacion }).ToList();
+            return Json(cursos);
+        }
 
         [Autenticado]
         [PermisoAttribute(Permiso = RolesMenu.menu_reporte_todo)]
-        public ActionResult ReportesMatricula()
+        public ActionResult ReportesMatricula(int ? especialidad_id, int ? curso_id, bool ? modalidad_id, string alumno_nombres, DateTime ? fecha_matricula)
         {
 
-            //We recover pendient state from db
-            var estado_pagado = (from e in db.Estado where e.Denominacion.Equals("PAGADO") select e.Id).SingleOrDefault();
+            var Matriculas = (from e in db.Especialidad
+                     join m in db.Matricula
+                     on e.Id equals m.EspecialidadId
+                     join a in db.Alumno
+                     on m.AlumnoId equals a.Id
+                     join cc in db.CuentasPorCobrar
+                     on a.Id equals cc.AlumnoId
+                     join cm in db.CajaMovimiento
+                     on cc.CajaMovimientoId equals cm.Id
+                     where m.CondicionEstudioId == 1
+                     select new MatriculaVm
+                     {
+                         AlumnoCodigo = a.Codigo,
+                         AlumnoNombres = a.Paterno + " " + a.Materno + " " + a.Nombres,
+                         EspecialidadId = m.EspecialidadId,
+                         EspecialidadDenominacion = e.Denominacion,
+                         Proceso = m.Proceso,
+                         Fecha = m.Fecha,
+                         VoucherPago = cm.Serie + "-" + cm.Numero,
+                         IndPagoUnico = m.IndPagoUnico
 
-            // We get the 'records page' from the Cuentas Por Cobrar table
-            var Matriculas = db.CuentasPorCobrar.Where(x=>x.MatriculaId!=null && x.EstadoId == estado_pagado).OrderBy(x => x.Id)
-                                             .Include(x => x.Matricula)
-                                             .Include(x => x.Alumno)
-                                             .Include(x => x.Estado)
-                                             .ToList();
+                     }).ToList();
 
 
-            //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
-            var SubMatriculas = Matriculas.Select(S => new CuentasPorCobrarVm
+            if (!especialidad_id.Equals(null))
             {
-                Id = S.Id,
-                Fecha = S.Fecha,
-                AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
-                Total = S.Total,
-            }).ToList();
+                Matriculas = Matriculas.Where(x => x.EspecialidadId == especialidad_id).ToList();
+            }
+
+            if (!curso_id.Equals(null))
+            {
+                Matriculas = (from e in db.Especialidad
+                              join c in db.Curso
+                              on e.Id equals c.EspecialidadId
+                              join md in db.MatriculaDetalle
+                              on c.Id equals md.CursoId
+                              join m in db.Matricula
+                              on md.MatriculaId equals m.Id
+                              join a in db.Alumno
+                              on m.AlumnoId equals a.Id
+                              join cc in db.CuentasPorCobrar
+                              on a.Id equals cc.AlumnoId
+                              join cm in db.CajaMovimiento
+                              on cc.CajaMovimientoId equals cm.Id
+                              where md.CursoId == curso_id.Value && m.CondicionEstudioId == 1
+                              select new MatriculaVm{
+
+                                  AlumnoCodigo = a.Codigo,
+                                  AlumnoNombres = a.Paterno + " " + a.Materno + " " + a.Nombres,
+                                  EspecialidadId = m.EspecialidadId,
+                                  EspecialidadDenominacion = e.Denominacion,
+                                  Proceso = m.Proceso,
+                                  Fecha = m.Fecha,
+                                  VoucherPago = cm.Serie + "-" + cm.Numero,
+                                  IndPagoUnico = m.IndPagoUnico
+
+                              }).ToList();
+            }
+
+            if (!modalidad_id.Equals(null))
+            {
+                Matriculas = Matriculas.Where(x => x.IndPagoUnico == modalidad_id.Value).ToList();
+            }
+            if (!string.IsNullOrEmpty(alumno_nombres))
+            {
+                Matriculas = Matriculas.Where(x => x.AlumnoNombres.Contains(alumno_nombres)).ToList();
+            }
+            if (!fecha_matricula.Equals(null))
+            {
+
+                Matriculas = Matriculas.Where(x => x.Fecha.ToString("dd/MM/yyyy") == fecha_matricula.Value.ToString("dd/MM/yyyy")).ToList();
+            }
+
 
             // Define la URL de la Cabecera 
             string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
             // Define la URL del Pie de página
             string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
 
-            return new ViewAsPdf("ReportesMatricula", SubMatriculas)
+            return new ViewAsPdf("ReportesMatricula", Matriculas)
             {
                 // Establece la Cabecera y el Pie de página
                 CustomSwitches = "--header-html " + _headerUrl + " --header-spacing 0 " +
@@ -226,7 +296,6 @@ namespace Web.Controllers.Secretaria
             ViewBag.Periodo = periodo_actual;
             ViewBag.Alumno = matricula.AlumnoNombres;
             ViewBag.Fecha = matricula.Fecha;
-
 
             var matricula_detalles = db.MatriculaDetalle.Where(x => x.MatriculaId == id)
                                                         .OrderBy(x => x.Id)
@@ -352,11 +421,13 @@ namespace Web.Controllers.Secretaria
             {
                 Id = S.Id,
                 MatriculaId = S.MatriculaId,
+                AlumnoCodigo = S.Alumno.Codigo,
                 AlumnoNombres = S.Alumno.Paterno + " " + S.Alumno.Materno + " " + S.Alumno.Nombres,
                 Fecha = S.Fecha,
                 Total = S.Total,
                 EstadoDenominacion = S.Estado.Denominacion,
-                Descripcion = S.Descripcion
+                Descripcion = S.Descripcion,
+                FechaVencimiento = S.FechaVencimiento
 
             }).ToList();
 

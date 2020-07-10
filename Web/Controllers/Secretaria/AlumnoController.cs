@@ -2,6 +2,7 @@
 using DA;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -94,39 +95,126 @@ namespace Web.Controllers
 
             else
             {
-                return View(AlumnoBL.Obtener(id));
+                var alumno = AlumnoBL.Obtener(id);
+                
+                return View(alumno);
             }
 
         }
         [HttpPost]
-        public ActionResult Guardar(Alumno obj, string activo)
+        public ActionResult Guardar(int? idAlumno, string Dni, string Paterno, string Materno, string Nombres, string Codigo, string Correo, string Celular, string Nacimiento, string Direccion, bool Estado)
         {
             var rm = new Comun.ResponseModel();
-            obj.Estado = string.IsNullOrEmpty(activo) ? false : true;
+            //DateTime? fecha_nacimiento = Nacimiento != null ? Convert.ToDateTime(Nacimiento) : null;
+            var correo = !String.IsNullOrEmpty(Correo) ? Correo : null;
+            var celular = !String.IsNullOrEmpty(Celular) ? Celular : null;
+            var direccion = !String.IsNullOrEmpty(Direccion) ? Direccion : null;
+            DateTime? nacimiento = !String.IsNullOrEmpty(Nacimiento) ? DateTime.ParseExact(Nacimiento, "yyyy-MM-dd", CultureInfo.InvariantCulture) : (DateTime?)null;
+
+
             try
             {
-                obj.FechaMod = DateTime.Now;
-                if (obj.Id == 0)
+                if (idAlumno==null)
                 {
-                    obj.FechaReg = DateTime.Now;                    
-                    obj.Estado = true;
-                    AlumnoBL.Crear(obj);
+                    rm.message = "El id del alumno es inválido o nulo";
+                    rm.SetResponse(false, rm.message);
                 }
                 else
                 {
-                    obj.FechaMod = DateTime.Now;
-                    AlumnoBL.ActualizarParcial(obj, x => x.Nombres, x => x.Paterno, x => x.Materno, x => x.Dni,
-                        x => x.Nacimiento, x => x.Direccion, x => x.Celular, x => x.Estado, x => x.FechaMod 
-                        );
+                    if (Dni == "")
+                    {
+                        rm.message = "Complete el campo Dni";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else
+                    {
+                        if (Paterno == "")
+                        {
+                            rm.message = "Complete el campo Apellido Paterno";
+                            rm.SetResponse(false, rm.message);
+                        }
+                        else
+                        {
+                            if (Materno == "")
+                            {
+                                rm.message = "Complete el campo Apellido Materno";
+                                rm.SetResponse(false, rm.message);
+                            }
+                            else
+                            {
+                                if (Nombres == "")
+                                {
+                                    rm.message = "Complete el campo Nombres";
+                                    rm.SetResponse(false, rm.message);
+                                }
+                                else
+                                {
+                                    if (Codigo == "")
+                                    {
+                                        rm.message = "Complete el campo Codigo";
+                                        rm.SetResponse(false, rm.message);
+                                    }
+                                    else
+                                    {
+                                        Alumno alumno = new Alumno();
+                                        if (idAlumno == 0)
+                                        {
+                                            alumno.Paterno = Paterno;
+                                            alumno.Materno = Materno;
+                                            alumno.Nombres = Nombres;
+                                            alumno.Dni = Dni;
+                                            alumno.Nacimiento = nacimiento;
+                                            alumno.Direccion = direccion;
+                                            alumno.Celular = correo;
+                                            alumno.Correo = celular;
+                                            alumno.Codigo = Codigo;
+                                            alumno.FechaReg = DateTime.Now;
+                                            alumno.Estado = true;
+                                            AlumnoBL.Crear(alumno);
+                                        }
+                                        else
+                                        {
+                                            alumno.Id = idAlumno.Value;
+                                            alumno.Paterno = Paterno;
+                                            alumno.Materno = Materno;
+                                            alumno.Nombres = Nombres;
+                                            alumno.Dni = Dni;
+                                            alumno.Nacimiento = nacimiento;
+                                            alumno.Direccion = direccion;
+                                            alumno.Celular = celular;
+                                            alumno.Correo = correo;
+                                            alumno.Codigo = Codigo;
+                                            alumno.Estado = Estado;
+                                            alumno.FechaMod = DateTime.Now;
+                                            AlumnoBL.ActualizarParcial(alumno, x => x.Nombres, x => x.Paterno, x => x.Materno, x => x.Dni,
+                                                x => x.Nacimiento, x => x.Direccion, x => x.Celular, x => x.Correo, x => x.Codigo, x => x.Estado, x => x.FechaMod
+                                                );
+                                        }
+                                        rm.SetResponse(true);
+                                        rm.href = Url.Action("Index", "Alumno");
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
                 }
-                rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Alumno");
+
             }
             catch (Exception ex)
             {
                 rm.SetResponse(false, ex.Message);
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Eliminar(int id)
+        {
+            var alumno = AlumnoBL.Obtener(id);
+            AlumnoBL.Eliminar(db, alumno);
+            return RedirectToAction("Index");
+
         }
     }
 }

@@ -592,7 +592,6 @@ namespace Web.Controllers
                             }
                             else
                             {
-
                                 // RECOVER FIELDS OF ACCOUNT RECEIVABLE
                                 var cuenta_ingresante = (from ci in db.CuentasPorCobrar where ci.Id == CuentaPorCobrarId.Value select ci).SingleOrDefault();
 
@@ -615,159 +614,166 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
-                                    var existen_series = (from tc in db.TipoComprobante where tc.CajaId == CajaAsignada.CajaId && tc.Descripcion.Equals(TipoComprobante) && tc.Estado == false select tc).Any();
-
-                                    if (!existen_series)
+                                    if (cuenta_ingresante.Fecha > cuenta_ingresante.FechaVencimiento)
                                     {
-                                        var mensaje_fallo = "";
-
-                                        if (TipoComprobante == "BL")
-                                        {
-                                            mensaje_fallo = "BOLETA";
-                                        }
-                                        else
-                                        {
-                                            mensaje_fallo = "FACTURA";
-                                        }
-
-                                        rm.message = "LA CAJA NO TIENE MAS SERIES PARA LA " + mensaje_fallo + ", SOLICITE A LA SUNAT";
+                                        rm.message = "PLAZO VENCIDO DE LA CUENTA POR COBRAR";
                                         rm.SetResponse(false, rm.message);
                                     }
                                     else
                                     {
+                                        var existen_series = (from tc in db.TipoComprobante where tc.CajaId == CajaAsignada.CajaId && tc.Descripcion.Equals(TipoComprobante) && tc.Estado == false select tc).Any();
 
-                                        if (TipoComprobante == "BL") //TIPO COMPROBANTE : BOLETA
+                                        if (!existen_series)
                                         {
-                                            // WE PASSED AND SAVE CHANGES 'Cuenta Por Cobrar' in 'CajaMovimiento' TABLE
-                                            CajaMovimiento movimiento = new CajaMovimiento();
-                                            movimiento.CajaDiarioId = CajaAsignada.Id;
-                                            movimiento.AlumnoId = cuenta_ingresante.AlumnoId;
-                                            movimiento.OperacionId = Operacion.Id;
-                                            movimiento.EstadoId = estado_pagado_id;
-                                            movimiento.Fecha = DateTime.Now;
-                                            movimiento.Total = cuenta_ingresante.Total;
-                                            movimiento.IndEntrada = true;
-                                            movimiento.Descripcion = cuenta_ingresante.Descripcion;
-                                            movimiento.IndComprobante = true;
-                                            movimiento.TipoComprobante = 1;
-                                            movimiento.ComprobanteDes = "BOLETA";
-                                            CajaMovimientoBL.Crear(movimiento);
+                                            var mensaje_fallo = "";
 
-                                            // Recover id from movimiento object created
-                                            var CajaMovimientoId = movimiento.Id;
-
-                                            //Instanciamos un objeto de 'Caja Movimiento Detalle' para después guardarlo
-                                            CajaMovimientoDetalle detalles = new CajaMovimientoDetalle();
-                                            foreach (var item in detalles_cobranza)
+                                            if (TipoComprobante == "BL")
                                             {
-                                                detalles.CajaMovimientoId = CajaMovimientoId;
-                                                detalles.ConceptoPagoId = item.ConceptoPagoId;
-                                                detalles.ItemId = item.ItemId;
-                                                detalles.Cantidad = item.Cantidad;
-                                                detalles.Descuento = item.Descuento;
-                                                detalles.Importe = item.Importe;
-
-                                                CajaMovimientoDetalleBL.Crear(detalles);
+                                                mensaje_fallo = "BOLETA";
+                                            }
+                                            else
+                                            {
+                                                mensaje_fallo = "FACTURA";
                                             }
 
-                                            // Update the assigned 'caja diario' for the user in session (Entries, Balance Final)
-                                            diario.Id = CajaAsignada.Id;
-                                            diario.Entradas = Entradas + cuenta_ingresante.Total;
-                                            diario.SaldoFinal = SaldoInicial + (Entradas + cuenta_ingresante.Total) - Salidas;
-                                            CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
-
-                                            //Update 'Cuentas Por Cobrar' pay assigned to student (estado pendiente => pagado) and (CajaMovimientoId)
-
-                                            CuentasPorCobrar cobranza = new CuentasPorCobrar();
-                                            cobranza.Id = CuentaPorCobrarId.Value;
-                                            cobranza.EstadoId = estado_pagado_id;
-                                            cobranza.CajaMovimientoId = CajaMovimientoId;
-                                            CuentasPorCobrarBL.ActualizarParcial(cobranza, x => x.EstadoId, x => x.CajaMovimientoId);
-
-                                            //Recover data that send from Egresos-Ingresos to view
-                                            var datos = new string[5];
-                                            datos[0] = Convert.ToString(SaldoInicial);
-                                            datos[1] = Convert.ToString(diario.Entradas);
-                                            datos[2] = Convert.ToString(diario.SaldoFinal);
-                                            datos[3] = Convert.ToString(diario.Entradas - Salidas);
-                                            datos[4] = Convert.ToString(cobranza.Id);
-
-                                            rm.SetResponse(true);
-                                            rm.result = datos;
+                                            rm.message = "LA CAJA NO TIENE MAS SERIES PARA LA " + mensaje_fallo + ", SOLICITE A LA SUNAT";
+                                            rm.SetResponse(false, rm.message);
                                         }
-                                        else // TIPO COMPROBANTE : FACTURA
-                                        { 
-                                            var IGV = Convert.ToDecimal(1.18);
+                                        else
+                                        {
 
-                                            //MULTIPLICAMOS EL TOTAL DE LA CUENTA POR COBRAR (VALOR DE VENTA) CON EL IGV
-
-                                            var Total = cuenta_ingresante.Total * IGV;
-
-                                            // WE PASSED AND SAVE CHANGES 'Cuenta Por Cobrar' in 'CajaMovimiento' TABLE
-                                            CajaMovimiento movimiento = new CajaMovimiento();
-                                            movimiento.CajaDiarioId = CajaAsignada.Id;
-                                            movimiento.AlumnoId = cuenta_ingresante.AlumnoId;
-                                            movimiento.OperacionId = Operacion.Id;
-                                            movimiento.EstadoId = estado_pagado_id;
-                                            movimiento.Fecha = DateTime.Now;
-                                            movimiento.Total = Total;
-                                            movimiento.IndEntrada = true;
-                                            movimiento.Descripcion = cuenta_ingresante.Descripcion;
-                                            movimiento.IndComprobante = true;
-                                            movimiento.TipoComprobante = 2;
-                                            movimiento.ComprobanteDes = "FACTURA";
-                                            CajaMovimientoBL.Crear(movimiento);
-
-                                            // Recover id from movimiento object created
-                                            var CajaMovimientoId = movimiento.Id;
-
-                                            //Instanciamos un objeto de 'Caja Movimiento Detalle' para después guardarlo
-                                            CajaMovimientoDetalle detalles = new CajaMovimientoDetalle();
-                                            foreach (var item in detalles_cobranza)
+                                            if (TipoComprobante == "BL") //TIPO COMPROBANTE : BOLETA
                                             {
-                                                detalles.CajaMovimientoId = CajaMovimientoId;
-                                                detalles.ConceptoPagoId = item.ConceptoPagoId;
-                                                detalles.ItemId = item.ItemId;
-                                                detalles.Cantidad = item.Cantidad;
-                                                detalles.Descuento = item.Descuento;
-                                                detalles.Importe = item.Importe;
+                                                // WE PASSED AND SAVE CHANGES 'Cuenta Por Cobrar' in 'CajaMovimiento' TABLE
+                                                CajaMovimiento movimiento = new CajaMovimiento();
+                                                movimiento.CajaDiarioId = CajaAsignada.Id;
+                                                movimiento.AlumnoId = cuenta_ingresante.AlumnoId;
+                                                movimiento.OperacionId = Operacion.Id;
+                                                movimiento.EstadoId = estado_pagado_id;
+                                                movimiento.Fecha = DateTime.Now;
+                                                movimiento.Total = cuenta_ingresante.Total;
+                                                movimiento.IndEntrada = true;
+                                                movimiento.Descripcion = cuenta_ingresante.Descripcion;
+                                                movimiento.IndComprobante = true;
+                                                movimiento.TipoComprobante = 1;
+                                                movimiento.ComprobanteDes = "BOLETA";
+                                                CajaMovimientoBL.Crear(movimiento);
 
-                                                CajaMovimientoDetalleBL.Crear(detalles);
+                                                // Recover id from movimiento object created
+                                                var CajaMovimientoId = movimiento.Id;
+
+                                                //Instanciamos un objeto de 'Caja Movimiento Detalle' para después guardarlo
+                                                CajaMovimientoDetalle detalles = new CajaMovimientoDetalle();
+                                                foreach (var item in detalles_cobranza)
+                                                {
+                                                    detalles.CajaMovimientoId = CajaMovimientoId;
+                                                    detalles.ConceptoPagoId = item.ConceptoPagoId;
+                                                    detalles.ItemId = item.ItemId;
+                                                    detalles.Cantidad = item.Cantidad;
+                                                    detalles.Descuento = item.Descuento;
+                                                    detalles.Importe = item.Importe;
+
+                                                    CajaMovimientoDetalleBL.Crear(detalles);
+                                                }
+
+                                                // Update the assigned 'caja diario' for the user in session (Entries, Balance Final)
+                                                diario.Id = CajaAsignada.Id;
+                                                diario.Entradas = Entradas + cuenta_ingresante.Total;
+                                                diario.SaldoFinal = SaldoInicial + (Entradas + cuenta_ingresante.Total) - Salidas;
+                                                CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+
+                                                //Update 'Cuentas Por Cobrar' pay assigned to student (estado pendiente => pagado) and (CajaMovimientoId)
+
+                                                CuentasPorCobrar cobranza = new CuentasPorCobrar();
+                                                cobranza.Id = CuentaPorCobrarId.Value;
+                                                cobranza.EstadoId = estado_pagado_id;
+                                                cobranza.CajaMovimientoId = CajaMovimientoId;
+                                                CuentasPorCobrarBL.ActualizarParcial(cobranza, x => x.EstadoId, x => x.CajaMovimientoId);
+
+                                                //Recover data that send from Egresos-Ingresos to view
+                                                var datos = new string[5];
+                                                datos[0] = Convert.ToString(SaldoInicial);
+                                                datos[1] = Convert.ToString(diario.Entradas);
+                                                datos[2] = Convert.ToString(diario.SaldoFinal);
+                                                datos[3] = Convert.ToString(diario.Entradas - Salidas);
+                                                datos[4] = Convert.ToString(cobranza.Id);
+
+                                                rm.message = "PAGO REGISTRADO CON ÉXITO";
+                                                rm.SetResponse(true, rm.message);
+                                                rm.result = datos;
                                             }
+                                            else // TIPO COMPROBANTE : FACTURA
+                                            {
+                                                var IGV = Convert.ToDecimal(1.18);
 
-                                            // Update the assigned 'caja diario' for the user in session (Entries, Balance Final)
-                                            diario.Id = CajaAsignada.Id;
-                                            diario.Entradas = Entradas + Total;
-                                            diario.SaldoFinal = SaldoInicial + (Entradas + Total) - Salidas;
-                                            CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+                                                //MULTIPLICAMOS EL TOTAL DE LA CUENTA POR COBRAR (VALOR DE VENTA) CON EL IGV
 
-                                            //Update 'Cuentas Por Cobrar' pay assigned to student (estado pendiente => pagado) and (CajaMovimientoId)
+                                                var Total = cuenta_ingresante.Total * IGV;
 
-                                            CuentasPorCobrar cobranza = new CuentasPorCobrar();
-                                            cobranza.Id = CuentaPorCobrarId.Value;
-                                            cobranza.EstadoId = estado_pagado_id;
-                                            cobranza.CajaMovimientoId = CajaMovimientoId;
-                                            CuentasPorCobrarBL.ActualizarParcial(cobranza, x => x.EstadoId, x => x.CajaMovimientoId);
+                                                // WE PASSED AND SAVE CHANGES 'Cuenta Por Cobrar' in 'CajaMovimiento' TABLE
+                                                CajaMovimiento movimiento = new CajaMovimiento();
+                                                movimiento.CajaDiarioId = CajaAsignada.Id;
+                                                movimiento.AlumnoId = cuenta_ingresante.AlumnoId;
+                                                movimiento.OperacionId = Operacion.Id;
+                                                movimiento.EstadoId = estado_pagado_id;
+                                                movimiento.Fecha = DateTime.Now;
+                                                movimiento.Total = Total;
+                                                movimiento.IndEntrada = true;
+                                                movimiento.Descripcion = cuenta_ingresante.Descripcion;
+                                                movimiento.IndComprobante = true;
+                                                movimiento.TipoComprobante = 2;
+                                                movimiento.ComprobanteDes = "FACTURA";
+                                                CajaMovimientoBL.Crear(movimiento);
 
-                                            //Recover data that send from Egresos-Ingresos to view
-                                            var datos = new string[5];
-                                            datos[0] = Convert.ToString(SaldoInicial);
-                                            datos[1] = Convert.ToString(diario.Entradas);
-                                            datos[2] = Convert.ToString(diario.SaldoFinal);
-                                            datos[3] = Convert.ToString(diario.Entradas - Salidas);
-                                            datos[4] = Convert.ToString(cobranza.Id);
+                                                // Recover id from movimiento object created
+                                                var CajaMovimientoId = movimiento.Id;
 
-                                            rm.SetResponse(true);
-                                            rm.result = datos;
+                                                //Instanciamos un objeto de 'Caja Movimiento Detalle' para después guardarlo
+                                                CajaMovimientoDetalle detalles = new CajaMovimientoDetalle();
+                                                foreach (var item in detalles_cobranza)
+                                                {
+                                                    detalles.CajaMovimientoId = CajaMovimientoId;
+                                                    detalles.ConceptoPagoId = item.ConceptoPagoId;
+                                                    detalles.ItemId = item.ItemId;
+                                                    detalles.Cantidad = item.Cantidad;
+                                                    detalles.Descuento = item.Descuento;
+                                                    detalles.Importe = item.Importe;
+
+                                                    CajaMovimientoDetalleBL.Crear(detalles);
+                                                }
+
+                                                // Update the assigned 'caja diario' for the user in session (Entries, Balance Final)
+                                                diario.Id = CajaAsignada.Id;
+                                                diario.Entradas = Entradas + Total;
+                                                diario.SaldoFinal = SaldoInicial + (Entradas + Total) - Salidas;
+                                                CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+
+                                                //Update 'Cuentas Por Cobrar' pay assigned to student (estado pendiente => pagado) and (CajaMovimientoId)
+
+                                                CuentasPorCobrar cobranza = new CuentasPorCobrar();
+                                                cobranza.Id = CuentaPorCobrarId.Value;
+                                                cobranza.EstadoId = estado_pagado_id;
+                                                cobranza.CajaMovimientoId = CajaMovimientoId;
+                                                CuentasPorCobrarBL.ActualizarParcial(cobranza, x => x.EstadoId, x => x.CajaMovimientoId);
+
+                                                //Recover data that send from Egresos-Ingresos to view
+                                                var datos = new string[5];
+                                                datos[0] = Convert.ToString(SaldoInicial);
+                                                datos[1] = Convert.ToString(diario.Entradas);
+                                                datos[2] = Convert.ToString(diario.SaldoFinal);
+                                                datos[3] = Convert.ToString(diario.Entradas - Salidas);
+                                                datos[4] = Convert.ToString(cobranza.Id);
+
+                                                rm.message = "PAGO REGISTRADO CON ÉXITO";
+                                                rm.SetResponse(true, rm.message);
+                                                rm.result = datos;
+                                            }
                                         }
-
                                     }
 
                                 }
                             }
-
                         }
-
                     }
 
                     else

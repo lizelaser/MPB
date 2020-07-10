@@ -46,19 +46,22 @@
                         N° &nbsp;
                     </th>
                     <th>
-                        Fecha
+                        Codigo
                     </th>
                     <th>
                         Alumno
                     </th>
                     <th>
-                        Voucher
+                        Fecha
                     </th>
                     <th>
                         Total
                     </th>
                     <th>
                         Descripcion
+                    </th>
+                    <th>
+                        Fecha Vencimiento
                     </th>
                 </tr>
             </thead>
@@ -74,16 +77,22 @@
                             @_count
                         </td>
                         <td>
-                            @item.Fecha
+                            @item.AlumnoCodigo
                         </td>
                         <td>
                             @item.AlumnoNombres
+                        </td>
+                        <td>
+                            @item.Fecha
                         </td>
                         <td>
                             @item.Total
                         </td>
                         <td>
                             @item.Descripcion
+                        </td>
+                        <td>
+                            @item.FechaVencimiento
                         </td>
                     </tr>
                 }

@@ -112,6 +112,7 @@ namespace Web.Controllers.Secretaria
             var rm = new Comun.ResponseModel();
             //Asignamos el estado pendiente a la cuenta por cobrar
             int EstadoId = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e.Id).SingleOrDefault();
+            DateTime endofDay = DateTime.Now.AddDays(1).AddMilliseconds(-1);
 
             try
             {
@@ -124,6 +125,7 @@ namespace Web.Controllers.Secretaria
                 cobranzas.Fecha = Convert.ToDateTime(Fecha);
                 cobranzas.Total = Total;
                 cobranzas.Descripcion = Descripcion;
+                cobranzas.FechaVencimiento = endofDay;
 
                 //Verify if exist any 'cuenta por cobrar' that already exist in BD
 

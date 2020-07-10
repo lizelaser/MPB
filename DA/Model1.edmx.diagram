@@ -5,7 +5,6 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="a2e8ab34b49049c2b0f5201bd3e1c1e4" Name="Diagram1">
-        <EntityTypeShape EntityType="ACADEMICOModel.Alumno" Width="1.5" PointX="0.75" PointY="7.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Alumno_Especialidad" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Aula" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Boveda" Width="1.5" PointX="7.125" PointY="29.625" IsExpanded="true" />
@@ -22,8 +21,6 @@
         <EntityTypeShape EntityType="ACADEMICOModel.Rol" Width="1.5" PointX="1.5" PointY="34.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.TipoPersonal" Width="1.5" PointX="4.875" PointY="33.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.ValorTabla" Width="1.5" PointX="7.75" PointY="1.25" IsExpanded="true" />
-        <AssociationConnector Association="ACADEMICOModel.FK_AE_Alumno" ManuallyRouted="false" />
-        <AssociationConnector Association="ACADEMICOModel.FK_Notas_Alumno" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_AE_Especialidad" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_Horario_Aula" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_Horario_Periodo" ManuallyRouted="false" />
@@ -51,20 +48,17 @@
         <EntityTypeShape EntityType="ACADEMICOModel.CuentasPorCobrarDetalle" Width="1.5" PointX="13.625" PointY="8" />
         <EntityTypeShape EntityType="ACADEMICOModel.MatriculaDetalle" Width="1.5" PointX="5.25" PointY="11.25" />
         <EntityTypeShape EntityType="ACADEMICOModel.TipoComprobante" Width="1.5" PointX="2.875" PointY="41.375" />
-        <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90" />
         <AssociationConnector Association="ACADEMICOModel.FK_TipoComprobante_Caja" />
         <AssociationConnector Association="ACADEMICOModel.FK_CCDetalle_Concepto" />
         <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A" />
         <AssociationConnector Association="ACADEMICOModel.FK_CCDetalle_CuentasPorCobrar" />
         <EntityTypeShape EntityType="ACADEMICOModel.CajaMovimiento" Width="2.25" PointX="8.25" PointY="16.75" />
-        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Alumno" />
         <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_CajaDiario" />
         <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Estado" />
         <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Operacion" />
         <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Personal" />
         <AssociationConnector Association="ACADEMICOModel.FK_CMDetalle_CajaMovimiento" />
         <EntityTypeShape EntityType="ACADEMICOModel.Matricula" Width="1.5" PointX="4.5" PointY="3.625" />
-        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Alumno" />
         <AssociationConnector Association="ACADEMICOModel.FK_Matricula_CondicionEstudio" />
         <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Matri__2EDAF651" />
         <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Periodo" />
@@ -74,6 +68,12 @@
         <AssociationConnector Association="ACADEMICOModel.FK_Horario_Curso" />
         <AssociationConnector Association="ACADEMICOModel.FK_MD_Curso" />
         <AssociationConnector Association="ACADEMICOModel.FK_Notas_Curso" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Alumno" Width="1.5" PointX="0.75" PointY="7.5" />
+        <AssociationConnector Association="ACADEMICOModel.FK__CuentasPo__Alumn__634EBE90" />
+        <AssociationConnector Association="ACADEMICOModel.FK_AE_Alumno" />
+        <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Alumno" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Alumno" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Notas_Alumno" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

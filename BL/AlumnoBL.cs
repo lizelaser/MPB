@@ -41,5 +41,26 @@ namespace BL
             }
         }
 
+        public static List<Alumno> LookFor(string codigo)
+        {
+            using (var context = new DAEntities())
+            {
+                context.Configuration.LazyLoadingEnabled = false;
+                context.Configuration.ProxyCreationEnabled = false;
+
+                var periodo_id = (from p in context.Periodo where p.Estado == true select p.Id).SingleOrDefault();
+                var alumno = (from a in context.Alumno
+                              join m in context.Matricula
+                              on a.Id equals m.AlumnoId
+                              join cc in context.CuentasPorCobrar
+                              on m.Id equals cc.MatriculaId
+                              orderby a.Id
+                              where m.PeridoId == periodo_id && m.CondicionEstudioId == 1 && cc.EstadoId == 3 && a.Codigo.Contains(codigo)
+                              select a).Take(5).ToList();
+
+                return alumno;
+            }
+        }
+
     }
 }

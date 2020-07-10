@@ -33,12 +33,12 @@ namespace DA
         public Nullable<int> EspecialidadId { get; set; }
         public string Proceso { get; set; }
     
-        public virtual Alumno Alumno { get; set; }
         public virtual CondicionEstudio CondicionEstudio { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CuentasPorCobrar> CuentasPorCobrar { get; set; }
         public virtual Periodo Periodo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatriculaDetalle> MatriculaDetalle { get; set; }
+        public virtual Alumno Alumno { get; set; }
     }
 }

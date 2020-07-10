@@ -215,6 +215,9 @@
             </div>
             <div class="col s12" style="width:760px;margin-left:20px;">
                 <div id="validations" class="card card-tabs">
+                    <div class="card-content contenedor_mensaje" id="div_mensaje_cobranza" hidden>
+                        <p id="txt_mensaje_cobranza" style="margin-top:-10px;"></p>
+                    </div>
                     <div class="card-content">
                         <div class="form-group">
                             <div class="row">
@@ -262,7 +265,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="#principal" class="modal-close btn-small blue right" style="margin-right:30px;" id="realizar_cobranza">Guardar</a>
+                <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="realizar_cobranza">Guardar</a>
                 &nbsp;
                 <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;">Cancelar</a>
             </div>
@@ -709,6 +712,8 @@ else
 
         });
 
+
+
     </script>
 
 
@@ -904,7 +909,7 @@ else
                             $("#importe").val('')
 
                             // Refresh again pagination
-                            paginadorFuncPagos(currentPage);
+                            paginadorFuncPagos($("#filtro").val(),currentPage);
                             paginadorFuncEntradas(currentPage);
                             paginadorFuncSalidas(currentPage);
                         }
@@ -960,7 +965,8 @@ else
         });
     }
 
-    var isChargeLoading = false;
+
+        var isChargeLoading = false;
 
     function guardarCobroFun() {
         $("#realizar_cobranza").on("click", function () {
@@ -982,6 +988,10 @@ else
                 var envio = {
                     CuentaPorCobrarId: $("#num_cobranzaId").val(),
                     TipoComprobante: comprobante
+                    //AlumnoNombres: $("#txt_alumno").val(),
+                    //Fecha: $("#txt_fecha").val(),
+                    //Importe: $("#num_importe").val(),
+                    //Descripcion: $("#txt_descripcion").val()
                 }
 
                 $("#realizar_cobranza").prop('disabled',true);
@@ -989,13 +999,47 @@ else
                     url: '@Url.Action("GuardarCobro","Pagos")',
                     data: JSON.stringify(envio),
                     type: 'POST',
-                    async: false,//this makes the ajax-call blocking
+                    async: true,//this makes the ajax-call blocking
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function (rm) {
+                        
                         try {
 
-                            if (rm.response == true) {
+                            if (rm.response == false) {
+                                $("#div_mensaje_cobranza").show();
+                                $("#div_mensaje_cobranza").css("background-color","#F94040");
+                                $("#txt_mensaje_cobranza").text(rm.message);
+
+                                if (valTimeout) {
+                                    clearTimeout(valTimeout);
+                                }
+
+                                valTimeout = setTimeout(() => {
+                                    $("#div_mensaje_cobranza").fadeOut();
+                                }, 2500);
+                            }
+
+                            else {
+
+                                $("#div_mensaje_cobranza").show();
+                                $("#div_mensaje_cobranza").css("background-color","#27EF37");
+                                $("#txt_mensaje_cobranza").text(rm.message);
+
+                                if (valTimeout) {
+                                    clearTimeout(valTimeout);
+                                }
+
+                                valTimeout = setTimeout(() => {
+                                    $("#div_mensaje_cobranza").fadeOut();
+                                }, 2500);
+
+                                // Refresh Modal or Clear Fields
+                                $("#txt_alumno").val("");
+                                $("#txt_fecha").val("");
+                                $("#num_importe").val("");
+                                $("#txt_descripcion").val("");
+
                                 //Update Cards 'Caja Diario' (Entries and final balance)
                                 $("#inicial_caja").text(rm.result[0]);
                                 $("#entradas_caja").text(rm.result[1]);

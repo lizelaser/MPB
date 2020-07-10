@@ -42,12 +42,12 @@ function fillTable(tableId, trArgs, ...args) {
 
     args.forEach((arg) => {
         if (typeof arg === 'object') {
-            if (arg.isExtra) items.push(arg.value)
+            if (arg?.isExtra) items.push(arg?.value ?? '')
             else {
                 let row = '<td style="padding:0;'
 
                 // Style flag.
-                if (Array.isArray(arg.styles)) {
+                if (Array.isArray(arg?.styles)) {
                     arg.styles.forEach((style) => {
                         row += `${style}`
                     })
@@ -55,15 +55,15 @@ function fillTable(tableId, trArgs, ...args) {
                 row += '"'
 
                 // Attributes flag.
-                if (Array.isArray(arg.attributes)) {
+                if (Array.isArray(arg?.attributes)) {
                     arg.attributes.forEach((attribute) => {
                         row += ` ${attribute}`
                     })
                 }
-                row += `>${arg.value}</td>`
+                row += `>${arg?.value != null && String(arg.value).trim().length != 0 ? String(arg.value).trim() : ''}</td>`
                 items.push(row)
             }
-        } else items.push(`<td style="padding:0">${arg}</td>`)
+        } else items.push(`<td style="padding:0">${arg != null && String(arg).trim().length != 0 ? String(arg).trim() : ''}</td>`)
 
     })
 

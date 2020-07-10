@@ -36,12 +36,12 @@ namespace DA
         public Nullable<int> TipoComprobante { get; set; }
         public string ComprobanteDes { get; set; }
     
-        public virtual Alumno Alumno { get; set; }
         public virtual CajaDiario CajaDiario { get; set; }
         public virtual Estado Estado { get; set; }
         public virtual Operacion Operacion { get; set; }
         public virtual Personal Personal { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimientoDetalle> CajaMovimientoDetalle { get; set; }
+        public virtual Alumno Alumno { get; set; }
     }
 }

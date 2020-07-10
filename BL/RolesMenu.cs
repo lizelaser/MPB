@@ -27,7 +27,8 @@ namespace BL
         menu_horario_todo = 53,
         menu_reporte_todo = 58,
         menu_reporte_entradas = 59,
-        menu_reporte_salidas = 60
+        menu_reporte_salidas = 60,
+        menu_notas_todo = 61
         #endregion
     }
 }
