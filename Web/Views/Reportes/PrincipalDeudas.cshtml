@@ -35,10 +35,10 @@
             <ul class="tabs align-center s12 m12">
                 <li class="tab col s12 m4 active" id="reporte"><a id="linkReporte" href="#test1"><strong>REPORTES DEUDAS PENDIENTES</strong></a></li>
             </ul>
-            <div class="col s12" style="border: 1px solid #ccc;">
+            <div class="col s12" style="border: 1px solid #ccc; padding:0">
                 <div id="test1">
-                    <div class="col s12 m12">
-                        <div class="card card-tabs">
+                    <div class="col s12 m12" style="padding:0">
+                        <div class="card card-tabs" style="margin:0">
                             <div class="card-content" style="">
                                 @using (Html.BeginForm("ReportesDeudas", "Reportes", FormMethod.Post))
                                 {
@@ -49,8 +49,8 @@
                                             <i class="material-icons prefix" style="margin-left:-40px;">search</i>
                                         </div>
                                         <div class="input-field col s12 m5">
-                                            <button type="submit" class="btn btn-small red">
-                                                <i><span class="material-icons">picture_as_pdf</span>Generar</i>
+                                            <button type="submit" class="btn btn-small red" style="height:52.5px">
+                                                <i class="material-icons" style="font-size:35px; line-height:53.5px">picture_as_pdf</i>
                                             </button>
                                         </div>
                                     </div>

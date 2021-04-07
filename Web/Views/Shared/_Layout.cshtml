@@ -30,7 +30,7 @@
     <header class="page-topbar" id="header">
         <div class="navbar navbar-fixed">
             <nav class="navbar-main navbar-color nav-collapsible sideNav-lock navbar-dark gradient-45deg-indigo-purple no-shadow">
-                <div class="nav-wrapper">
+                <div class="nav-wrapper" style="background-color:#308bd1 !important">
                     <div class="header-search-wrapper hide-on-small-and-down" style="margin-top:0">
                         <p style="margin:0">Bienvenido: @Session["UsuarioRol"]</p>
                     </div>
@@ -64,7 +64,7 @@
     </header>
 
     <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light sidenav-active-square">
-        <div class="brand-sidebar"style="background-color:#7229DA;">
+        <div class="brand-sidebar"style="background-color:white;">
             <h1 class="logo-wrapper">
                 <a class="brand-logo darken-1" href="@Url.Action("Index","Home")">
                     <img src="~/app-assets/images/logo/materialize-logo-color.png" alt="MBP" />
@@ -86,11 +86,10 @@
             @if (rol_codigo == "SA")
             {
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Administración</div>
+                    <div class="collapsible-header"><i class="material-icons">add_box</i>Administración</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[8]</span>
                             </a>
                         </span>
@@ -98,7 +97,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[5]</span>
                             </a>
                         </span>
@@ -106,7 +104,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[9]</span>
                             </a>
                         </span>
@@ -114,18 +111,16 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[0]</span>
                             </a>
                         </span>
                     </div>
                 </li>
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-header"><i class="material-icons">person</i>Mantemientos</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[1]</span>
                             </a>
                         </span>
@@ -133,7 +128,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[2]</span>
                             </a>
                         </span>
@@ -141,7 +135,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[4]</span>
                             </a>
                         </span>
@@ -149,7 +142,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[3]</span>
                             </a>
                         </span>
@@ -157,19 +149,17 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[10])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[10]</span>
                             </a>
                         </span>
                     </div>
                 </li>
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Operaciones</div>
+                    <div class="collapsible-header"><i class="material-icons">attach_money</i>Operaciones</div>
 
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[6]</span>
                             </a>
                         </span>
@@ -177,7 +167,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[7])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[7]</span>
                             </a>
                         </span>
@@ -188,7 +177,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesAlumno","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Alumno</span>
                             </a>
                         </span>
@@ -196,7 +184,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Personal</span>
                             </a>
                         </span>
@@ -204,7 +191,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalMatriculas","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Matriculas</span>
                             </a>
                         </span>
@@ -212,7 +198,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalDeudas","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Cuentas Por Cobrar</span>
                             </a>
                         </span>
@@ -223,11 +208,10 @@
             {
 
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons" style="">library_books</i><span>Mantemientos</span></div>
+                    <div class="collapsible-header"><i class="material-icons" style="">person</i><span>Mantemientos</span></div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[0]</span>
                             </a>
                         </span>
@@ -235,18 +219,16 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[1]</span>
                             </a>
                         </span>
                     </div>
                 </li>
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Operaciones</div>
+                    <div class="collapsible-header"><i class="material-icons">attach_money</i>Operaciones</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[2]</span>
                             </a>
                         </span>
@@ -254,7 +236,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[4]</span>
                             </a>
                         </span>
@@ -262,7 +243,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[3]</span>
                             </a>
                         </span>
@@ -274,7 +254,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesAlumno","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Alumno</span>
                             </a>
                         </span>
@@ -282,7 +261,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesPersonal","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Personal</span>
                             </a>
                         </span>
@@ -290,7 +268,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesIngreso","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Ingresos Caja</span>
                             </a>
                         </span>
@@ -298,7 +275,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("ReportesEgreso","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Egresos Caja</span>
                             </a>
                         </span>
@@ -306,7 +282,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalMatriculas","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Matriculas</span>
                             </a>
                         </span>
@@ -314,7 +289,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("PrincipalDeudas","Reportes")">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">Cuentas Por Cobrar</span>
                             </a>
                         </span>
@@ -324,11 +298,10 @@
             @if (rol_codigo == "CO")
             {
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-header"><i class="material-icons">person</i>Mantemientos</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[0]</span>
                             </a>
                         </span>
@@ -336,7 +309,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[1]</span>
                             </a>
                         </span>
@@ -344,7 +316,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[3]</span>
                             </a>
                         </span>
@@ -352,7 +323,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[2]</span>
                             </a>
                         </span>
@@ -360,7 +330,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[4]</span>
                             </a>
                         </span>
@@ -368,7 +337,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[5]</span>
                             </a>
                         </span>
@@ -379,11 +347,10 @@
             @if (rol_codigo == "DI")
             {
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Administración</div>
+                    <div class="collapsible-header"><i class="material-icons">add_box</i>Administración</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[6]</span>
                             </a>
                         </span>
@@ -391,7 +358,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[5])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[5]</span>
                             </a>
                         </span>
@@ -399,7 +365,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[7])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[7]</span>
                             </a>
                         </span>
@@ -407,18 +372,16 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[0])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[0]</span>
                             </a>
                         </span>
                     </div>
                 </li>
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">library_books</i>Mantemientos</div>
+                    <div class="collapsible-header"><i class="material-icons">person</i>Mantemientos</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[1])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[1]</span>
                             </a>
                         </span>
@@ -426,7 +389,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[2])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[2]</span>
                             </a>
                         </span>
@@ -434,7 +396,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[4])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[4]</span>
                             </a>
                         </span>
@@ -442,7 +403,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[3])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[3]</span>
                             </a>
                         </span>
@@ -450,7 +410,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[8]</span>
                             </a>
                         </span>
@@ -458,7 +417,6 @@
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[9])">
-                                <i class="material-icons">library_books</i>
                                 <span class="menu-title" data-i18n="">@menu[9]</span>
                             </a>
                         </span>
@@ -474,8 +432,8 @@
         @RenderBody()
     </div>
 
-    <footer class="page-footer footer footer-fixed footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow">
-        <div class="footer-copyright">
+    <footer class="page-footer footer footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow" style="background-color:#308bd1 !important; background-image:none !important">
+        <div class="footer-copyright" style="background-color:#308bd1 !important">
             <div class="container"><span>Todos los Derechos Reservados </span><span class="right hide-on-small-only"><a href="https://codeaperu.com">@empresa</a></span></div>
         </div>
     </footer>
@@ -494,4 +452,15 @@
     <script src="~/Scripts/ini.js"></script>
     @RenderSection("scripts", required: false)
 </body>
+<style>
+    .card.card-tabs{
+        margin:0;
+    }
+    .tabs+.col.s12{
+        padding:0;
+    }
+    .card-content > .collapsible{
+        margin:0;
+    }
+</style>
 </html>

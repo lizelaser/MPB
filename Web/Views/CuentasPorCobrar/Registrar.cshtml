@@ -141,7 +141,7 @@
                                     <table>
                                         <tr>
                                             <td>Total a Pagar:</td>
-                                            <td><input style="font-size: 20px; font-weight: 700;" class="form-control" name="total" id="total" type="number" step="any" required readonly /></td>
+                                            <td style="font-size: 20px; font-weight: 700;" class="form-control" name="total" id="total" type="number" step="any" required readonly></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -304,20 +304,24 @@
     function fn_sumar() {
         var suma = 0;
         $(".subtotal").each(function () {
+            console.log($(this).text())
             suma += parseFloat($(this).text());
         });
 
-        $("#total").val(suma.toFixed(2));
+        $("#total").text(suma.toFixed(2));
     }
     function fn_restar() {
         total = total - valor;
-        $("#total").val(total.toFixed(2));
+        if (total < 0) {
+            total = 0;
+        }
+        $("#total").text(total.toFixed(2));
     }
 
     function fn_eliminar_concepto() {
         $("a.remover").click(function () {
             filas = $("#tbd_conceptos tr").length;
-            total = $("#total").val();
+            total = $("#total").text();
             valor = $(this).parents("tr").find("td").eq(6).html();
             $(this).parents("tr").fadeOut("normal", function () {
                 $(this).remove();
@@ -377,7 +381,7 @@
             var envio = {
                 AlumnoId: $("#Id").val(),
                 Fecha: $("#fecha").val(),
-                Total: $("#total").val(),
+                Total: $("#total").text(),
                 Descripcion: $("#descripcion").val(),
                 CuentasPorCobrarDetalle: _CuentasPorCobrarDetalle
             }
