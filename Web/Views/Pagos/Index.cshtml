@@ -150,8 +150,12 @@
 
         <!--Modal Structure Transferir Saldos-->
         <div id="modal2" class="modal center-align">
-            <div class="modal-content" style="height:60px;">
+            <div class="modal-content" style="height:60px; display:flex; justify-content:space-between; align-items:center;">
+                <div></div>
                 <h5 style="margin-top:-10px;">TRANSFERENCIAS</h5>
+                <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                    <i class="material-icons">cancel</i>
+                </a>
             </div>
             <div class="col s12" style="width:760px;margin-left:20px;">
                 <div id="validations" class="card card-tabs">
@@ -191,8 +195,12 @@
         </div>
         <!--Modal Structure Cerrar Caja-->
         <div id="modal3" class="modal center-align">
-            <div class="modal-content" style="height:50px;">
+            <div class="modal-content" style="height:50px; display:flex; justify-content:space-between; align-items:center;">
+                <div></div>
                 <h5 class="cabecera">MPB CAJAS</h5>
+                <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                    <i class="material-icons">cancel</i>
+                </a>
             </div>
             <div class="col s12" style="width:360px;margin-left:20px;">
                 <div id="validations" class="card card-tabs">
@@ -210,8 +218,12 @@
 
         <!--Modal Structure pay account receivable-->
         <div id="modal5" class="modal center-align">
-            <div class="modal-content" style="height:60px;">
+            <div class="modal-content" style="height:60px; display:flex; justify-content:space-between; align-items:center;">
+                <div></div>
                 <h5 class="" style="margin-top:-10px;">REALIZAR COBRO</h5>
+                <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                    <i class="material-icons">cancel</i>
+                </a>
             </div>
             <div class="col s12" style="width:760px;margin-left:20px;">
                 <div id="validations" class="card card-tabs">
@@ -1367,18 +1379,19 @@ else
             var getMinute = mydate.getMinutes();
             var standardDate = (getDay < 10 ? '0' : '') + getDay + '/' + (getMonth < 10 ? '0' : '') + getMonth + '/' + getYear + ' ' + (getHour < 10 ? '0' : '') + getHour + ':' + (getMinute < 10 ? '0' : '') + getMinute;
 
-            var accion = "<td style='padding:0'></td>";
+            var accion = "<td style='padding:0'>--</td>";
 
             if (item.IndComprobante == true && item.TipoComprobante == 1) {
                 accion = `<td style="padding:0">
                                     <a href="Pagos/Boleta/${item.Id}"><i class="material-icons center">assignment</i></a>
                                 </td>`
             }
-            if (item.IndComprobante == true && item.TipoComprobante == 2) {
+            else if (item.IndComprobante == true && item.TipoComprobante == 2) {
                 accion = `<td style="padding:0">
                                     <a href="Pagos/Factura/${item.Id}"><i class="material-icons center">assignment</i></a>
                                 </td>`
             }
+            
 
             $(id).append(
                 `<tr>

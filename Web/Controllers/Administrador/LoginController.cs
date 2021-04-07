@@ -21,7 +21,7 @@ namespace Web.Controllers
         public JsonResult Autenticar(UsuarioVm u)
         {
             var rm = new Comun.ResponseModel();
-            //password = Comun.HashHelper.MD5(password);
+           //password = Comun.HashHelper.MD5(password);
            // u.Clave = u.Clave.ToLower();
 
             var usuario= UsuarioBL.Obtener(x => x.Correo == u.Usuario && x.Clave == u.Clave && x.Activo,includeProperties:"Rol");

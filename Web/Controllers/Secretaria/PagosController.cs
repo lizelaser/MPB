@@ -849,7 +849,7 @@ namespace Web.Controllers
                     movimiento.EstadoId = EstadoId;
                     movimiento.Fecha = DateTime.Now;
                     movimiento.Total = Total;
-                    if (OperacionDenominacion.Equals("PAGO DE SERVICIOS") || OperacionDenominacion.Equals("SALIDAS OTROS"))
+                    if (OperacionDenominacion.Equals("PAGO DE SERVICIOS") || OperacionDenominacion.Equals("SALIDAS OTROS") || OperacionDenominacion.Equals("FALTANTE DE CAJA"))
                     {
                         movimiento.IndEntrada = false;
                         movimiento.Descripcion = Descripcion;
