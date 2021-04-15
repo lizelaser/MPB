@@ -90,17 +90,20 @@ namespace Web.Controllers
 
         public ActionResult Mantener(int id=0)
         {
+            ViewBag.PersonalId = new SelectList(db.Personal.ToList().Select(p => {
+                p.Paterno = p.Paterno + " " + p.Materno + " " + p.Nombres;
+                return p;
+            }), "Id", "Paterno");
+            ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion");
+
 
             if (id == 0)
             {
-                ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno");
-                ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion");
+
                 return View(new Usuario() { Activo = true, IndCambio = false });
             }       
             else
             {
-                ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno");
-                ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion");
                 return View(UsuarioBL.Obtener(id));
             } 
 
@@ -118,7 +121,7 @@ namespace Web.Controllers
                     ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno", usuario.PersonalId);
                     ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion", usuario.RolId);
                     usuario.Nombre = usuario.Nombre;
-                    usuario.Clave = usuario.Correo;
+                    usuario.Clave = Comun.HashHelper.SHA256("123456");
                     usuario.IndCambio = false;
                     usuario.Activo = true;
                     UsuarioBL.Crear(usuario);

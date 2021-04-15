@@ -3,83 +3,8 @@
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_usuario_todo))
 {
     <div class="row">
-        <div class="col s12 m12 l12">
-            <div id="bordered-table" class="card card card-default scrollspy">
-                <div class="card-content">
-                    <div class="card-title">
-                        <div class="row">
-                            <div class="col s8 m6 l10">
-                                <h4 class="card-title">GESTIONAR USUARIOS</h4>
-                            </div>
-                            <div class="col s4 m6 l2">
-                                <a class="btn-small blue right" href="@Url.Action("Mantener","Usuario", new { id=0})"><i class="material-icons left">add</i>Nuevo</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <input type="text" name="nombre" id="nombre" placeholder="BUSCAR USUARIO POR NOMBRE DE USUARIO" />
-                    </div>
-
-                    <div class="row">
-                        <div class="col s12">
-                        </div>
-                        <div class="col s12">
-                            <table class="bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre Usuario</th>
-                                        <th>Correo</th>
-                                        <th>Personal</th>
-                                        <th>Rol</th>
-                                        <th>Activo</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbd_usuarios">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s12 m12 l12">
-                            <div id="bordered-table" class="card card card-default scrollspy">
-                                <div class="col-md-12 center text-center">
-                                    <div id="Encontrado">
-                                        <span>
-                                            <label id="TotalRegistros"></label> registros encontrados
-                                        </span>
-                                        <span>&nbsp;|&nbsp;</span>
-                                        <span>
-                                            Página <label id="PaginaActual"></label> de
-                                            <label id="TotalPaginas"></label>
-                                        </span>
-                                    </div>
-                                    <div class="row" id="NoEncontrado">
-                                        <span>&nbsp;|&nbsp;</span>
-                                        <span>No hay resultados de la búsqueda</span>
-                                        <span>&nbsp;|&nbsp;</span>
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-small blue" id="inicio_usuarios"><<</button>
-                                        <span></span>
-                                        <button class="btn btn-small blue" id="anterior_usuarios">Anterior</button>
-
-                                        <button class="btn btn-small blue" id="siguiente_usuarios">Siguiente</button>
-                                        <span></span>
-                                        <button class="btn btn-small blue" id="ultimo_usuarios">>></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col s12">
-            <div id="validations" class="card card-tabs">
+        <div class="col s12  m12 l12">
+            <div id="validations" class="card card-tabs" style="margin-top:20px;">
                 <div class="card-content">
                     <div class="card-title">
                         <div class="row">
@@ -110,12 +35,13 @@
                                 <input id="cemail" type="email" name="Correo" required value="@Model.Correo">
                             </div>
                             <div class="input-field col s12 m4">
-
                                 @Html.DropDownListFor(x => x.PersonalId, (IEnumerable<SelectListItem>)ViewBag.PersonalId)
+                                <label>Personal</label>
                             </div>
                             <div class="input-field col s12 m4">
 
                                 @Html.DropDownListFor(x => x.RolId, (IEnumerable<SelectListItem>)ViewBag.RolId)
+                                <label>Rol Sistema</label>
                             </div>
 
                             <div class="col s12 m4">

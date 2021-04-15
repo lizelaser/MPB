@@ -6,11 +6,16 @@ using System.Web;
 
 namespace BL
 {
-    public class HorarioVm:Horario
+    public class HorarioVm
     {
-        public string PeriodoDenominacion { get; set; }
-        public string CursoDenominacion { get; set; }
-        public string AulaDenominacion { get; set; }
+        public int Id { get; set; }
+        public string Periodo { get; set; }
+        public string Curso { get; set; }
+        public string Aula { get; set; }
+        public string Docente { get; set; }
+        public string HoraInicio { get; set; }
+        public string HoraFin { get; set; }
+        public string Dias { get; set; }
 
     }
 }

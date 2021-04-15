@@ -17,9 +17,9 @@ namespace DA
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Curso()
         {
-            this.Horario = new HashSet<Horario>();
             this.MatriculaDetalle = new HashSet<MatriculaDetalle>();
             this.Notas = new HashSet<Notas>();
+            this.Horario = new HashSet<Horario>();
         }
     
         public int Id { get; set; }
@@ -37,13 +37,14 @@ namespace DA
         public Nullable<int> Ciclo { get; set; }
         public string ReqCurso { get; set; }
         public Nullable<decimal> ReqCredito { get; set; }
+        public Nullable<bool> Estado { get; set; }
     
         public virtual Especialidad Especialidad { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Horario> Horario { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatriculaDetalle> MatriculaDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Notas> Notas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Horario> Horario { get; set; }
     }
 }

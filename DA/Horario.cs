@@ -18,12 +18,14 @@ namespace DA
         public int PeriodoId { get; set; }
         public int CursoId { get; set; }
         public Nullable<int> AulaId { get; set; }
-        public int Hora { get; set; }
-        public int CantidadHora { get; set; }
-        public int Dia { get; set; }
+        public System.TimeSpan HoraInicio { get; set; }
+        public System.TimeSpan HoraFin { get; set; }
+        public string Dias { get; set; }
+        public Nullable<int> DocenteId { get; set; }
     
         public virtual Aula Aula { get; set; }
-        public virtual Periodo Periodo { get; set; }
         public virtual Curso Curso { get; set; }
+        public virtual Personal Personal { get; set; }
+        public virtual Periodo Periodo { get; set; }
     }
 }

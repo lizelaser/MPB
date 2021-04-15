@@ -1,60 +1,114 @@
 ﻿@model DA.Horario
+@using System.Web.Helpers;
+@{ 
+    int periodoId = ViewBag.PeriodoId;
+    var periodoDenominacion = ViewBag.PeriodoDenominacion;
+    var especialidades = ViewBag.Especialidades;
+
+    var ses = ViewBag.SelEspecialidad;
+    var lco = ViewBag.ListCursos;
+}
 
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_horario_todo))
 {
     <div class="row">
         <div class="col s12">
-            <div id="validations" class="card card-tabs">
+            <div id="validations" class="card card-tabs" style="margin-top:20px;">
                 <div class="card-content">
                     <div class="card-title">
                         <div class="row">
                             <div class="col s8 m6 l10">
                                 <h4 class="card-title">
-                                    <a href="@Url.Action("Index","Horario")"><i class="material-icons left">keyboard_backspace</i></a>
+                                    <a href="@Url.Action("Index", "Horario")"><i class="material-icons left">keyboard_backspace</i></a>
                                     @if (Model.Id == 0)
                                     {
-                                        <text>Nuevo Horario</text>
+                                        <text>Nuevo Horario - Periodo Académico @periodoDenominacion</text>
                                     }
                                     else
                                     {
-                                        <text>Editar Horario</text>
+                                        <text>Editar Horario - Periodo Académico @periodoDenominacion</text>
                                     }
                                 </h4>
                             </div>
                         </div>
                     </div>
-                    <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar","Horario")">
+                    <div class="card-content contenedor_mensaje" id="div_mensaje_horario" hidden>
+                        <p id="txt_mensaje_horario" style="margin-top:-10px;"></p>
+                    </div>
+                    <form class="validar" id="formValidate" method="post" action="@Url.Action("Guardar", "Horario")">
                         <div class="row">
-                            <input name="Id" type="hidden" value="@Model.Id">
                             <div class="input-field col s12 m4">
-                                <label for="cperiodo"></label>
-                                @Html.DropDownListFor(x => x.PeriodoId, (IEnumerable<SelectListItem>)ViewBag.PeriodoId)
+                                <select id="EspecialidadId">
+                                    <option disabled selected value="">Seleccione</option>
+                                    @foreach (var e in especialidades)
+                                    {
+                                        <option value="@e.Id" @(Model.Id > 0 && ses != null && ses.Id == e.Id ? "selected" : "")>@e.Denominacion</option>
+                                    }
+                                </select>
+                                <label>Especialidad</label>
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="ccurso"></label>
-                                @Html.DropDownListFor(x => x.CursoId, (IEnumerable<SelectListItem>)ViewBag.CursoId)
+                                <select id="AulaId">
+                                    <option disabled selected value="">Seleccione</option>
+                                    @foreach (var a in ViewBag.Aulas)
+                                    {
+                                        <option value="@a.Id" @(Model.Id > 0 && a.Id == Model.AulaId ? "selected" : "")>@a.Denominacion</option>
+                                    }
+                                </select>
+                                <label>Aula</label>
                             </div>
                             <div class="input-field col s12 m4">
-                                <label for="caula"></label>
-                                @Html.DropDownListFor(x => x.AulaId, (IEnumerable<SelectListItem>)ViewBag.AulaId)
+                                <select id="DocenteId">
+                                    <option disabled selected value="">Seleccione</option>
+                                    @foreach (var a in ViewBag.Docentes)
+                                    {
+                                        <option value="@a.Id" @(Model.Id > 0 && a.Id == Model.DocenteId ? "selected" : "")>@a.Paterno @a.Materno @a.Nombres</option>
+                                    }
+                                </select>
+                                <label>Docente</label>
                             </div>
-                            <div class="input-field col s12 m4">
-                                <label for="chora">Hora*</label>
-                                <input id="chora" name="Hora" type="text" required value="@Model.Hora" autofocus>
+                            <div class="input-field col s12 m8">
+                                <select id="CursoId">
+                                    <option disabled selected value="">Seleccione</option>
+                                    @if (Model.Id > 0 && lco != null)
+                                    {
+                                        foreach (var c in lco)
+                                        {
+                                            <option value="@c.Id" @(c.Id == Model.CursoId ? "selected" : "")>@c.Denominacion</option>
+                                        }
+                                    }
+                                </select>
+                                <label>Curso</label>
+                            </div>
+                            <div class="input-field col s12 m2">
+                                <label for="chora">Hora Inicio*</label>
+                                <input class="timepicker" id="horaInicio" name="horaInicio" type="text" required value="@Model.HoraInicio" autofocus>
                             </div>
 
-                            <div class="input-field col s12 m4">
-                                <label for="ccantidad">Cantidad de Horas*</label>
-                                <input id="ccantidad" name="CantidadHora" type="text" required value="@Model.CantidadHora">
+                            <div class="input-field col s12 m2">
+                                <label for="ccantidad">Hora Fin*</label>
+                                <input class="timepicker" id="horaFin" name="horaFin" type="text" required value="@Model.HoraFin">
                             </div>
-                            <div class="input-field col s12 m3">
-                                <label for="cdia">Dia*</label>
-                                <input id="cdia" name="Dia" type="text" required value="@Model.Dia">
+                            <div class="input-field col s12 m8">
+                                <select id="DiasId" multiple>
+                                    @{
+                                        var d = !string.IsNullOrEmpty(Model.Dias) 
+                                            ? new List<string>(Model.Dias.Split(','))
+                                            : new List<string>();
+
+                                        <option value="" disabled hidden>Seleccione</option>
+                                        <option value="Lunes" @(d.Contains("Lunes") ? "selected" : "")>Lunes</option>
+                                        <option value="Martes" @(d.Contains("Martes") ? "selected" : "")>Martes</option>
+                                        <option value="Miercoles" @(d.Contains("Miercoles") ? "selected" : "")>Miércoles</option>
+                                        <option value="Jueves" @(d.Contains("Jueves") ? "selected" : "")>Jueves</option>
+                                        <option value="Viernes" @(d.Contains("Viernes") ? "selected" : "")>Viernes</option>
+                                        <option value="Sabado" @(d.Contains("Sabado") ? "selected" : "")>Sábado</option>
+                                    }
+                                </select>
+                                <label>Dias*</label>
                             </div>
-
-
                             <div class="input-field col s12">
-                                <button data-ajax="true" class="btn right blue" type="submit">
+                                <button data-ajax="true" id="guardar" class="btn right blue">
                                     Guardar
                                     <i class="material-icons right">send</i>
                                 </button>
@@ -70,7 +124,129 @@
 
 @section   scripts{
     <script>
+        $(document).ready(function(){
+            $(".timepicker").timepicker({
+                twelveHour:false
+            });
+
+            $("select").formSelect();
+
+            var valTimeout;
+
+            var isRegistryLoading = false;
+
+            $("#EspecialidadId").change(function () {
+                $.ajax({
+                    url: '@Url.Action("CursosPorEspecialidad", "Horario")',
+                    data: { id: parseInt(this.value) },
+                    type: 'POST',
+                    async: true,//this makes the ajax-call blocking
+                    success: function (rm) {
+                        if (rm.response == false) {
+                            $("#div_mensaje_horario").show();
+                            $("#div_mensaje_horario").css("background-color", "#F94040");
+                            $("#txt_mensaje_horario").text(rm.message);
+
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_horario").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+                            var $dropdown = $('#CursoId');
+                            $dropdown.empty();
+                            $dropdown.append($('<option disabled selected hidden />').val('').text('Seleccione'));
+                            for (let item of rm.result) {
+                                $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
+                            }
+                            $dropdown.formSelect();
+                        }
+                    },
+                })
+            });
+
+
+            $("#guardar").click(function () {
+
+                if (!isRegistryLoading) {
+                    isRegistryLoading = true;
+
+                    var startDate = M.Timepicker.getInstance($("#horaInicio"))
+                    var endDate = M.Timepicker.getInstance($("#horaFin"))
+
+                    console.log(startDate.toString())
+
+                    var obj = {
+                        Id: @(Model.Id),
+                        CursoId: $("#CursoId").val(),
+                        AulaId: $("#AulaId").val(),
+                        DocenteId: $("#DocenteId").val(),
+                        HoraInicio: $("#horaInicio").val(),
+                        HoraFin: $("#horaFin").val(),
+                        Dias: M.FormSelect.getInstance($("#DiasId")).getSelectedValues().join(",")
+                    }
+
+                    $("#guardar").prop("disabled", true);
+                    $.ajax({
+                        url: '@Url.Action("Guardar","Horario")',
+                        data: JSON.stringify(obj),
+                        type: "POST",
+                        async: true,//this makes the ajax-call blocking
+                        contentType: 'application/json;charset=UTF-8',
+                        dataType: 'json',
+                        success: function (rm) {
+                            try {
+                                if (rm.response == false) {
+                                    $("#div_mensaje_registrar").show();
+                                    $("#div_mensaje_registrar").css("background-color", "#F94040");
+                                    $("#txt_mensaje_registrar").text(rm.message);
+
+                                    if (valTimeout) {
+                                        clearTimeout(valTimeout);
+                                    }
+
+                                    valTimeout = setTimeout(() => {
+                                        $("#div_mensaje_registrar").fadeOut();
+                                    }, 2500);
+                                }
+                                else {
+                                    window.location.href = rm.href;
+                                }
+                            }
+                            catch (e) {
+                                alert("La nota ya fue registrada");
+                            }
+                        },
+                        complete: function () {
+                            isRegistryLoading = false;
+                            $("#guardar").prop("disabled", false);
+                        }
+                    });
+                }
+                else {
+                    console.log("The registry was alredy completed");
+                }
+
+            });
+        })
 
     </script>
 }
-
+<style>
+    .timepicker-digital-display {
+        background-color: #308bd1 !important;
+    }
+    .timepicker-close {
+        color: #308bd1 !important;
+    }
+    line, circle {
+        stroke: #308bd1 !important;
+        fill: #308bd1 !important;
+    }
+    .timepicker-tick:hover {
+        background-color: rgba(48, 139, 209, 0.25) !important;
+    }
+</style>

@@ -28,9 +28,10 @@
                                         <th>Periodo</th>
                                         <th>Curso</th>
                                         <th>Aula</th>
-                                        <th>Hora</th>
-                                        <th>Cantidad Horas</th>
-                                        <th>Dia</th>
+                                        <th>Docente</th>
+                                        <th>Hora Inicio</th>
+                                        <th>Hora Fin</th>
+                                        <th>Dias</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -41,7 +42,7 @@
                     </div>
                     <div class="row">
                         <div class="col s12 m12 l12">
-                            <div id="bordered-table" class="card card card-default scrollspy">
+                            <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                 <div class="col-md-12 center text-center">
                                     <div id="Encontrado">
                                         <span>
@@ -165,8 +166,13 @@
 
             fillTable(id,
                 { keyword: 'horario', id: item.Id },
-                item.Id,
-                item.Denominacion,
+                item.Periodo,
+                item.Curso,
+                item.Aula,
+                item.Docente,
+                item.HoraInicio,
+                item.HoraFin,
+                item.Dias,
                 { isExtra: true, value: button }
             )
 

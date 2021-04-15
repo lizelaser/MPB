@@ -111,6 +111,7 @@ namespace Web.Controllers
             var direccion = !String.IsNullOrEmpty(Direccion) ? Direccion : null;
             DateTime? nacimiento = !String.IsNullOrEmpty(Nacimiento) ? DateTime.ParseExact(Nacimiento, "yyyy-MM-dd", CultureInfo.InvariantCulture) : (DateTime?)null;
 
+            var alumno_exists = db.Alumno.Where(a=>a.Dni==Dni && a.Codigo==Codigo).SingleOrDefault();
 
             try
             {

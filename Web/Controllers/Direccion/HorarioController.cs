@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Web.Models;
 
@@ -45,25 +44,28 @@ namespace Web.Controllers
                                                      .Include(x=>x.Periodo)
                                                      .Include(x=>x.Curso)
                                                      .Include(x=>x.Aula)
+                                                     .Include(x=>x.Personal)
                                                      .ToList();
 
                     //We list "Horarios" only with the required fields to avoid serialization problems
 
                     var SubHorarios = Horarios.Select(S => new HorarioVm {
-                        PeriodoDenominacion = S.Periodo.Denominacion,
-                        CursoDenominacion = S.Curso.Denominacion,
-                        AulaDenominacion = S.Curso.Denominacion,
-                        Hora = S.Hora,
-                        CantidadHora = S.CantidadHora,
-                        Dia = S.Dia
+                        Id = S.Id,
+                        Periodo = S.Periodo.Denominacion,
+                        Curso = S.Curso.Denominacion,
+                        Aula = S.Aula.Denominacion,
+                        Docente= S.Personal.Paterno + " " + S.Personal.Nombres,
+                        HoraInicio = S.HoraInicio.ToString(),
+                        HoraFin = S.HoraFin.ToString(),
+                        Dias = S.Dias
                     }).ToList();
 
                     if (!string.IsNullOrEmpty(denominacion))
                     {
-                        SubHorarios = SubHorarios.Where(x => x.CursoDenominacion.Contains(denominacion)).OrderBy(x => x.Id)
+                        SubHorarios = SubHorarios.Where(x => x.Curso.ToLower().Contains(denominacion.ToLower())).OrderBy(x => x.Id)
                             .Skip((pagina - 1) * RegistrosPorPagina)
                             .Take(RegistrosPorPagina).ToList();
-                        TotalRegistros = SubHorarios.Where(x => x.CursoDenominacion.Contains(denominacion)).Count();
+                        TotalRegistros = SubHorarios.Where(x => x.Curso.ToLower().Contains(denominacion.ToLower())).Count();
                     }
                     // Total number of pages in the student table
                     var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -88,9 +90,22 @@ namespace Web.Controllers
         }
         public ActionResult Mantener(int id = 0)
         {
-            ViewBag.PeriodoId = new SelectList(db.Periodo, "Id", "Denominacion");
-            ViewBag.CursoId = new SelectList(db.Curso, "Id", "Denominacion");
-            ViewBag.AulaId = new SelectList(db.Aula, "Id", "Denominacion");
+            db.Configuration.LazyLoadingEnabled = false;
+            var periodoActual = db.Periodo.Where(p => p.Estado).FirstOrDefault();
+            var isEven = periodoActual.Denominacion.Split('-')[1]=="II";
+
+            ViewBag.ListCursos = null;
+            ViewBag.SelEspecialidad = null;
+
+            ViewBag.PeriodoDenominacion = periodoActual?.Denominacion;
+            ViewBag.PeriodoId = periodoActual?.Id;
+            ViewBag.Especialidades = db.Especialidad.ToList();
+            ViewBag.Aulas = db.Aula.ToList();
+            ViewBag.Docentes = (from p in db.Personal
+                                join pt in db.Personal_Tipo on p.Id equals pt.PersonalId
+                                where pt.TipoPersonalId == 2
+                                select p).ToList();
+
             if (id == 0)
             {
                 return View(new Horario());
@@ -98,9 +113,32 @@ namespace Web.Controllers
                 
             else
             {
+                var horario = db.Horario.Include(x=> x.Curso).Single(x=> x.Id == id);
+
+                ViewBag.ListCursos = db.Curso.Where(x => x.EspecialidadId == horario.Curso.EspecialidadId).ToList();
+                ViewBag.SelEspecialidad = db.Especialidad.Find(horario.Curso.EspecialidadId);
                 return View(HorarioBL.Obtener(id));
             }
                
+        }
+        [HttpPost]
+        public ActionResult CursosPorEspecialidad(int id)
+        {
+            var rm = new Comun.ResponseModel();
+            var periodoActual = db.Periodo.Where(p => p.Estado).FirstOrDefault();
+            if (periodoActual!=null)
+            {
+                var isEven = periodoActual.Denominacion.Split('-')[1] == "II";
+                var cursos = isEven ? db.Curso.Where(c => c.EspecialidadId == id && c.Ciclo % 2 == 0) : db.Curso.Where(c => c.EspecialidadId == id && c.Ciclo % 2 != 0);
+                var filterCursos = cursos.Select(c => new { Id = c.Id, Denominacion = c.Denominacion }).ToList();
+                rm.SetResponse(true);
+                rm.result = filterCursos;
+            }
+            else
+            {
+                rm.SetResponse(false,"NO EXITE UN PERIODO ACADÉMICO ACTIVO");
+            }
+            return Json(rm);
         }
         [HttpPost]
         public ActionResult Guardar(Horario obj)
@@ -108,30 +146,40 @@ namespace Web.Controllers
             var rm = new Comun.ResponseModel();
             try
             {
-                if (obj.Id == 0)
+                var periodo = db.Periodo.Where(p => p.Estado).SingleOrDefault();
+                if (periodo == null)
                 {
-                    ViewBag.PeriodoId = new SelectList(db.Periodo, "Id", "Denominacion", obj.PeriodoId);
-                    ViewBag.CursoId = new SelectList(db.Curso, "Id", "Denominacion", obj.CursoId);
-                    ViewBag.AulaId = new SelectList(db.Aula, "Id", "Denominacion", obj.AulaId);
-
-                    HorarioBL.Crear(obj);
+                    rm.SetResponse(false, "NO EXISTE UN PERIODO ACADÉMICO ACTIVO");
+                }
+                else if (string.IsNullOrEmpty(obj.Dias))
+                {
+                    rm.SetResponse(false, "SELECCIONE LOS DÍAS DEL HORARIO");
+                }
+                else if (obj.CursoId <= 0 || obj.AulaId <= 0)
+                {
+                    rm.SetResponse(false, "SELECCIONE EL CURSO Y/O EL AULA");
                 }
                 else
                 {
-                    ViewBag.PeriodoId = new SelectList(db.Periodo, "Id", "Denominacion", obj.PeriodoId);
-                    ViewBag.CursoId = new SelectList(db.Curso, "Id", "Denominacion", obj.CursoId);
-                    ViewBag.AulaId = new SelectList(db.Aula, "Id", "Denominacion", obj.AulaId);
-                    HorarioBL.ActualizarParcial(obj, x => x.PeriodoId, x => x.CursoId, x => x.AulaId, x => x.Hora,
-                        x => x.CantidadHora, x => x.Dia);
+                    if (obj.Id == 0)
+                    {
+                        obj.PeriodoId = periodo.Id;
+                        HorarioBL.Crear(obj);
+                    }
+                    else
+                    {
+                        HorarioBL.ActualizarParcial(obj, x => x.CursoId, x => x.AulaId, x => x.DocenteId, x => x.HoraInicio,
+                            x => x.HoraFin, x => x.Dias);
+                    }
+                    rm.SetResponse(true);
+                    rm.href = Url.Action("Index", "Horario");
                 }
-                rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Horario");
             }
             catch (Exception ex)
             {
                 rm.SetResponse(false, ex.Message);
             }
-            return Json(rm, JsonRequestBehavior.AllowGet);
+            return Json(rm);
         }
         public ActionResult Eliminar(int id)
         {

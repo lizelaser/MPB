@@ -12,7 +12,6 @@
         <EntityTypeShape EntityType="ACADEMICOModel.CondicionEstudio" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Especialidad" Width="1.5" PointX="0.75" PointY="17.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Estado" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ACADEMICOModel.Horario" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Notas" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Operacion" Width="1.5" PointX="3.75" PointY="21.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.Periodo" Width="1.5" PointX="0.75" PointY="12.75" IsExpanded="true" />
@@ -22,8 +21,6 @@
         <EntityTypeShape EntityType="ACADEMICOModel.TipoPersonal" Width="1.5" PointX="4.875" PointY="33.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ACADEMICOModel.ValorTabla" Width="1.5" PointX="7.75" PointY="1.25" IsExpanded="true" />
         <AssociationConnector Association="ACADEMICOModel.FK_AE_Especialidad" ManuallyRouted="false" />
-        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Aula" ManuallyRouted="false" />
-        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Periodo" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_Notas_Periodo" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_PT_Personal" ManuallyRouted="false" />
         <AssociationConnector Association="ACADEMICOModel.FK_PT_TipoPersonal" ManuallyRouted="false" />
@@ -65,7 +62,6 @@
         <AssociationConnector Association="ACADEMICOModel.FK_MD_Matricula" />
         <EntityTypeShape EntityType="ACADEMICOModel.Curso" Width="1.5" PointX="3" PointY="16.125" />
         <AssociationConnector Association="ACADEMICOModel.FK_Curso_Especialidad" />
-        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Curso" />
         <AssociationConnector Association="ACADEMICOModel.FK_MD_Curso" />
         <AssociationConnector Association="ACADEMICOModel.FK_Notas_Curso" />
         <EntityTypeShape EntityType="ACADEMICOModel.Alumno" Width="1.5" PointX="0.75" PointY="7.5" />
@@ -74,6 +70,11 @@
         <AssociationConnector Association="ACADEMICOModel.FK_CajaMovimiento_Alumno" />
         <AssociationConnector Association="ACADEMICOModel.FK_Matricula_Alumno" />
         <AssociationConnector Association="ACADEMICOModel.FK_Notas_Alumno" />
+        <EntityTypeShape EntityType="ACADEMICOModel.Horario" Width="1.5" PointX="5.25" PointY="16" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Aula" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Curso" />
+        <AssociationConnector Association="ACADEMICOModel.FK__Horario__Docente__2DB1C7EE" />
+        <AssociationConnector Association="ACADEMICOModel.FK_Horario_Periodo" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
