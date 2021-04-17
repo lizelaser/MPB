@@ -86,13 +86,21 @@ namespace Web.Controllers
 
         public ActionResult Mantener(int id = 0)
         {
+            ViewBag.TiposPersonal = db.TipoPersonal.ToList();
             if (id == 0)
+            {
                 return View(new Personal() { Estado = true });
+            }
             else
+            {
+                ViewBag.TipoPersonal = db.Personal_Tipo.Where(pt => pt.PersonalId == id)
+                    .Select(pt => pt.TipoPersonalId).ToList();
                 return View(PersonalBL.Obtener(id));
+
+            }
         }
         [HttpPost]
-        public ActionResult Guardar(int? idPersonal, string Dni, string Paterno, string Materno, string Nombres, string Correo, string Celular, string Nacimiento, string Direccion, decimal ? Honorario, bool Estado)
+        public ActionResult Guardar(int? idPersonal, List<int> TiposPersonalId, string Dni, string Paterno, string Materno, string Nombres, string Correo, string Celular, string Nacimiento, string Direccion, decimal ? Honorario, bool Estado)
         {
             var rm = new Comun.ResponseModel();
             var correo = !String.IsNullOrEmpty(Correo) ? Correo : null;
@@ -173,6 +181,20 @@ namespace Web.Controllers
                                             x => x.Nacimiento, x => x.Direccion, x => x.Celular, x => x.Correo, x => x.Honorario, x => x.Estado, x => x.FechaMod
                                             );
                                     }
+
+                                    var tiposPersonalDb = db.Personal_Tipo.Where(pt => pt.PersonalId == personal.Id);
+                                    db.Personal_Tipo.RemoveRange(tiposPersonalDb);
+                                    db.SaveChanges();
+
+                                    var personal_tipo = TiposPersonalId.Select(tp => new Personal_Tipo
+                                    {
+                                        PersonalId = personal.Id,
+                                        TipoPersonalId = tp
+                                    });
+
+                                    db.Personal_Tipo.AddRange(personal_tipo);
+                                    db.SaveChanges();
+
                                     rm.SetResponse(true);
                                     rm.href = Url.Action("Index", "Personal");
                                 }

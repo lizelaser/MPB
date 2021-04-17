@@ -37,6 +37,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Denominacion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Estado" Type="bit" />
         </EntityType>
         <EntityType Name="Boveda">
           <Key>
@@ -181,6 +182,7 @@
           <Property Name="Ciclo" Type="int" />
           <Property Name="ReqCurso" Type="varchar" MaxLength="50" />
           <Property Name="ReqCredito" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Estado" Type="bit" />
         </EntityType>
         <EntityType Name="Especialidad">
           <Key>
@@ -193,6 +195,7 @@
           <Property Name="Cuotas" Type="int" Nullable="false" />
           <Property Name="Duracion" Type="varchar" MaxLength="20" />
           <Property Name="TotalHoras" Type="int" />
+          <Property Name="Estado" Type="bit" />
         </EntityType>
         <EntityType Name="Estado">
           <Key>
@@ -209,9 +212,10 @@
           <Property Name="PeriodoId" Type="int" Nullable="false" />
           <Property Name="CursoId" Type="int" Nullable="false" />
           <Property Name="AulaId" Type="int" />
-          <Property Name="Hora" Type="int" Nullable="false" />
-          <Property Name="CantidadHora" Type="int" Nullable="false" />
-          <Property Name="Dia" Type="int" Nullable="false" />
+          <Property Name="HoraInicio" Type="time" Precision="7" Nullable="false" />
+          <Property Name="HoraFin" Type="time" Precision="7" Nullable="false" />
+          <Property Name="Dias" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="DocenteId" Type="int" />
         </EntityType>
         <EntityType Name="Matricula">
           <Key>
@@ -392,6 +396,18 @@
             </Principal>
             <Dependent Role="CuentasPorCobrar">
               <PropertyRef Name="MatriculaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Horario__Docente__2DB1C7EE">
+          <End Role="Personal" Type="Self.Personal" Multiplicity="0..1" />
+          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="DocenteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -891,6 +907,10 @@
             <End Role="Matricula" EntitySet="Matricula" />
             <End Role="CuentasPorCobrar" EntitySet="CuentasPorCobrar" />
           </AssociationSet>
+          <AssociationSet Name="FK__Horario__Docente__2DB1C7EE" Association="Self.FK__Horario__Docente__2DB1C7EE">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
           <AssociationSet Name="FK_AE_Alumno" Association="Self.FK_AE_Alumno">
             <End Role="Alumno" EntitySet="Alumno" />
             <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
@@ -1052,7 +1072,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Denominacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Horario" Relationship="Self.FK_Horario_Aula" FromRole="Aula" ToRole="Horario" />
+          <Property Name="Estado" Type="Boolean" />
+          <NavigationProperty Name="Horario" Relationship="ACADEMICOModel.FK_Horario_Aula" FromRole="Aula" ToRole="Horario" />
         </EntityType>
         <EntityType Name="Boveda">
           <Key>
@@ -1109,6 +1130,7 @@
           <Property Name="TotalHoras" Type="Int32" />
           <NavigationProperty Name="Alumno_Especialidad" Relationship="Self.FK_AE_Especialidad" FromRole="Especialidad" ToRole="Alumno_Especialidad" />
           <NavigationProperty Name="Curso" Relationship="ACADEMICOModel.FK_Curso_Especialidad" FromRole="Especialidad" ToRole="Curso" />
+          <Property Name="Estado" Type="Boolean" />
         </EntityType>
         <EntityType Name="Estado">
           <Key>
@@ -1118,21 +1140,6 @@
           <Property Name="Denominacion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="CuentasPorCobrar" Relationship="ACADEMICOModel.FK__CuentasPo__Estad__2FCF1A8A" FromRole="Estado" ToRole="CuentasPorCobrar" />
           <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Estado" FromRole="Estado" ToRole="CajaMovimiento" />
-        </EntityType>
-        <EntityType Name="Horario">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PeriodoId" Type="Int32" Nullable="false" />
-          <Property Name="CursoId" Type="Int32" Nullable="false" />
-          <Property Name="AulaId" Type="Int32" />
-          <Property Name="Hora" Type="Int32" Nullable="false" />
-          <Property Name="CantidadHora" Type="Int32" Nullable="false" />
-          <Property Name="Dia" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Aula" Relationship="Self.FK_Horario_Aula" FromRole="Horario" ToRole="Aula" />
-          <NavigationProperty Name="Periodo" Relationship="Self.FK_Horario_Periodo" FromRole="Horario" ToRole="Periodo" />
-          <NavigationProperty Name="Curso" Relationship="ACADEMICOModel.FK_Horario_Curso" FromRole="Horario" ToRole="Curso" />
         </EntityType>
         <EntityType Name="Notas">
           <Key>
@@ -1168,9 +1175,9 @@
           <Property Name="FechaInicio" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="FechaFin" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Horario" Relationship="Self.FK_Horario_Periodo" FromRole="Periodo" ToRole="Horario" />
           <NavigationProperty Name="Notas" Relationship="Self.FK_Notas_Periodo" FromRole="Periodo" ToRole="Notas" />
           <NavigationProperty Name="Matricula" Relationship="ACADEMICOModel.FK_Matricula_Periodo" FromRole="Periodo" ToRole="Matricula" />
+          <NavigationProperty Name="Horario" Relationship="ACADEMICOModel.FK_Horario_Periodo" FromRole="Periodo" ToRole="Horario" />
         </EntityType>
         <EntityType Name="Personal">
           <Key>
@@ -1192,6 +1199,7 @@
           <NavigationProperty Name="Personal_Tipo" Relationship="Self.FK_PT_Personal" FromRole="Personal" ToRole="Personal_Tipo" />
           <NavigationProperty Name="Usuario" Relationship="ACADEMICOModel.FK_Usuario_Personal" FromRole="Personal" ToRole="Usuario" />
           <NavigationProperty Name="CajaMovimiento" Relationship="ACADEMICOModel.FK_CajaMovimiento_Personal" FromRole="Personal" ToRole="CajaMovimiento" />
+          <NavigationProperty Name="Horario" Relationship="ACADEMICOModel.FK__Horario__Docente__2DB1C7EE" FromRole="Personal" ToRole="Horario" />
         </EntityType>
         <EntityType Name="Personal_Tipo">
           <Key>
@@ -1246,30 +1254,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Horario_Aula">
-          <End Role="Aula" Type="Self.Aula" Multiplicity="0..1" />
-          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Aula">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Horario">
-              <PropertyRef Name="AulaId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Horario_Periodo">
-          <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
-          <End Role="Horario" Type="Self.Horario" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Periodo">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Horario">
-              <PropertyRef Name="PeriodoId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Notas_Periodo">
           <End Role="Periodo" Type="Self.Periodo" Multiplicity="1" />
           <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
@@ -1318,7 +1302,6 @@
           <EntitySet Name="CondicionEstudio" EntityType="Self.CondicionEstudio" />
           <EntitySet Name="Especialidad" EntityType="Self.Especialidad" />
           <EntitySet Name="Estado" EntityType="Self.Estado" />
-          <EntitySet Name="Horario" EntityType="Self.Horario" />
           <EntitySet Name="Notas" EntityType="Self.Notas" />
           <EntitySet Name="Operacion" EntityType="Self.Operacion" />
           <EntitySet Name="Periodo" EntityType="Self.Periodo" />
@@ -1330,14 +1313,6 @@
           <AssociationSet Name="FK_AE_Especialidad" Association="Self.FK_AE_Especialidad">
             <End Role="Especialidad" EntitySet="Especialidad" />
             <End Role="Alumno_Especialidad" EntitySet="Alumno_Especialidad" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Horario_Aula" Association="Self.FK_Horario_Aula">
-            <End Role="Aula" EntitySet="Aula" />
-            <End Role="Horario" EntitySet="Horario" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Horario_Periodo" Association="Self.FK_Horario_Periodo">
-            <End Role="Periodo" EntitySet="Periodo" />
-            <End Role="Horario" EntitySet="Horario" />
           </AssociationSet>
           <AssociationSet Name="FK_Notas_Periodo" Association="Self.FK_Notas_Periodo">
             <End Role="Periodo" EntitySet="Periodo" />
@@ -1461,10 +1436,6 @@
             <End Role="Especialidad" EntitySet="Especialidad" />
             <End Role="Curso" EntitySet="Curso" />
           </AssociationSet>
-          <AssociationSet Name="FK_Horario_Curso" Association="ACADEMICOModel.FK_Horario_Curso">
-            <End Role="Curso" EntitySet="Curso" />
-            <End Role="Horario" EntitySet="Horario" />
-          </AssociationSet>
           <AssociationSet Name="FK_MD_Curso" Association="ACADEMICOModel.FK_MD_Curso">
             <End Role="Curso" EntitySet="Curso" />
             <End Role="MatriculaDetalle" EntitySet="MatriculaDetalle" />
@@ -1493,6 +1464,23 @@
           <AssociationSet Name="FK_Notas_Alumno" Association="ACADEMICOModel.FK_Notas_Alumno">
             <End Role="Alumno" EntitySet="Alumno" />
             <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <EntitySet Name="Horario" EntityType="ACADEMICOModel.Horario" />
+          <AssociationSet Name="FK_Horario_Aula" Association="ACADEMICOModel.FK_Horario_Aula">
+            <End Role="Aula" EntitySet="Aula" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Curso" Association="ACADEMICOModel.FK_Horario_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Horario__Docente__2DB1C7EE" Association="ACADEMICOModel.FK__Horario__Docente__2DB1C7EE">
+            <End Role="Personal" EntitySet="Personal" />
+            <End Role="Horario" EntitySet="Horario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Horario_Periodo" Association="ACADEMICOModel.FK_Horario_Periodo">
+            <End Role="Periodo" EntitySet="Periodo" />
+            <End Role="Horario" EntitySet="Horario" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="ConceptoPago">
@@ -1990,9 +1978,10 @@
           <Property Name="ReqCurso" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ReqCredito" Type="Decimal" Precision="10" Scale="2" />
           <NavigationProperty Name="Especialidad" Relationship="ACADEMICOModel.FK_Curso_Especialidad" FromRole="Curso" ToRole="Especialidad" />
-          <NavigationProperty Name="Horario" Relationship="ACADEMICOModel.FK_Horario_Curso" FromRole="Curso" ToRole="Horario" />
           <NavigationProperty Name="MatriculaDetalle" Relationship="ACADEMICOModel.FK_MD_Curso" FromRole="Curso" ToRole="MatriculaDetalle" />
           <NavigationProperty Name="Notas" Relationship="ACADEMICOModel.FK_Notas_Curso" FromRole="Curso" ToRole="Notas" />
+          <Property Name="Estado" Type="Boolean" />
+          <NavigationProperty Name="Horario" Relationship="ACADEMICOModel.FK_Horario_Curso" FromRole="Curso" ToRole="Horario" />
         </EntityType>
         <Association Name="FK_Curso_Especialidad">
           <End Type="ACADEMICOModel.Especialidad" Role="Especialidad" Multiplicity="1">
@@ -2005,20 +1994,6 @@
             </Principal>
             <Dependent Role="Curso">
               <PropertyRef Name="EspecialidadId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Horario_Curso">
-          <End Type="ACADEMICOModel.Curso" Role="Curso" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="ACADEMICOModel.Horario" Role="Horario" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Curso">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Horario">
-              <PropertyRef Name="CursoId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2139,6 +2114,73 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Horario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PeriodoId" Type="Int32" Nullable="false" />
+          <Property Name="CursoId" Type="Int32" Nullable="false" />
+          <Property Name="AulaId" Type="Int32" />
+          <Property Name="HoraInicio" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="HoraFin" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="Dias" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="DocenteId" Type="Int32" />
+          <NavigationProperty Name="Aula" Relationship="ACADEMICOModel.FK_Horario_Aula" FromRole="Horario" ToRole="Aula" />
+          <NavigationProperty Name="Curso" Relationship="ACADEMICOModel.FK_Horario_Curso" FromRole="Horario" ToRole="Curso" />
+          <NavigationProperty Name="Personal" Relationship="ACADEMICOModel.FK__Horario__Docente__2DB1C7EE" FromRole="Horario" ToRole="Personal" />
+          <NavigationProperty Name="Periodo" Relationship="ACADEMICOModel.FK_Horario_Periodo" FromRole="Horario" ToRole="Periodo" />
+        </EntityType>
+        <Association Name="FK_Horario_Aula">
+          <End Type="ACADEMICOModel.Aula" Role="Aula" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.Horario" Role="Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Aula">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="AulaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Curso">
+          <End Type="ACADEMICOModel.Curso" Role="Curso" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ACADEMICOModel.Horario" Role="Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="CursoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Horario__Docente__2DB1C7EE">
+          <End Type="ACADEMICOModel.Personal" Role="Personal" Multiplicity="0..1" />
+          <End Type="ACADEMICOModel.Horario" Role="Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="DocenteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Horario_Periodo">
+          <End Type="ACADEMICOModel.Periodo" Role="Periodo" Multiplicity="1" />
+          <End Type="ACADEMICOModel.Horario" Role="Horario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Periodo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Horario">
+              <PropertyRef Name="PeriodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2157,6 +2199,7 @@
           <EntitySetMapping Name="Aula">
             <EntityTypeMapping TypeName="ACADEMICOModel.Aula">
               <MappingFragment StoreEntitySet="Aula">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
               </MappingFragment>
@@ -2204,6 +2247,7 @@
           <EntitySetMapping Name="Especialidad">
             <EntityTypeMapping TypeName="ACADEMICOModel.Especialidad">
               <MappingFragment StoreEntitySet="Especialidad">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
                 <ScalarProperty Name="Matricula" ColumnName="Matricula" />
@@ -2219,19 +2263,6 @@
               <MappingFragment StoreEntitySet="Estado">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Denominacion" ColumnName="Denominacion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Horario">
-            <EntityTypeMapping TypeName="ACADEMICOModel.Horario">
-              <MappingFragment StoreEntitySet="Horario">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PeriodoId" ColumnName="PeriodoId" />
-                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
-                <ScalarProperty Name="AulaId" ColumnName="AulaId" />
-                <ScalarProperty Name="Hora" ColumnName="Hora" />
-                <ScalarProperty Name="CantidadHora" ColumnName="CantidadHora" />
-                <ScalarProperty Name="Dia" ColumnName="Dia" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2491,6 +2522,7 @@
           <EntitySetMapping Name="Curso">
             <EntityTypeMapping TypeName="ACADEMICOModel.Curso">
               <MappingFragment StoreEntitySet="Curso">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="ReqCredito" ColumnName="ReqCredito" />
                 <ScalarProperty Name="ReqCurso" ColumnName="ReqCurso" />
                 <ScalarProperty Name="Ciclo" ColumnName="Ciclo" />
@@ -2524,6 +2556,20 @@
                 <ScalarProperty Name="Nombres" ColumnName="Nombres" />
                 <ScalarProperty Name="Materno" ColumnName="Materno" />
                 <ScalarProperty Name="Paterno" ColumnName="Paterno" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Horario">
+            <EntityTypeMapping TypeName="ACADEMICOModel.Horario">
+              <MappingFragment StoreEntitySet="Horario">
+                <ScalarProperty Name="DocenteId" ColumnName="DocenteId" />
+                <ScalarProperty Name="Dias" ColumnName="Dias" />
+                <ScalarProperty Name="HoraFin" ColumnName="HoraFin" />
+                <ScalarProperty Name="HoraInicio" ColumnName="HoraInicio" />
+                <ScalarProperty Name="AulaId" ColumnName="AulaId" />
+                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
+                <ScalarProperty Name="PeriodoId" ColumnName="PeriodoId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

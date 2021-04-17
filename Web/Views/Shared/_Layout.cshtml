@@ -78,15 +78,15 @@
 
             <li class="bold">
                 <a class="waves-effect waves-cyan " href="@Url.Action("Index","Home")">
-                    <i class="material-icons">palette</i>
-                    <span class="menu-title" data-i18n="">Dashboard</span>
+                    <i class="material-icons" style="margin-left:4px;">business</i>
+                    <span class="menu-title" data-i18n="">Institucion</span>
                 </a>
             </li>
 
             @if (rol_codigo == "SA")
             {
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">add_box</i>Administración</div>
+                    <div class="collapsible-header"><i class="material-icons">settings</i>Administración</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[8])">
@@ -347,7 +347,7 @@
             @if (rol_codigo == "DI")
             {
                 <li class="bold">
-                    <div class="collapsible-header"><i class="material-icons">add_box</i>Administración</div>
+                    <div class="collapsible-header"><i class="material-icons">settings</i>Administración</div>
                     <div class="collapsible-body">
                         <span style="padding-left:20px">
                             <a class="waves-effect waves-cyan " href="@Url.Action("Index", menu[6])">
@@ -461,6 +461,10 @@
     }
     .card-content > .collapsible{
         margin:0;
+    }
+    input[type=text]:focus {
+        border-bottom: 1px solid #2196f3 !important;
+        box-shadow: none !important;
     }
 </style>
 </html>

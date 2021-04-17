@@ -20,6 +20,7 @@ namespace DA
             this.Personal_Tipo = new HashSet<Personal_Tipo>();
             this.Usuario = new HashSet<Usuario>();
             this.CajaMovimiento = new HashSet<CajaMovimiento>();
+            this.Horario = new HashSet<Horario>();
         }
     
         public int Id { get; set; }
@@ -42,5 +43,7 @@ namespace DA
         public virtual ICollection<Usuario> Usuario { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CajaMovimiento> CajaMovimiento { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Horario> Horario { get; set; }
     }
 }

@@ -47,13 +47,14 @@ namespace Web.Controllers
 
                 if (!string.IsNullOrEmpty(nombre))
                 {
-                    Usuarios = db.Usuario.Where(x => x.Nombre.Contains(nombre)).OrderBy(x => x.Id)
+                    var filter = db.Usuario.Where(x => x.Nombre.ToLower().Contains(nombre.ToLower()));
+                    Usuarios = filter.OrderBy(x => x.Id)
                         .Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina)
                         .Include(x=>x.Personal)
                         .Include(x=>x.Rol)
                         .ToList();
-                    TotalRegistros = db.Usuario.Where(x => x.Nombre.Contains(nombre)).Count();
+                    TotalRegistros = filter.Count();
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -91,16 +92,40 @@ namespace Web.Controllers
         public ActionResult Mantener(int id=0)
         {
 
+            ViewBag.RolId = db.Rol.ToList();
+
+            var personal = (from p in db.Personal
+                            join u in db.Usuario on p.Id equals u.PersonalId into ps
+                            from u in ps.DefaultIfEmpty()
+                            where u.PersonalId.Equals(null)
+                            select p).ToList().Select(p =>
+                            {
+                                p.Nombres = p.Paterno + " " + p.Materno + " " + p.Nombres;
+                                return p;
+                            }).ToList();
+
             if (id == 0)
             {
-                ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno");
-                ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion");
+
+                ViewBag.PersonalId = personal;
+
                 return View(new Usuario() { Activo = true, IndCambio = false });
             }       
             else
             {
-                ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno");
-                ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion");
+                var current = (from p in db.Personal
+                               join u in db.Usuario on p.Id equals u.PersonalId
+                               where u.Id == id
+                               select p).SingleOrDefault();
+
+                if (current!=null)
+                {
+                    current.Nombres = current.Paterno + " " + current.Materno + " " + current.Nombres;
+                    personal.Add(current);
+                }
+
+                ViewBag.PersonalId = personal;
+
                 return View(UsuarioBL.Obtener(id));
             } 
 
@@ -115,10 +140,7 @@ namespace Web.Controllers
             {
                 if (usuario.Id == 0)
                 {
-                    ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno", usuario.PersonalId);
-                    ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion", usuario.RolId);
-                    usuario.Nombre = usuario.Nombre;
-                    usuario.Clave = usuario.Correo;
+                    usuario.Clave = Comun.HashHelper.MD5(usuario.Correo.ToLower().Split('@')[0]);
                     usuario.IndCambio = false;
                     usuario.Activo = true;
                     UsuarioBL.Crear(usuario);

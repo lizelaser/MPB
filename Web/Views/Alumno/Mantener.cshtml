@@ -1,6 +1,8 @@
 ﻿@model DA.Alumno
 
 @{
+    var especialidades = ViewBag.Especialidades;
+    List<int> especialidadesdb = ViewBag.EspecialidadesAlumno;
 }
 
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_alumno_todo))
@@ -104,6 +106,17 @@
                                 </p>
                             </div>
 
+                            <div class="input-field col s12 m8">
+                                <select id="EspecialidadId" multiple>
+                                    <option value="" disabled hidden>Seleccione</option>
+                                    @foreach (var e in especialidades)
+                                    {
+                                        <option value="@e.Id" @(Model.Id>0 && especialidadesdb.Contains(e.Id)?"selected":"")>@e.Denominacion</option>
+                                    }
+                                </select>
+                                <label>Especialidades</label>
+                            </div>
+
                             <div class="input-field col s12">
                                 <button id="guardar" data-ajax="true" class="btn right blue" type="submit">
                                     Guardar
@@ -132,6 +145,7 @@
 
     $(document).ready(function () {
         $("#guardar").click(guardarAlumnoFunc)
+        $("select").formSelect();
     })
 
     var valTimeout;
@@ -151,6 +165,7 @@
 
             var envio = {
                 idAlumno: $("#id_alumno").val(),
+                EspecialidadesId: M.FormSelect.getInstance($("#EspecialidadId")).getSelectedValues(),
                 Dni: $("#dni").val(),
                 Paterno: $("#paterno").val(),
                 Materno: $("#materno").val(),
@@ -162,8 +177,6 @@
                 Direccion: $("#direccion").val(),
                 Estado: estado
             }
-            console.log(envio)
-
 
             $("#guardar").prop("disabled", true);
 

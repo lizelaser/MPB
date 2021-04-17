@@ -59,7 +59,7 @@
                             <div class="row">
                                 <div class="input-field col s12 m6 filtro">
                                     <input type="number" name="alumno_id" id="alumno_id" hidden readonly />
-                                    <input type="text" id="alumno_nombres" name="alumno_nombres" placeholder="BUSCAR ALUMNO POR CÓDIGO" />
+                                    <input class="search" type="text" id="search" name="search" placeholder="BUSCAR ALUMNO POR DNI" />
                                     <i class="material-icons prefix" style="margin-left:-40px;">search</i>
                                 </div>
                                 <div class="input-field col s12 m6">
@@ -121,7 +121,7 @@
 
     <script src="~/Scripts/jquery-ui/jquery-ui.js"></script>
     <script>
-        $("#alumno_nombres").autocomplete({
+        $(".search").autocomplete({
             dataType: 'JSON',
             source: function (request, response) {
                 jQuery.ajax({
@@ -129,13 +129,14 @@
                     type: "post",
                     dataType: "json",
                     data: {
-                        codigo: request.term
+                        dni: request.term
                     },
                     success: function (data) {
+
                         response($.map(data, function (item) {
                             return {
                                 id: item.Id,
-                                value: item.Codigo,
+                                value: item.Dni,
                                 paterno: item.Paterno,
                                 materno: item.Materno,
                                 nombres: item.Nombres
@@ -146,11 +147,55 @@
 
             },
             select: function (e, ui) {
-                $("#alumno_id").val(ui.item.id)
-                $("#txt_datos").val(ui.item.nombres + " " + ui.item.paterno + " " + ui.item.materno)
+                jQuery.ajax({
+                    url: '/Notas/ValidarMatricula',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        idAlumno: ui.item.id
+                    },
+                    success: function (rm) {
+                        if (rm.response == false) {
+                            $("#div_mensaje_registrar").show();
+                            $("#div_mensaje_registrar").css("background-color", "#F94040");
+                            $("#txt_mensaje_registrar").text(rm.message);
 
-                $("#cursos").val(-1);
-                especialidadesListadoFunc(ui.item.id)
+                            if (valTimeout) {
+                                clearTimeout(valTimeout);
+                            }
+
+                            valTimeout = setTimeout(() => {
+                                $("#div_mensaje_registrar").fadeOut();
+                            }, 2500);
+                        }
+                        else {
+                            $("#alumno_id").val(ui.item.id)
+                            $("#txt_datos").val(ui.item.nombres + " " + ui.item.paterno + " " + ui.item.materno)
+
+                            $("#cursos").val(-1);
+                            //especialidadesListadoFunc(ui.item.id)
+                        }
+                    }
+                })
+
+                jQuery.ajax({
+                    url: '/Notas/ListarEspecialidadPorAlumno',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        id: ui.item.id
+                    },
+                    success: function (response) {
+                        var $dropdown = $('#especialidades');
+                        $dropdown.empty();
+                        $dropdown.append($('<option disabled selected hidden />').val('-1').text('SELECCIONE ESPECIALIDAD'));
+                        console.log(response)
+                        for (let item of response) {
+                            $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
+                        }
+
+                    }
+                })
 
             }
 
@@ -168,31 +213,7 @@
         guardarNotaFunc();
     });
 
-    function especialidadesListadoFunc(id_alumno) {
 
-        var envio = {
-            id: id_alumno
-        }
-
-        $.ajax({
-            url: '@Url.Action("ListarEspecialidadPorAlumno","Notas")',
-            data: JSON.stringify(envio),
-            type: 'POST',
-            async: true,//this makes the ajax-call blocking
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function (response) {
-
-                var $dropdown = $('#especialidades');
-                $dropdown.empty();
-                $dropdown.append($('<option disabled selected hidden />').val('-1').text('SELECCIONE ESPECIALIDAD'));
-                for (let item of response) {
-                    $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
-                }
-
-            }
-        });
-    }
 
     // LIST COURSES FOR EACH SPECIALITE
     function cursosListadoFunc() {
@@ -208,7 +229,7 @@
                     var $dropdown = $('#cursos');
                     $dropdown.empty();
                     $dropdown.append($('<option disabled selected hidden />').val('-1').text('SELECCIONE CURSO'));
-                    for (let item of response) {
+                    for (let item of response.result) {
                         $dropdown.append($('<option />').val(item.Id).text(item.Denominacion));
                     }
 

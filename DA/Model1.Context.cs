@@ -32,7 +32,6 @@ namespace DA
         public virtual DbSet<CondicionEstudio> CondicionEstudio { get; set; }
         public virtual DbSet<Especialidad> Especialidad { get; set; }
         public virtual DbSet<Estado> Estado { get; set; }
-        public virtual DbSet<Horario> Horario { get; set; }
         public virtual DbSet<Notas> Notas { get; set; }
         public virtual DbSet<Operacion> Operacion { get; set; }
         public virtual DbSet<Periodo> Periodo { get; set; }
@@ -56,5 +55,6 @@ namespace DA
         public virtual DbSet<Matricula> Matricula { get; set; }
         public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Alumno> Alumno { get; set; }
+        public virtual DbSet<Horario> Horario { get; set; }
     }
 }

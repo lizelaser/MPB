@@ -69,10 +69,11 @@ namespace Web.Controllers
 
                     if (!string.IsNullOrEmpty(nombres))
                     {
-                        SubNotas = SubNotas.Where(x => x.AlumnoNombres.Contains(nombres)).OrderBy(x => x.Id)
+                        var filtered = SubNotas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
+                        SubNotas = filtered.OrderBy(x => x.Id)
                             .Skip((pagina - 1) * RegistrosPorPagina)
                             .Take(RegistrosPorPagina).ToList();
-                        TotalRegistros = SubNotas.Where(x => x.AlumnoNombres.Contains(nombres)).Count();
+                        TotalRegistros = filtered.Count();
                     }
                     // Total number of pages in the student table
                     var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -97,21 +98,65 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult BuscarAlumno(string codigo)
+        public ActionResult BuscarAlumno(string dni)
         {
+            var alumno = AlumnoBL.Buscar(dni);
 
-            return Json(AlumnoBL.LookFor(codigo));
+            return Json(alumno);
         }
 
         [HttpPost]
-        public ActionResult ListarEspecialidadPorAlumno(int? id)
+        public ActionResult ValidarMatricula(int idAlumno)
+        {
+            var rm = new Comun.ResponseModel();
+            var periodoActual = (from p in db.Periodo where p.Estado == true select p).SingleOrDefault();
+
+            if (periodoActual!=null)
+            {
+                var verificar_matricula = (from a in db.Alumno
+                                           join m in db.Matricula on a.Id equals m.AlumnoId
+                                           join cc in db.CuentasPorCobrar on m.Id equals cc.MatriculaId
+                                           where m.AlumnoId == idAlumno && m.PeridoId == periodoActual.Id && cc.EstadoId==3
+                                           select a).Any();
+                if (verificar_matricula)
+                {
+                    rm.SetResponse(true);
+                }
+                else
+                {
+                    rm.SetResponse(false);
+                    rm.message = "EL ALUMNO NO ESTÁ MATRICULADO EN EL PERIODO ACADÉMICO ACTUAL";
+                }
+                
+            }
+            else
+            {
+                rm.SetResponse(false, "NO EXISTE UN PERIODO ACADÉMICO ACITVO");
+            }
+
+            return Json(rm);
+        }
+
+        [HttpPost]
+        public ActionResult ListarEspecialidadPorAlumno(int id)
         {
 
-            var especialidades = (from e in db.Especialidad
-                                  join ae in db.Alumno_Especialidad on e.Id equals ae.EspecialidadId
-                                  join a in db.Alumno on ae.AlumnoId equals a.Id
-                                  where a.Id == id
-                                  select new { Id = e.Id, Denominacion = e.Denominacion }).ToList();
+            var detalles = db.MatriculaDetalle
+                .Include(md => md.Matricula)
+                .Include(md => md.Curso)
+                .Where(md => md.Matricula.AlumnoId == id).ToList();
+
+            var especialidades = new List<dynamic>();
+            foreach (var item in detalles)
+            {
+                var esId = item.Matricula.EspecialidadId ?? item.Curso.EspecialidadId;
+                if (!especialidades.Any(e=>e.Id==esId))
+                {
+                    var es = db.Especialidad.Find(esId);
+                    especialidades.Add(new {Id=es.Id, Denominacion=es.Denominacion });
+                }
+                
+            }
 
             return Json(especialidades);
         }
@@ -119,18 +164,39 @@ namespace Web.Controllers
         [HttpPost]
         public ActionResult ListarCursosPorEspecialidad(int? id, int? alumno_id)
         {
-            var periodo_id = (from p in db.Periodo where p.Estado == true select p.Id).SingleOrDefault();
+            var rm = new Comun.ResponseModel();
+            var periodoActual = (from p in db.Periodo where p.Estado == true select p).SingleOrDefault();
 
-            var cursos = (from c in db.Curso
-                          join md in db.MatriculaDetalle
-                          on c.Id equals md.CursoId
-                          join m in db.Matricula
-                          on md.MatriculaId equals m.Id
-                          join cc in db.CuentasPorCobrar
-                          on m.Id equals cc.MatriculaId
-                          where m.EspecialidadId == id && m.PeridoId == periodo_id && m.AlumnoId == alumno_id && cc.EstadoId == 3
-                          select new { Id = c.Id, Denominacion = c.Denominacion }).ToList();
-            return Json(cursos);
+            if (periodoActual!=null)
+            {
+                var cursos = (from c in db.Curso
+                              join md in db.MatriculaDetalle
+                              on c.Id equals md.CursoId
+                              join m in db.Matricula
+                              on md.MatriculaId equals m.Id
+                              join cc in db.CuentasPorCobrar
+                              on m.Id equals cc.MatriculaId
+                              where m.EspecialidadId == id && m.PeridoId == periodoActual.Id && m.AlumnoId == alumno_id && cc.EstadoId == 3
+                              select c).ToList();
+
+                var cursos0 = new List<dynamic>();
+                foreach (var item in cursos)
+                {
+                    var exist = db.Notas.Any(n => n.PeriodoId == periodoActual.Id && n.AlumnoId == alumno_id && n.CursoId == item.Id);
+                    if (!exist)
+                    {
+                        cursos0.Add(new {Id=item.Id, Denominacion=item.Denominacion});
+                    }
+                }
+
+                rm.SetResponse(true);
+                rm.result = cursos0;
+            }
+            else
+            {
+                rm.SetResponse(false, "NO EXISTE UN PERIODO ACADÉMICO ACITVO");
+            }
+            return Json(rm);
         }
 
         [HttpPost]
@@ -145,6 +211,7 @@ namespace Web.Controllers
             ViewBag.PeriodoDisponible = (from p in db.Periodo where p.Estado == true select p).Any();
 
             ViewBag.PeriodoActual = (from p in db.Periodo where p.Estado == true select p.Denominacion).SingleOrDefault();
+
             return View();
         }
 
