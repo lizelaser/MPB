@@ -381,6 +381,7 @@
     <Content Include="app-assets\images\logo\materialize-logo-color.png" />
     <Content Include="app-assets\images\logo\materialize-logo.png" />
     <Content Include="app-assets\images\misch\signature-scan.png" />
+    <Content Include="app-assets\images\MPB.png" />
     <Content Include="app-assets\images\user\1.jpg" />
     <Content Include="app-assets\images\user\10.jpg" />
     <Content Include="app-assets\images\user\11.jpg" />

@@ -68,7 +68,7 @@
                                         <div class="card-content black-text">
                                             <span class="card-title center-align">SALDO INICIAL S/.</span>
                                             <p style="text-align:center" id="cardInicial" class="cardBoveda">
-                                                @actual.SaldoInicial
+                                                @(actual?.SaldoInicial??0m)
                                             </p>
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@
                                         <div class="card-content black-text">
                                             <span class="card-title center-align">ENTRADAS S/.</span>
                                             <p style="text-align: center" id="cardEntradas" class="cardBoveda">
-                                                @actual.Entradas
+                                                @(actual?.Entradas??0m)
                                             </p>
                                         </div>
                                     </div>
@@ -88,7 +88,7 @@
                                         <div class="card-content black-text">
                                             <span class="card-title center-align">SALIDAS S/.</span>
                                             <p style="text-align: center " id="cardSalidas" class="cardBoveda">
-                                                @actual.Salidas
+                                                @(actual?.Salidas??0m)
                                             </p>
                                         </div>
                                     </div>
@@ -98,7 +98,7 @@
                                         <div class="card-content black-text">
                                             <span class="card-title center-align">SALDO FINAL S/.</span>
                                             <p style="text-align:center" id="cardFinal" class="cardBoveda">
-                                                @actual.SaldoFinal
+                                                @(actual?.SaldoFinal??0m)
                                             </p>
                                         </div>
                                     </div>
@@ -136,9 +136,13 @@
 
     <!--Start Modals-->
     <!-- Modal Structure Apertura -->
-    <div id="modal1" class="modal center-block">
-        <div class="modal-content">
-            <h5 class="cabecera">APERTURA BOVEDA</h5>
+    <div id="modal1" class="modal center-align">
+        <div class="modal-content" style="display:flex; justify-content:space-between; align-items:center;">
+            <div></div>
+            <h5 class="cabecera" style="padding-top:17px; padding-left:23px;">APERTURA BOVEDA</h5>
+            <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                <i class="material-icons">cancel</i>
+            </a>
         </div>
         <div class="col s12">
             <div id="validations" class="card card-tabs">
@@ -170,8 +174,12 @@
 
     <!--Modal Structure Cierre-->
     <div id="modal2" class="modal center-align">
-        <div class="modal-content">
-            <h5 class="cabecera">CIERRE BOVEDA</h5>
+        <div class="modal-content" style="display:flex; justify-content:space-between; align-items:center;">
+            <div></div>
+            <h5 class="cabecera" style="padding-top:17px; padding-left:23px;">CIERRE BÓVEDA</h5>
+            <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                <i class="material-icons">cancel</i>
+            </a>
         </div>
         <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">
@@ -219,9 +227,13 @@
     </div>
 
     <!--Modal Structure TRANSFERENCIA-->
-    <div id="modal3" class="modal center-align">
-        <div class="modal-content">
-            <h5 class="cabecera">TRANSFERENCIAS</h5>
+    <div id="modal3" class="modal center-align" >
+        <div class="modal-content" style="display:flex; justify-content:space-between; align-items:center;">
+            <div></div>
+            <h5 class="cabecera" style="padding-top:17px; padding-left:23px;">TRANSFERENCIAS</h5>
+            <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                <i class="material-icons">cancel</i>
+            </a>
         </div>
         <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">
@@ -260,8 +272,12 @@
     </div>
     <!--Modal Structure EGRESO-INGRESO-->
     <div id="modal4" class="modal center-align">
-        <div class="modal-content">
-            <h5 class="cabecera">EGRESO-INGRESO</h5>
+        <div class="modal-content" style="display:flex; justify-content:space-between; align-items:center;">
+            <div></div>
+            <h5 class="cabecera" style="padding-top:17px; padding-left:23px;">EGRESOS-INGRESOS</h5>
+            <a href="#principal" class="modal-close right" style="margin-left:30px;" id="cancelar">
+                <i class="material-icons">cancel</i>
+            </a>
         </div>
         <div class="col s12" style="width:760px;margin-left:20px;">
             <div id="validations" class="card card-tabs">

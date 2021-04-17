@@ -1,3 +1,71 @@
-﻿<main>
-
+﻿@{ 
+    var seriesBoleta = ViewBag.Boleta;
+    var seriesFactura = ViewBag.Factura;
+}
+<main>
+    <div class="row">
+        <div class="col s12">
+            <div class="card card card-default scrollspy">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <img src="~/app-assets/images/MPB.png" style="height:500px; width:auto;" />
+                        </div>
+                        <div class="col s12 m6 institucion">
+                            <div><b>RAZÓN SOCIAL: </b> &nbsp; C.E.P. MARIA PARADO DE BELLIDO EIRLTDA </div>
+                            <div><b>RUC: </b> &nbsp; 20323363022 </div>
+                            <div><b>DIRECCIÓN: </b> &nbsp; JR. 9 DE DICIEMEBRE NRO. 471 AYACUCHO - HUAMANGA - AYACUCHO </div>
+                            <div>
+                                <b>CELULAR: </b> &nbsp; 977 369 750
+                            </div>
+                            <div><b>CORREO: </b> &nbsp; istmpbellido@gmail.com </div>
+                            <div><b>PÁGINA WEB: </b> &nbsp; <a href="http://www.istbellido.edu.pe/">http://www.istbellido.edu.pe/</a> </div>
+                            <div>
+                                <b>DATOS DE COMPROBANTE DE PAGO:</b>
+                                <ul class="collapsible z-depth-0">
+                                    <li>
+                                        <div class="collapsible-header">
+                                            BOLETA
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <b>SERIES:</b>
+                                            <ul>
+                                                @foreach (var bl in seriesBoleta)
+                                                {
+                                                    <li>@bl</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="collapsible-header">
+                                            FACTURA
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <b>SERIES:</b>
+                                            <ul>
+                                                @foreach (var ft in seriesFactura)
+                                                {
+                                                    <li>@ft</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
+<style>
+    .institucion > div{
+        margin-top:5px;
+    }
+    .institucion{
+        margin-top:65px;
+    }
+    
+</style>

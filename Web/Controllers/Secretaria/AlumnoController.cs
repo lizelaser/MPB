@@ -20,6 +20,12 @@ namespace Web.Controllers
         private readonly int RegistrosPorPagina = 5;
         private List<Alumno> Alumnos;
         private Paginador<AlumnoVm> ListadoAlumnos;
+
+        public AlumnoController()
+        {
+            db = new DAEntities();
+        }
+
         // GET: Alumno
         public ActionResult Index()
         {
@@ -88,6 +94,7 @@ namespace Web.Controllers
         {
             //ViewBag.cboTipoPersonal = new SelectList(ValorTablaBL.Listar(x => x.TablaId == Constante.ValorTabla.TipoPersonal && x.ItemId > 0), "ItemId", "Denominacion");
 
+            ViewBag.Especialidades = db.Especialidad.ToList();
             if (id == 0)
             {
                 return View(new Alumno() { Estado = true });
@@ -95,6 +102,8 @@ namespace Web.Controllers
 
             else
             {
+                ViewBag.EspecialidadesAlumno = db.Alumno_Especialidad.Where(ae => ae.AlumnoId == id)
+                    .Select(ae=>ae.EspecialidadId).ToList();
                 var alumno = AlumnoBL.Obtener(id);
                 
                 return View(alumno);
@@ -102,7 +111,7 @@ namespace Web.Controllers
 
         }
         [HttpPost]
-        public ActionResult Guardar(int? idAlumno, string Dni, string Paterno, string Materno, string Nombres, string Codigo, string Correo, string Celular, string Nacimiento, string Direccion, bool Estado)
+        public ActionResult Guardar(int? idAlumno, List<int> EspecialidadesId, string Dni, string Paterno, string Materno, string Nombres, string Codigo, string Correo, string Celular, string Nacimiento, string Direccion, bool Estado)
         {
             var rm = new Comun.ResponseModel();
             //DateTime? fecha_nacimiento = Nacimiento != null ? Convert.ToDateTime(Nacimiento) : null;
@@ -191,6 +200,20 @@ namespace Web.Controllers
                                                 x => x.Nacimiento, x => x.Direccion, x => x.Celular, x => x.Correo, x => x.Codigo, x => x.Estado, x => x.FechaMod
                                                 );
                                         }
+
+                                        var especialidadesdb = db.Alumno_Especialidad.Where(ae=>ae.AlumnoId==alumno.Id);
+                                        db.Alumno_Especialidad.RemoveRange(especialidadesdb);
+                                        db.SaveChanges();
+
+                                        var alumno_especialidad = EspecialidadesId.Select(e => new Alumno_Especialidad
+                                        {
+                                            AlumnoId = alumno.Id,
+                                            EspecialidadId = e
+                                        });
+
+                                        db.Alumno_Especialidad.AddRange(alumno_especialidad);
+                                        db.SaveChanges();
+                              
                                         rm.SetResponse(true);
                                         rm.href = Url.Action("Index", "Alumno");
 

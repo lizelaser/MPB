@@ -57,7 +57,7 @@ namespace Web.Controllers
                 ViewBag.CajasDisponibles = listaCajas;
                 // MONTO TOTAL EN BÓVEDA
                 var montoTotal = (from b in db.Boveda where b.IndCierre == false select b.SaldoFinal).SingleOrDefault();
-                ViewBag.MontoTotal = montoTotal;
+                ViewBag.MontoTotal = montoTotal??0;
             }
 
             return View();
@@ -203,8 +203,14 @@ namespace Web.Controllers
         {
             var rm = new Comun.ResponseModel();
 
+            var bovedaActual = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
+
             try
             {
+                if (bovedaActual == null)
+                {
+                    rm.SetResponse(false, "LA BÓVEDA NO HA SIDO APERTURADA");
+                }
 
                 // -- Datos de la bóveda actual -- //
                 Boveda boveda = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
@@ -335,6 +341,13 @@ namespace Web.Controllers
             var rm = new Comun.ResponseModel();
             try
             {
+                var bovedaActual = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
+
+                if (bovedaActual == null)
+                {
+                    rm.SetResponse(false, "LA BÓVEDA NO HA SIDO APERTURADA");
+                }
+
                 //Asignamos el IndBoveda a true al cerrar las cajas
                 var CajasAsignadas = (from cd in db.CajaDiario where cd.IndBoveda == false && cd.IndCierre == true select cd).ToList();
 

@@ -21,10 +21,12 @@ namespace Web.Controllers
         public JsonResult Autenticar(UsuarioVm u)
         {
             var rm = new Comun.ResponseModel();
-           //password = Comun.HashHelper.MD5(password);
-           // u.Clave = u.Clave.ToLower();
+            //password = Comun.HashHelper.MD5(password);
+            // u.Clave = u.Clave.ToLower();
 
-            var usuario= UsuarioBL.Obtener(x => x.Correo == u.Usuario && x.Clave == u.Clave && x.Activo,includeProperties:"Rol");
+            var hashPassword = Comun.HashHelper.MD5(u.Clave);
+
+            var usuario= UsuarioBL.Obtener(x => x.Correo.ToLower() == u.Usuario.ToLower() && x.Clave == hashPassword && x.Activo,includeProperties:"Rol");
             if (usuario != null)
             {
                 if (!usuario.IndCambio)
@@ -67,8 +69,8 @@ namespace Web.Controllers
             var rm = new Comun.ResponseModel();
             try
             {
-                //var enc = Comun.HashHelper.MD5(clave);
-                UsuarioBL.ActualizarParcial(new DA.Usuario { Id = id, Clave = clave, IndCambio = true }, x => x.Clave, x => x.IndCambio);
+                var enc = Comun.HashHelper.MD5(clave);
+                UsuarioBL.ActualizarParcial(new DA.Usuario { Id = id, Clave = enc, IndCambio = true }, x => x.Clave, x => x.IndCambio);
                 rm.SetResponse(true);
                 Autenticar(new UsuarioVm { Usuario = usuario, Clave = clave });
             }

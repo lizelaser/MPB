@@ -39,13 +39,13 @@ namespace Web.Controllers.Direccion
                     // Total number of records in the student table
                     TotalRegistros = db.Periodo.Count();
                     // We get the 'records page' from the student table
-                    Periodos = db.Periodo.OrderBy(x => x.Id)
+                    Periodos = db.Periodo.OrderByDescending(x => x.Id)
                                                      .Skip((pagina - 1) * RegistrosPorPagina)
                                                      .Take(RegistrosPorPagina)
                                                      .ToList();
                     if (!string.IsNullOrEmpty(denominacion))
                     {
-                        Periodos = db.Periodo.Where(x => x.Denominacion.Contains(denominacion)).OrderBy(x => x.Id)
+                        Periodos = db.Periodo.Where(x => x.Denominacion.Contains(denominacion)).OrderByDescending(x => x.Id)
                             .Skip((pagina - 1) * RegistrosPorPagina)
                             .Take(RegistrosPorPagina).ToList();
                         TotalRegistros = db.Periodo.Where(x => x.Denominacion.Contains(denominacion)).Count();
@@ -100,6 +100,7 @@ namespace Web.Controllers.Direccion
         {
             var rm = new Comun.ResponseModel();
 
+            var existePeriodoActivo = db.Periodo.Where(p => p.Estado).Any();
 
             try
             {
@@ -110,55 +111,62 @@ namespace Web.Controllers.Direccion
                 }
                 else
                 {
-                    if (Denominacion == "")
+                    if (existePeriodoActivo)
                     {
-                        rm.message = "Complete el campo Denominacion";
-                        rm.SetResponse(false, rm.message);
+                        rm.SetResponse(false, "Ya existe un periodo académico activo");
                     }
                     else
                     {
-                        if (FechaInicio == "")
+                        if (Denominacion == "")
                         {
-                            rm.message = "Seleccione fecha de inicio del periodo";
+                            rm.message = "Complete el campo Denominacion";
                             rm.SetResponse(false, rm.message);
                         }
                         else
                         {
-                            if (FechaFin == "")
+                            if (FechaInicio == "")
                             {
-                                rm.message = "Seleccione fecha de fin del periodo";
+                                rm.message = "Seleccione fecha de inicio del periodo";
                                 rm.SetResponse(false, rm.message);
                             }
                             else
                             {
-                                DateTime fecha_inicio = DateTime.ParseExact(FechaInicio, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                                DateTime fecha_fin = DateTime.ParseExact(FechaFin, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-                                Periodo periodo = new Periodo();
-                                if (idPeriodo == 0)
+                                if (FechaFin == "")
                                 {
-                                    periodo.Denominacion = Denominacion;
-                                    periodo.FechaInicio = fecha_inicio;
-                                    periodo.FechaFin = fecha_fin;
-                                    periodo.Estado = true;
-                                    PeriodoBL.Crear(periodo);
+                                    rm.message = "Seleccione fecha de fin del periodo";
+                                    rm.SetResponse(false, rm.message);
                                 }
                                 else
                                 {
-                                    periodo.Id = idPeriodo.Value;
-                                    periodo.Denominacion = Denominacion;
-                                    periodo.FechaInicio = fecha_inicio;
-                                    periodo.FechaFin = fecha_fin;
-                                    periodo.Estado = Estado;
+                                    DateTime fecha_inicio = DateTime.ParseExact(FechaInicio, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                    DateTime fecha_fin = DateTime.ParseExact(FechaFin, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                                    PeriodoBL.ActualizarParcial(periodo, x => x.Denominacion, x => x.FechaInicio,
-                                        x => x.FechaFin, x => x.Estado);
+                                    Periodo periodo = new Periodo();
+                                    if (idPeriodo == 0)
+                                    {
+                                        periodo.Denominacion = Denominacion;
+                                        periodo.FechaInicio = fecha_inicio;
+                                        periodo.FechaFin = fecha_fin;
+                                        periodo.Estado = true;
+                                        PeriodoBL.Crear(periodo);
+                                    }
+                                    else
+                                    {
+                                        periodo.Id = idPeriodo.Value;
+                                        periodo.Denominacion = Denominacion;
+                                        periodo.FechaInicio = fecha_inicio;
+                                        periodo.FechaFin = fecha_fin;
+                                        periodo.Estado = Estado;
+
+                                        PeriodoBL.ActualizarParcial(periodo, x => x.Denominacion, x => x.FechaInicio,
+                                            x => x.FechaFin, x => x.Estado);
+                                    }
+
+                                    rm.SetResponse(true);
+                                    rm.href = Url.Action("Index", "Periodo");
                                 }
 
-                                rm.SetResponse(true);
-                                rm.href = Url.Action("Index", "Periodo");
                             }
-
                         }
                     }
 

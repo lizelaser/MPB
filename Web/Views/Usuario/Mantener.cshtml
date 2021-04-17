@@ -1,5 +1,10 @@
 ﻿@model DA.Usuario
 
+@{ 
+    var personal = ViewBag.PersonalId;
+    var roles = ViewBag.RolId;
+}
+
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_usuario_todo))
 {
     <div class="row">
@@ -35,12 +40,22 @@
                                 <input id="cemail" type="email" name="Correo" required value="@Model.Correo">
                             </div>
                             <div class="input-field col s12 m4">
-                                @Html.DropDownListFor(x => x.PersonalId, (IEnumerable<SelectListItem>)ViewBag.PersonalId)
+                                <select id="PersonalId" name="PersonalId" data-val="true">
+                                    @foreach (var p in personal)
+                                    {
+                                        <option value="@p.Id" @(Model.Id>0 && p.Id==Model.PersonalId?"selected":"")>@p.Nombres</option>
+                                    }
+                                </select>
                                 <label>Personal</label>
                             </div>
                             <div class="input-field col s12 m4">
 
-                                @Html.DropDownListFor(x => x.RolId, (IEnumerable<SelectListItem>)ViewBag.RolId)
+                                <select id="RolId" name="RolId" data-val="true">
+                                    @foreach (var r in roles)
+                                    {
+                                        <option value="@r.Id" @(Model.Id > 0 && r.Id == Model.RolId ? "selected" : "")>@r.Denominacion</option>
+                                    }
+                                </select>
                                 <label>Rol Sistema</label>
                             </div>
 
