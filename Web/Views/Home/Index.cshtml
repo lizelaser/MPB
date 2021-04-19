@@ -1,71 +1,102 @@
-﻿@{ 
-    var seriesBoleta = ViewBag.Boleta;
-    var seriesFactura = ViewBag.Factura;
-}
-<main>
-    <div class="row">
-        <div class="col s12">
-            <div class="card card card-default scrollspy">
-                <div class="card-content">
-                    <div class="row">
-                        <div class="col s12 m6">
-                            <img src="~/app-assets/images/MPB.png" style="height:500px; width:auto;" />
-                        </div>
-                        <div class="col s12 m6 institucion">
-                            <div><b>RAZÓN SOCIAL: </b> &nbsp; C.E.P. MARIA PARADO DE BELLIDO EIRLTDA </div>
-                            <div><b>RUC: </b> &nbsp; 20323363022 </div>
-                            <div><b>DIRECCIÓN: </b> &nbsp; JR. 9 DE DICIEMEBRE NRO. 471 AYACUCHO - HUAMANGA - AYACUCHO </div>
-                            <div>
-                                <b>CELULAR: </b> &nbsp; 977 369 750
-                            </div>
-                            <div><b>CORREO: </b> &nbsp; istmpbellido@gmail.com </div>
-                            <div><b>PÁGINA WEB: </b> &nbsp; <a href="http://www.istbellido.edu.pe/">http://www.istbellido.edu.pe/</a> </div>
-                            <div>
-                                <b>DATOS DE COMPROBANTE DE PAGO:</b>
-                                <ul class="collapsible z-depth-0">
-                                    <li>
-                                        <div class="collapsible-header">
-                                            BOLETA
-                                        </div>
-                                        <div class="collapsible-body">
-                                            <b>SERIES:</b>
-                                            <ul>
-                                                @foreach (var bl in seriesBoleta)
-                                                {
-                                                    <li>@bl</li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="collapsible-header">
-                                            FACTURA
-                                        </div>
-                                        <div class="collapsible-body">
-                                            <b>SERIES:</b>
-                                            <ul>
-                                                @foreach (var ft in seriesFactura)
-                                                {
-                                                    <li>@ft</li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+﻿<main>
+    <div class="grid-container">
+        <a href="@Url.Action("Index","Periodo")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/2599/2599390.svg?token=exp=1618768354~hmac=e48ee305065c9b1b3aaf324c2dca4032" />
+                <br>
+                Periodo Académico
             </div>
-        </div>
+        </a>
+        <a href="@Url.Action("Index","Personal")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/premium-icon/icons/svg/3079/3079976.svg" />
+                <br>
+                Personal
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Alumno")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/3135/3135810.svg?token=exp=1618769281~hmac=c473e83c7606ffad82e2c2ed7d034110" />
+                <br>
+                Alumno
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Usuario")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/1077/1077012.svg?token=exp=1618769357~hmac=1f568425ec95051e88fb9aa930e6f37e" />
+                <br>
+                Usuario
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Especialidad")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/2020/2020399.svg?token=exp=1618776119~hmac=920fc21f19b6f9a5c8925360929cd045" />
+                <br>
+                Especialidad
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Curso")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/premium-icon/icons/svg/3664/3664002.svg" />
+                <br>
+                Curso
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Matricula")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/2643/2643356.svg?token=exp=1618776066~hmac=85a982ec201feeff95261ab5af2d0e2c" />
+                <br>
+                Matriculas
+            </div>
+        </a>
+        <a href="@Url.Action("Index","CuentasPorCobrar")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/1019/1019607.svg?token=exp=1618776090~hmac=ebfdf61a08a1d983e25dc66c22252eac" />
+                <br>
+                Cuentas Por Cobrar
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Pagos")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/1086/1086741.svg?token=exp=1618776090~hmac=81a42cd4395c4c988e7088d752a78db7" />
+                <br>
+                Pagos
+            </div>
+        </a>
+        <a href="@Url.Action("Index","CajaDiario")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/premium-icon/icons/svg/2137/2137683.svg" />
+                <br>
+                Caja Diario
+            </div>
+        </a>
+        <a href="@Url.Action("Index","Boveda")">
+            <div class="grid-item card">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/2488/2488743.svg?token=exp=1618776162~hmac=383f3d3ad9291313251055384e60c072" />
+                <br>
+                Boveda
+
+            </div>
+        </a>
     </div>
 </main>
 <style>
-    .institucion > div{
-        margin-top:5px;
+    .grid-container{
+        display:grid;
+        grid-template-columns:auto auto auto auto;
+        grid-gap:30px;
+        margin-right: 25px;
+        margin-left: 25px;
+        margin-top: 25px;
     }
-    .institucion{
-        margin-top:65px;
+    .grid-item{
+        padding: 10px;
+        text-align: center;
+        font-weight: 700;
+        margin: 0 !important;
     }
-    
+    .grid-item >img{
+        width:100px;
+        height:100px;
+    }
 </style>

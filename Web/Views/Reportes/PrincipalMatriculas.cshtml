@@ -28,7 +28,7 @@
         <div class="col s12">
             <ul class="tabs align-center s12 m12">
                 <li class="tab col s12 m4 active" id="reporte"><a id="linkReporte" href="#test1"><strong>REPORTES MATRICULA</strong></a></li>
-                <li class="tab col s12 m4 active" id="consulta"><a id="linkConsulta" href="#test2"><strong>CONSULTAR MATRÍCULAS</strong></a></li>
+                <li class="tab col s12 m4 active" id="consulta"><a id="linkConsulta" href="#test2"><strong>FICHA DE MATRÍCULA</strong></a></li>
             </ul>
             <div class="col s12" style="border: 1px solid #ccc;">
                 <div id="test1">
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                             <br />
-                            @using (Html.BeginForm("ReportesMatricula", "Reportes", FormMethod.Post))
+                            @*@using (Html.BeginForm("ReportesMatricula", "Reportes", FormMethod.Post))
                             {
                                 <div class="row">
                                     <div class="input-field col s12 m6 filtro">
@@ -114,72 +114,68 @@
                                     </div>
                                 </div>
 
-                            }
+                            }*@
                         </div>
                     </div>
                 </div>
                 <div id="test2">
                     <div class="row">
                         <div class="col s12 m12 l12">
-                            <div class="card-content">
-                                <ul class="collapsible">
-                                    <li class="active">
-                                        <div class="collapsible-header"><i class="material-icons">account_balance</i>MATRICULAS</div>
-                                        <div class="collapsible-body">
-                                            <div class="row">
-                                                <div class="col s12 m12">
-                                                    <table class="bordered" id="tblMatricula">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Fecha</th>
-                                                                <th>Alumno</th>
-                                                                <th>Monto</th>
-                                                                <th>Observacion</th>
-                                                                <th>Accion</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tbd_matriculas">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s12 m12 l12">
-                                                    <div id="bordered-table" class="card card card-default scrollspy">
-                                                        <div class="col-md-12 center text-center">
-                                                            <div id="Encontrado">
-                                                                <span>
-                                                                    <label id="TotalRegistros"></label> registros encontrados
-                                                                </span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>
-                                                                    Página <label id="PaginaActual"></label> de
-                                                                    <label id="TotalPaginas"></label>
-                                                                </span>
-                                                            </div>
-                                                            <div class="row" id="NoEncontrado">
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                                <span>No hay resultados de la búsqueda</span>
-                                                                <span>&nbsp;|&nbsp;</span>
-                                                            </div>
-                                                            <div>
-                                                                <button class="btn btn-small blue" id="inicio_matriculas"><<</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="anterior_matriculas">Anterior</button>
+                            <div id="bordered-table" class="card card card-default scrollspy" style="margin:0;">
+                                <div class="card-content">
+                                    <div class="row">
+                                        <input type="text" id="nombres" name="nombres" placeholder="BUSCAR MATRÍCULA POR ALUMNO" />
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12 m12">
+                                            <table class="bordered" id="tblMatricula">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Fecha</th>
+                                                        <th>Alumno</th>
+                                                        <th>Monto</th>
+                                                        <th>Observacion</th>
+                                                        <th>Accion</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbd_matriculas">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12 m12 l12">
+                                            <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
+                                                <div class="col-md-12 center text-center">
+                                                    <div id="Encontrado">
+                                                        <span>
+                                                            <label id="TotalRegistros"></label> registros encontrados
+                                                        </span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>
+                                                            Página <label id="PaginaActual"></label> de
+                                                            <label id="TotalPaginas"></label>
+                                                        </span>
+                                                    </div>
+                                                    <div class="row" id="NoEncontrado">
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <span>No hay resultados de la búsqueda</span>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-small blue" id="inicio_matriculas"><<</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="anterior_matriculas">Anterior</button>
 
-                                                                <button class="btn btn-small blue" id="siguiente_matriculas">Siguiente</button>
-                                                                <span></span>
-                                                                <button class="btn btn-small blue" id="ultimo_matriculas">>></button>
-                                                            </div>
-                                                        </div>
+                                                        <button class="btn btn-small blue" id="siguiente_matriculas">Siguiente</button>
+                                                        <span></span>
+                                                        <button class="btn btn-small blue" id="ultimo_matriculas">>></button>
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
-                                    </li>
-                                </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -379,9 +375,15 @@
     }
 
 
+    $("#nombres").on('input', function () {
+        paginadorFunc($("#nombres").val(), 1)
+    });
+
+
     //PAGINATION MATRICULA TABLE
-    var paginadorFunc = function (pagina) {
+    var paginadorFunc = function (nombres, pagina) {
         var envio = {
+            nombres: nombres,
             pagina: pagina > 0 ? pagina : 1
         }
         $.ajax({
@@ -413,6 +415,8 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
+                    $("#tbd_matriculas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'matriculas')

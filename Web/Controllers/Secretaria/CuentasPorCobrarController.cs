@@ -25,7 +25,7 @@ namespace Web.Controllers.Secretaria
         }
 
         [HttpPost]
-        public ActionResult Tabla(int pagina)
+        public ActionResult Tabla(string nombres, int pagina)
         {
             var rm = new Comun.ResponseModel();
 
@@ -43,9 +43,6 @@ namespace Web.Controllers.Secretaria
                                                  .Include(X => X.Estado)
                                                  .ToList();
 
-                // Total number of pages in the student table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-
 
                 //We list courses only with the required fields to avoid serialization problems
                 var SubDeudas = Deudas.Select(S => new CuentasPorCobrarVm
@@ -60,6 +57,17 @@ namespace Web.Controllers.Secretaria
 
                 }).ToList();
 
+                if (!string.IsNullOrEmpty(nombres))
+                {
+                    var filtered = SubDeudas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
+                    SubDeudas = filtered.OrderBy(x => x.Id)
+                        .Skip((pagina - 1) * RegistrosPorPagina)
+                        .Take(RegistrosPorPagina).ToList();
+                    TotalRegistros = filtered.Count();
+                }
+
+                // Total number of pages in the student table
+                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
 
                 // We instantiate the 'Paging class' and assign the new values
                 ListadoDeudas = new Paginador<CuentasPorCobrarVm>()
@@ -84,7 +92,7 @@ namespace Web.Controllers.Secretaria
         public ActionResult BuscarAlumno(string dni)
         {
             var alumno = AlumnoBL.Buscar(dni);
-            return Json(alumno, JsonRequestBehavior.AllowGet);
+            return Json(alumno);
         }
 
         public ActionResult Registrar()
@@ -152,7 +160,7 @@ namespace Web.Controllers.Secretaria
                     }
 
                     rm.SetResponse(true);
-                    rm.href = Url.Action("Index", "CuentasPorCobrar");
+                    rm.href = Url?.Action("Index", "CuentasPorCobrar");
                 }
                 else
                 {
@@ -162,7 +170,7 @@ namespace Web.Controllers.Secretaria
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message, true);
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }

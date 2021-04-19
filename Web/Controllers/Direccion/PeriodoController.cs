@@ -163,7 +163,7 @@ namespace Web.Controllers.Direccion
                                     }
 
                                     rm.SetResponse(true);
-                                    rm.href = Url.Action("Index", "Periodo");
+                                    rm.href = Url?.Action("Index", "Periodo");
                                 }
 
                             }
@@ -176,7 +176,7 @@ namespace Web.Controllers.Direccion
             }
             catch(Exception eX)
             {
-                rm.SetResponse(false,eX.Message);
+                rm.SetResponse(false,eX.Message,true);
             }
             return Json(rm,JsonRequestBehavior.AllowGet);
 

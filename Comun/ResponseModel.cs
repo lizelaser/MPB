@@ -14,6 +14,7 @@ namespace Comun
     {
         public dynamic result { get; set; }
         public bool response { get; set; }
+        public bool isException { get; set; }
         public string message { get; set; }
         public string href { get; set; }
         public string function { get; set; }
@@ -22,12 +23,14 @@ namespace Comun
         {
             this.response = false;
             this.message = "Ocurrio un error inesperado";
+            this.isException = false;
         }
 
-        public void SetResponse(bool r, string m = "")
+        public void SetResponse(bool r, string m = "", bool e=false)
         {
             this.response = r;
             this.message = m;
+            this.isException = e;
 
             if (!r && m == "") this.message = "Ocurrio un error inesperado";
         }

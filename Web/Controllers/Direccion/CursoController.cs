@@ -46,10 +46,11 @@ namespace Web.Controllers
                                                  .ToList();
                 if (!string.IsNullOrEmpty(denominacion))
                 {
-                    Cursos = db.Curso.Where(x => x.Denominacion.Contains(denominacion)).OrderBy(x => x.Id)
+                    var filter = db.Curso.Where(x => x.Denominacion.ToLower().Contains(denominacion.ToLower()));
+                    Cursos = filter.OrderBy(x => x.Id)
                         .Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina).Include(x => x.Especialidad).ToList();
-                    TotalRegistros = db.Curso.Where(x => x.Denominacion.Contains(denominacion)).Count();
+                    TotalRegistros = filter.Count();
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int) Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -92,16 +93,16 @@ namespace Web.Controllers
 
         public ActionResult Mantener(int id = 0)
         {
+            ViewBag.EspecialidadId = db.Especialidad.ToList();
+
             if (id == 0)
             {
-
-                ViewBag.EspecialidadId = new SelectList(db.Especialidad, "Id", "Denominacion");
                 return View(new Curso());
             }
 
             else
             {
-                ViewBag.EspecialidadId = new SelectList(db.Especialidad, "Id", "Denominacion");
+                
                 return View(CursoBL.Obtener(id));
             }
                 
@@ -114,7 +115,6 @@ namespace Web.Controllers
             {
                 if (obj.Id == 0)
                 {
-                    ViewBag.EspecialidadId = new SelectList(db.Especialidad, "Id", "Denominacion", obj.EspecialidadId);
                     CursoBL.Crear(obj);
                 }
                 else
@@ -123,7 +123,7 @@ namespace Web.Controllers
                         );
                 }
                 rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Curso");
+                rm.href = Url?.Action("Index", "Curso");
             }
             catch (Exception ex)
             {

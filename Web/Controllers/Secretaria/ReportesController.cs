@@ -335,7 +335,7 @@ namespace Web.Controllers.Secretaria
         }
 
         [HttpPost]
-        public ActionResult Tabla(int pagina)
+        public ActionResult Tabla(string nombres, int pagina)
         {
             var rm = new Comun.ResponseModel();
 
@@ -356,9 +356,6 @@ namespace Web.Controllers.Secretaria
                                                  .Include(x => x.CondicionEstudio)
                                                  .Include(x => x.Alumno)
                                                  .ToList();
-                // Total number of pages in the Cuentas por Cobrar table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-
 
                 //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
                 var SubMatriculas = Matriculas.Select(S => new MatriculaVm
@@ -371,6 +368,18 @@ namespace Web.Controllers.Secretaria
                     Monto = S.Monto,
                     Observacion = S.Observacion
                 }).ToList();
+
+                if (!string.IsNullOrEmpty(nombres))
+                {
+                    var filtered = SubMatriculas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
+                    SubMatriculas = filtered.OrderBy(x => x.Id)
+                        .Skip((pagina - 1) * RegistrosPorPagina)
+                        .Take(RegistrosPorPagina).ToList();
+                    TotalRegistros = filtered.Count();
+                }
+
+                // Total number of pages in the Cuentas por Cobrar table
+                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
 
 
                 // We instantiate the 'Paging class' and assign the new values
