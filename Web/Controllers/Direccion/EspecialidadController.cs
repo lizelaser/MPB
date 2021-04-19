@@ -104,7 +104,7 @@ namespace Web.Controllers
                     EspecialidadBL.ActualizarParcial(obj, x => x.Denominacion, x => x.Matricula, x => x.Mensualidad, x => x.Cuotas);
                 }
                 rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Especialidad");
+                rm.href = Url?.Action("Index", "Especialidad");
             }
             catch (Exception ex)
             {

@@ -215,7 +215,7 @@ namespace Web.Controllers
                                         db.SaveChanges();
                               
                                         rm.SetResponse(true);
-                                        rm.href = Url.Action("Index", "Alumno");
+                                        rm.href = Url?.Action("Index", "Alumno");
 
                                     }
                                 }

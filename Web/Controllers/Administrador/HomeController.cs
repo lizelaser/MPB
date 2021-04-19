@@ -13,9 +13,6 @@ namespace Web.Controllers
         private DAEntities db = new DAEntities();
         public ActionResult Index()
         {
-            var comprobante = db.TipoComprobante.ToList();
-            ViewBag.Boleta = comprobante.Where(c=>c.Descripcion=="BL").Select(c=>c.Serie).ToList();
-            ViewBag.Factura = comprobante.Where(c => c.Descripcion == "FT").Select(c => c.Serie).ToList();
             return View();
         }
 

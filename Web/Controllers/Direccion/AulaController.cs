@@ -107,7 +107,7 @@ namespace Web.Controllers
                     AulaBL.ActualizarParcial(obj, x => x.Denominacion);
                 }
                 rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Aula");
+                rm.href = Url?.Action("Index", "Aula");
             }
             catch (Exception ex)
             {

@@ -30,7 +30,7 @@ namespace Web.Controllers
             return View();
         }
 
-        public ActionResult Tabla(string nombres, int pagina)
+        public ActionResult Tabla(string nombres="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
 

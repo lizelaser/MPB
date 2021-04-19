@@ -138,22 +138,30 @@ namespace Web.Controllers
             usuario.Activo = string.IsNullOrEmpty(activo) ? false : true;
             try
             {
-                if (usuario.Id == 0)
+                if (usuario.PersonalId<1 || usuario.RolId < 1 || string.IsNullOrEmpty(usuario.Nombre) 
+                    || string.IsNullOrEmpty(usuario.Correo) || string.IsNullOrEmpty(usuario.Clave))
                 {
-                    usuario.Clave = Comun.HashHelper.MD5(usuario.Correo.ToLower().Split('@')[0]);
-                    usuario.IndCambio = false;
-                    usuario.Activo = true;
-                    UsuarioBL.Crear(usuario);
+                    rm.SetResponse(false, "ASEGURESE DE COMPLETAR LOS CAMPOS REQUERIDOS");
                 }
                 else
                 {
-                    usuario.IndCambio = true;
-                    ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno", usuario.PersonalId);
-                    ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion", usuario.RolId);
-                    UsuarioBL.ActualizarParcial(usuario, x=>x.Nombre, x => x.Correo, x => x.Activo, x => x.RolId, x=>x.PersonalId);
+                    if (usuario.Id == 0)
+                    {
+                        usuario.Clave = Comun.HashHelper.MD5(usuario.Correo.ToLower().Split('@')[0]);
+                        usuario.IndCambio = false;
+                        usuario.Activo = true;
+                        UsuarioBL.Crear(usuario);
+                    }
+                    else
+                    {
+                        usuario.IndCambio = true;
+                        ViewBag.PersonalId = new SelectList(db.Personal, "Id", "Paterno", usuario.PersonalId);
+                        ViewBag.RolId = new SelectList(db.Rol, "Id", "Denominacion", usuario.RolId);
+                        UsuarioBL.ActualizarParcial(usuario, x => x.Nombre, x => x.Correo, x => x.Activo, x => x.RolId, x => x.PersonalId);
+                    }
+                    rm.SetResponse(true);
+                    rm.href = Url?.Action("Index", "Usuario");
                 }
-                rm.SetResponse(true);
-                rm.href = Url.Action("Index", "Usuario");
                 
             }
             catch (Exception ex)

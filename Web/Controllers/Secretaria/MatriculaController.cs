@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Web.Models;
@@ -28,7 +29,7 @@ namespace Web.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Tabla(int pagina)
+        public ActionResult Tabla(string nombres, int pagina)
         {
             var rm = new Comun.ResponseModel();
 
@@ -47,9 +48,6 @@ namespace Web.Controllers
                                                  .Include(x=>x.CondicionEstudio)
                                                  .Include(x => x.Alumno)
                                                  .ToList();
-                // Total number of pages in the Cuentas por Cobrar table
-                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
-
 
                 //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
                 var SubMatriculas = Matriculas.Select(S => new MatriculaVm
@@ -62,6 +60,18 @@ namespace Web.Controllers
                     Monto = S.Monto,
                     Observacion = S.Observacion
                 }).ToList();
+
+                if (!string.IsNullOrEmpty(nombres))
+                {
+                    var filtered = SubMatriculas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
+                    SubMatriculas = filtered.OrderBy(x => x.Id)
+                        .Skip((pagina - 1) * RegistrosPorPagina)
+                        .Take(RegistrosPorPagina).ToList();
+                    TotalRegistros = filtered.Count();
+                }
+
+                // Total number of pages in the Cuentas por Cobrar table
+                var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
 
 
                 // We instantiate the 'Paging class' and assign the new values
@@ -88,7 +98,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VerificarMatricula(string dni)
+        public ActionResult VerificarMatricula(string dni)
         {
             var rm = new Comun.ResponseModel();
 
@@ -141,7 +151,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message, true);
             }
             return Json(rm);
         }
@@ -237,7 +247,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message, true);
             }
             return Json(rm);
         }
@@ -677,7 +687,10 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
-                                    if (condicion_estudio.Denominacion == "ESPECIALIDAD")
+                                    var alumno = db.Alumno.Find(AlumnoId);
+                                    var jsonMatriculaEspecialidad = VerificarMatricula(alumno.Dni) as JsonResult;
+                                    var Jsonrm = jsonMatriculaEspecialidad.Data as Comun.ResponseModel;
+                                    if (condicion_estudio.Denominacion == "ESPECIALIDAD" && Jsonrm.response)
                                     {
 
                                         //REGISTRO MATRÍCULA
@@ -710,6 +723,21 @@ namespace Web.Controllers
                                     }
                                     else //CONDICIÓN CURSO
                                     {
+
+                                        foreach (var item in MatriculaDetalle)
+                                        {
+                                            var jsonMatriculaCurso = VerificarCursoRepetido(AlumnoId,item.CursoId) as JsonResult;
+                                            
+                                            var JsonCursoRm = jsonMatriculaEspecialidad.Data as Comun.ResponseModel;
+                                            if (!JsonCursoRm.response)
+                                            {
+                                                var cursoRepetido = db.Curso.Find(item.CursoId);
+                                                rm.SetResponse(false, $"EL ALUMNO YA SE ENCUENTRA MATRICULADO EN EL CURSO {cursoRepetido.Denominacion}");
+                                                return Json(rm);
+                                            }
+                                           
+                                        }
+                                                                             
                                         //REGISTRO MATRÍCULA
                                         Matricula matricula = new Matricula();
                                         matricula.Fecha = DateTime.Now;
@@ -735,7 +763,7 @@ namespace Web.Controllers
                                     }
                                     rm.message = "LA MATRÍCULA SE REGISTRÓ CON ÉXITO";
                                     rm.SetResponse(true, rm.message);
-                                    rm.href = Url.Action("Index", "Matricula");
+                                    rm.href = Url?.Action("Index", "Matricula");
                                 }
 
                             }

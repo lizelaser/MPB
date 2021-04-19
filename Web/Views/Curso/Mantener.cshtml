@@ -1,5 +1,8 @@
 ﻿@model DA.Curso
 
+@{ 
+    var especialidades = ViewBag.EspecialidadId;
+}
 
 @if (Web.Models.Autorizacion.TienePermiso(BL.RolesMenu.menu_curso_todo))
 {
@@ -28,8 +31,13 @@
                         <div class="row">
                             <input name="Id" type="hidden" value="@Model.Id">
                             <div class="input-field col s12 m4">
-                                <label for="cespecialidad"></label>
-                                @Html.DropDownListFor(x => x.EspecialidadId, (IEnumerable<SelectListItem>)ViewBag.EspecialidadId)
+                                <select id="EspecialidadId" name="EspecialidadId" data-val="true">
+                                    @foreach (var e in especialidades)
+                                    {
+                                        <option value="@e.Id" @(Model.Id > 0 && e.Id == Model.EspecialidadId ? "selected" : "")>@e.Denominacion</option>
+                                    }
+                                </select>
+                                <label>Especialidad</label>
                             </div>
                             <div class="input-field col s12 m4">
                                 <label for="ccodigo">Codigo*</label>

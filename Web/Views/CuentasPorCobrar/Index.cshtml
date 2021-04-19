@@ -39,8 +39,11 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <input type="text" id="nombres" name="nombres" placeholder="BUSCAR CUENTAS POR COBRAR POR ALUMNO" />
+                            </div>
+                            <div class="row">
                                 <div class="col s12 m12 l12">
-                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                    <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                         <div class="col-md-12 center text-center">
 
                                             <div id="Encontrado">
@@ -119,9 +122,15 @@
     });
 
 
+    //Filter Schedule denomination
+    $("#nombres").on('input', function () {
+        paginadorFuncCobranzas($("#nombres").val(), 1)
+    });
 
-    var paginadorFuncCobranzas = function (_pagina) {
+
+    var paginadorFuncCobranzas = function (nombres, _pagina) {
         var envio = {
+            nombres: nombres,
             pagina: _pagina > 0 ? _pagina : 1
         }
         console.log(envio)
@@ -133,7 +142,6 @@
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function (rm) {
-                console.log(rm.result);
                 var Listado = rm.result.Listado;
                 var PaginaActual = rm.result.PaginaActual;
                 var RegistrosPorPagina = rm.result.RegistrosPorPagina;
@@ -142,8 +150,6 @@
 
                 pageCount = rm.result.TotalPaginas;
                 currentPage = rm.result.PaginaActual;
-
-                console.log(rm.result.TotalPaginas)
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
@@ -155,6 +161,8 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
+                    $("#tbd_cobranzas").empty();
 
                 }
 
