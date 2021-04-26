@@ -20,7 +20,7 @@ namespace BL
         public static class Menu {
             public static List<string> Listar(string rol)
             {
-                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno","Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario"};
+                var mnuAdministrador = new List<string> {"Usuario", "Personal", "Alumno","Curso","Especialidad", "Caja","CajaDiario","Boveda","Periodo","Aula","Horario","Notas"};
                 var mnuSecretaria = new List<string> {"Personal","Alumno","Matricula","Pagos", "CuentasPorCobrar"};
                 var mnuCoordinador = new List<string> {"Personal", "Alumno","Curso", "Especialidad","Horario","Notas" };
                 var mnuDireccion = new List<string> {"Usuario", "Personal", "Alumno","Curso", "Especialidad", "Caja", "Periodo", "Aula", "Horario", "Notas" };

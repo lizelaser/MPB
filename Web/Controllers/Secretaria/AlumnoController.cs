@@ -32,7 +32,7 @@ namespace Web.Controllers
             return View();
         }
 
-        public ActionResult Tabla(string dni, int pagina)
+        public ActionResult Tabla(string dni="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
 
@@ -227,10 +227,11 @@ namespace Web.Controllers
 
             }
             catch (Exception ex)
+            
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message,true);
             }
-            return Json(rm, JsonRequestBehavior.AllowGet);
+            return Json(rm);
         }
 
         public ActionResult Eliminar(int id)

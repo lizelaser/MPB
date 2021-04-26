@@ -84,8 +84,7 @@ namespace Web.Controllers
         }
 
         //FILTRO, PAGINACIÓN Y LISTADO CUENTAS POR COBRAR
-        [HttpPost]
-        public ActionResult TablaCobranzas(string nombres, int pagina)
+        public ActionResult TablaCobranzas(string nombres="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
 
@@ -149,8 +148,7 @@ namespace Web.Controllers
         }
 
         //FILTRO, PAGINACIÓN Y LISTADO PAGOS
-        [HttpPost]
-        public ActionResult TablaPagos(string nombres, int pagina)
+        public ActionResult TablaPagos(string nombres="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
             using (db = new DAEntities())
@@ -263,8 +261,7 @@ namespace Web.Controllers
 
 
         //FILTRO, PAGINACIÓN Y LISTADO ENTRADAS
-        [HttpPost]
-        public ActionResult TablaEntradas(int pagina)
+        public ActionResult TablaEntradas(int pagina=1)
         {
             var rm = new Comun.ResponseModel();
             // RECUPERAMOS EL ID DEL USUARIO EN SESIÓN
@@ -373,7 +370,7 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    rm.SetResponse(false,ex.Message);
+                    rm.SetResponse(false,ex.Message, true);
                 }
 
             }
@@ -385,8 +382,7 @@ namespace Web.Controllers
 
 
         //FILTRO, PAGINACIÓN Y LISTADO SALIDAS
-        [HttpPost]
-        public ActionResult TablaSalidas(int pagina)
+        public ActionResult TablaSalidas(int pagina=1)
         {
             var rm = new Comun.ResponseModel();
             // RECUPERAMOS EL ID DEL USUARIO EN SESIÓN
@@ -554,10 +550,10 @@ namespace Web.Controllers
                 var CajaAsignada = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
 
                 //Recover initial balance, entries, outputs, final balance
-                var SaldoInicial = CajaAsignada.SaldoInicial;
-                var Entradas = CajaAsignada.Entradas;
-                var Salidas = CajaAsignada.Salidas;
-                var SaldoFinal = CajaAsignada.SaldoInicial;
+                var SaldoInicial = CajaAsignada?.SaldoInicial??0;
+                var Entradas = CajaAsignada?.Entradas??0;
+                var Salidas = CajaAsignada?.Salidas??0;
+                var SaldoFinal = CajaAsignada?.SaldoInicial??0;
                 
 
                 //Instanciamos un nuevo objeto caja diario para su posterior actualización
@@ -785,11 +781,11 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    rm.SetResponse(false, ex.Message);
+                    rm.SetResponse(false, ex.Message, true);
                 }
             }
 
-            return Json(rm,JsonRequestBehavior.AllowGet);
+            return Json(rm);
         }
 
         [HttpPost]
@@ -806,10 +802,10 @@ namespace Web.Controllers
                 var CajaAsignada = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
 
                 //Recover initial balance, entries, outputs, final balance
-                var SaldoInicial = (from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.SaldoInicial).SingleOrDefault();
-                var Entradas = (from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.Entradas).SingleOrDefault();
-                var Salidas = (from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.Salidas).SingleOrDefault();
-                var SaldoFinal = (from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.SaldoFinal).SingleOrDefault();
+                var SaldoInicial = CajaAsignada!=null?(from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.SaldoInicial).SingleOrDefault():0;
+                var Entradas = CajaAsignada!=null?(from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.Entradas).SingleOrDefault():0;
+                var Salidas = CajaAsignada!=null?(from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.Salidas).SingleOrDefault():0;
+                var SaldoFinal = CajaAsignada!=null?(from ca in db.CajaDiario where ca.Id.Equals(CajaAsignada.Id) select ca.SaldoFinal).SingleOrDefault():0;
                 decimal NetoCaja = 0;
 
                 //Instanciamos un nuevo objeto caja diario para su posterior actualización
@@ -818,98 +814,105 @@ namespace Web.Controllers
                 //OBTENEMOS EL ESTADO "PAGADO" PARA REALIZAR LA OPERACIÓN
                 var EstadoId = (from e in db.Estado where e.Denominacion.Equals("PAGADO") select e.Id).SingleOrDefault();
 
-                if (OperacionId == null || OperacionDenominacion == "SELECCIONE OPERACION")
+                if (CajaAsignada!=null)
                 {
-                    rm.message = "SELECCIONE UNA OPERACIÓN";
-                    rm.SetResponse(false, rm.message);
-                }
-                else if (PersonalId == null || PersonalFiltro == "")
-                {
-                    rm.message = "SELLECIONE UNA PERSONA";
-                    rm.SetResponse(false, rm.message);
-                }
-                else if (Total == null || Total < 0)
-                {
-                    rm.message = "EL CAMPO IMPORTE NO DEBE SER NULO NI NEGATIVO";
-                    rm.SetResponse(false, rm.message);
-                }
-                else if (Descripcion == "")
-                {
-                    rm.message = "COMPLETE EL CAMPO DESCRIPCIÓN";
-                    rm.SetResponse(false, rm.message);
-                }
-                else
-                {
-                    //REGISTRAMOS EL MOVIMIENTO DE CAJA
-                    CajaMovimiento movimiento = new CajaMovimiento();
-
-                    movimiento.CajaDiarioId = CajaAsignada.Id;
-                    movimiento.PersonalId = PersonalId;
-                    movimiento.OperacionId = OperacionId.Value;
-                    movimiento.EstadoId = EstadoId;
-                    movimiento.Fecha = DateTime.Now;
-                    movimiento.Total = Total;
-                    if (OperacionDenominacion.Equals("PAGO DE SERVICIOS") || OperacionDenominacion.Equals("SALIDAS OTROS") || OperacionDenominacion.Equals("FALTANTE DE CAJA"))
+                    if (OperacionId == null || OperacionDenominacion == "SELECCIONE OPERACION")
                     {
-                        movimiento.IndEntrada = false;
-                        movimiento.Descripcion = Descripcion;
-                        movimiento.IndComprobante = false;
+                        rm.message = "SELECCIONE UNA OPERACIÓN";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else if (PersonalId == null || PersonalFiltro == "")
+                    {
+                        rm.message = "SELLECIONE UNA PERSONA";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else if (Total == null || Total < 0)
+                    {
+                        rm.message = "EL CAMPO IMPORTE NO DEBE SER NULO NI NEGATIVO";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else if (Descripcion == "")
+                    {
+                        rm.message = "COMPLETE EL CAMPO DESCRIPCIÓN";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else
+                    {
+                        //REGISTRAMOS EL MOVIMIENTO DE CAJA
+                        CajaMovimiento movimiento = new CajaMovimiento();
 
-                        if (Total > CajaAsignada.SaldoFinal)
+                        movimiento.CajaDiarioId = CajaAsignada.Id;
+                        movimiento.PersonalId = PersonalId;
+                        movimiento.OperacionId = OperacionId.Value;
+                        movimiento.EstadoId = EstadoId;
+                        movimiento.Fecha = DateTime.Now;
+                        movimiento.Total = Total;
+                        if (OperacionDenominacion.Equals("PAGO DE SERVICIOS") || OperacionDenominacion.Equals("SALIDAS OTROS") || OperacionDenominacion.Equals("FALTANTE DE CAJA"))
                         {
-                            rm.message = "El IMPORTE DEBE SER MENOR AL SALDO TOTAL DE LA CAJA";
-                            rm.SetResponse(false, rm.message);
+                            movimiento.IndEntrada = false;
+                            movimiento.Descripcion = Descripcion;
+                            movimiento.IndComprobante = false;
+
+                            if (Total > CajaAsignada.SaldoFinal)
+                            {
+                                rm.message = "El IMPORTE DEBE SER MENOR AL SALDO TOTAL DE LA CAJA";
+                                rm.SetResponse(false, rm.message);
+                            }
+                            else
+                            {
+                                CajaMovimientoBL.Crear(movimiento);
+
+                                //ACTUALIZAMOS LA CAJA ASIGNADA AL USUARIO EN SESIÓN
+                                diario.Id = CajaAsignada.Id;
+                                diario.Salidas = Salidas + Total;
+                                diario.SaldoFinal = SaldoInicial + Entradas - (Salidas + Total);
+                                CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
+                                NetoCaja = (Entradas - diario.Salidas).Value;
+
+                                rm.message = "OPERACIÓN REALIZADA CON ÉXITO";
+                                rm.SetResponse(true, rm.message);
+                            }
                         }
-                        else
+                        else // OperacionDenominacion.Equals("ENTRADAS OTROS")
                         {
+                            movimiento.IndEntrada = true;
+                            movimiento.Descripcion = Descripcion;
+                            movimiento.IndComprobante = false;
+
                             CajaMovimientoBL.Crear(movimiento);
 
                             //ACTUALIZAMOS LA CAJA ASIGNADA AL USUARIO EN SESIÓN
                             diario.Id = CajaAsignada.Id;
-                            diario.Salidas = Salidas + Total;
-                            diario.SaldoFinal = SaldoInicial + Entradas - (Salidas + Total);
-                            CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
-                            NetoCaja = (Entradas - diario.Salidas).Value;
+                            diario.Entradas = Entradas + Total;
+                            diario.SaldoFinal = SaldoInicial + (Entradas + Total) - Salidas;
+                            CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
+                            NetoCaja = (diario.Entradas - Salidas).Value;
 
                             rm.message = "OPERACIÓN REALIZADA CON ÉXITO";
                             rm.SetResponse(true, rm.message);
                         }
+
+                        //Recover data that send from Egresos-Ingresos to view
+                        var datos = new string[6];
+                        datos[0] = OperacionDenominacion;
+                        datos[1] = Convert.ToString(SaldoInicial);
+                        datos[2] = Convert.ToString(diario.Entradas);
+                        datos[3] = Convert.ToString(diario.Salidas);
+                        datos[4] = Convert.ToString(diario.SaldoFinal);
+                        datos[5] = Convert.ToString(NetoCaja);
+
+                        rm.result = datos;
                     }
-                    else // OperacionDenominacion.Equals("ENTRADAS OTROS")
-                    {
-                        movimiento.IndEntrada = true;
-                        movimiento.Descripcion = Descripcion;
-                        movimiento.IndComprobante = false;
-
-                        CajaMovimientoBL.Crear(movimiento);
-
-                        //ACTUALIZAMOS LA CAJA ASIGNADA AL USUARIO EN SESIÓN
-                        diario.Id = CajaAsignada.Id;
-                        diario.Entradas = Entradas + Total;
-                        diario.SaldoFinal = SaldoInicial + (Entradas + Total) - Salidas;
-                        CajaDiarioBL.ActualizarParcial(diario, x => x.Entradas, x => x.SaldoFinal);
-                        NetoCaja = (diario.Entradas - Salidas).Value;
-
-                        rm.message = "OPERACIÓN REALIZADA CON ÉXITO";
-                        rm.SetResponse(true, rm.message);
-                    }
-
-                    //Recover data that send from Egresos-Ingresos to view
-                    var datos = new string[6];
-                    datos[0] = OperacionDenominacion;
-                    datos[1] = Convert.ToString(SaldoInicial);
-                    datos[2] = Convert.ToString(diario.Entradas);
-                    datos[3] = Convert.ToString(diario.Salidas);
-                    datos[4] = Convert.ToString(diario.SaldoFinal);
-                    datos[5] = Convert.ToString(NetoCaja);
-
-                    rm.result = datos;
+                }
+                else
+                {
+                    rm.SetResponse(false, "CAJA NO ASIGNADA PARA ESTE USUARIO");
                 }
 
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false,ex.Message);
+                rm.SetResponse(false,ex.Message,true);
             }
 
             return Json(rm,JsonRequestBehavior.AllowGet);
@@ -932,119 +935,125 @@ namespace Web.Controllers
 
             try
             {
-
-                if (OperacionId != operacion_salidas_otros.Id && OperacionDenominacion != operacion_salidas_otros.Denominacion )
+                if (caja_actual!=null && OperacionId != null && OperacionDenominacion!="" && Importe > 0 && Descripcion != "")
                 {
-                    rm.message = "OPERACIÓN INVÁLIDA";
-                    rm.SetResponse(false, rm.message);
-                }
-                else if (Importe == null || Importe < 0)
-                {
-                    rm.message = "EL CAMPO IMPORTE NO DEBE SER NULO NI NEGATIVO";
-                    rm.SetResponse(false, rm.message);
-                }
-                else if (Descripcion == "")
-                {
-                    rm.message = "COMPLETE EL CAMPO DESCRIPCIÓN";
-                    rm.SetResponse(false, rm.message);
-                }
-                else
-                {
-                    if (Importe > caja_actual.SaldoFinal)
+                    if (OperacionId != operacion_salidas_otros.Id && OperacionDenominacion != operacion_salidas_otros.Denominacion)
                     {
-                        rm.message = "EL IMPORTE DEBE SER MENOR AL SALDO TOTAL DE LA CAJA";
+                        rm.message = "OPERACIÓN INVÁLIDA";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else if (Importe == null || Importe < 0)
+                    {
+                        rm.message = "EL CAMPO IMPORTE NO DEBE SER NULO NI NEGATIVO";
+                        rm.SetResponse(false, rm.message);
+                    }
+                    else if (Descripcion == "")
+                    {
+                        rm.message = "COMPLETE EL CAMPO DESCRIPCIÓN";
                         rm.SetResponse(false, rm.message);
                     }
                     else
                     {
+                        if (Importe > caja_actual.SaldoFinal)
+                        {
+                            rm.message = "EL IMPORTE DEBE SER MENOR AL SALDO TOTAL DE LA CAJA";
+                            rm.SetResponse(false, rm.message);
+                        }
+                        else
+                        {
 
-                        //WE GET THE BOX ASSIGNMENT FROM USER IN SESSION
-                        var CajaAsignada = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
+                            //WE GET THE BOX ASSIGNMENT FROM USER IN SESSION
+                            var CajaAsignada = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
 
-                        //WE GET THE PERSONAL ASSOCIATED WITH THE USER IN SESSION
-                        int PersonalId = (from p in db.Personal
-                                          join u in db.Usuario on p.Id equals u.PersonalId
-                                          where u.Id == UsuarioActualId
-                                          select p.Id).SingleOrDefault();
+                            //WE GET THE PERSONAL ASSOCIATED WITH THE USER IN SESSION
+                            int PersonalId = (from p in db.Personal
+                                              join u in db.Usuario on p.Id equals u.PersonalId
+                                              where u.Id == UsuarioActualId
+                                              select p.Id).SingleOrDefault();
 
-                        //WE GET THE 'CREATED' STATE FOR BALANCES TRANSFER
-                        int EstadoId = (from e in db.Estado where e.Denominacion.Equals("CREADO") select e.Id).SingleOrDefault();
+                            //WE GET THE 'CREATED' STATE FOR BALANCES TRANSFER
+                            int EstadoId = (from e in db.Estado where e.Denominacion.Equals("CREADO") select e.Id).SingleOrDefault();
 
-                        // CREATE A NEW RECORD IN 'CAJA MOVIMIENTO' TABLE
-                        CajaMovimiento movimiento_transf = new CajaMovimiento();
-                        movimiento_transf.CajaDiarioId = CajaAsignada.Id;
-                        movimiento_transf.OperacionId = OperacionId.Value;
-                        movimiento_transf.EstadoId = EstadoId;
-                        movimiento_transf.PersonalId = PersonalId;
-                        movimiento_transf.Total = Importe;
-                        movimiento_transf.Descripcion = Descripcion;
-                        movimiento_transf.Fecha = DateTime.Now;
-                        movimiento_transf.IndEntrada = false;
-                        movimiento_transf.IndComprobante = false;
+                            // CREATE A NEW RECORD IN 'CAJA MOVIMIENTO' TABLE
+                            CajaMovimiento movimiento_transf = new CajaMovimiento();
+                            movimiento_transf.CajaDiarioId = CajaAsignada.Id;
+                            movimiento_transf.OperacionId = OperacionId.Value;
+                            movimiento_transf.EstadoId = EstadoId;
+                            movimiento_transf.PersonalId = PersonalId;
+                            movimiento_transf.Total = Importe;
+                            movimiento_transf.Descripcion = Descripcion;
+                            movimiento_transf.Fecha = DateTime.Now;
+                            movimiento_transf.IndEntrada = false;
+                            movimiento_transf.IndComprobante = false;
 
-                        CajaMovimientoBL.Crear(movimiento_transf);
+                            CajaMovimientoBL.Crear(movimiento_transf);
 
-                        //WE RECOVER ID FROM THE CURRENT BOVEDA
+                            //WE RECOVER ID FROM THE CURRENT BOVEDA
 
-                        int BovedaId = (from b in db.Boveda where b.IndCierre == false select b.Id).SingleOrDefault();
+                            int BovedaId = (from b in db.Boveda where b.IndCierre == false select b.Id).SingleOrDefault();
 
-                        //RECUPERAMOS LA OPERACION 'Transferencia Egreso Boveda' PERTENECIENTE SOLO A BÓVEDA (IndTipo)
-                        int movimiento_operacion_id = (from o in db.Operacion where o.Denominacion.Equals("TRANSFERENCIA INGRESO BOVEDA") && o.IndTipo.Equals(true) select o.Id).SingleOrDefault();
+                            //RECUPERAMOS LA OPERACION 'Transferencia Egreso Boveda' PERTENECIENTE SOLO A BÓVEDA (IndTipo)
+                            int movimiento_operacion_id = (from o in db.Operacion where o.Denominacion.Equals("TRANSFERENCIA INGRESO BOVEDA") && o.IndTipo.Equals(true) select o.Id).SingleOrDefault();
 
-                        // CREATE A NEW RECORD IN 'BOVEDA MOVIMIENTO' TABLE
+                            // CREATE A NEW RECORD IN 'BOVEDA MOVIMIENTO' TABLE
 
-                        BovedaMovimiento boveda_mov = new BovedaMovimiento();
-                        boveda_mov.BovedaId = BovedaId;
-                        boveda_mov.CajaDiarioId = CajaAsignada.Id;
-                        boveda_mov.OperacionId = movimiento_operacion_id;
-                        boveda_mov.Fecha = DateTime.Now;
-                        boveda_mov.Glosa = "TRANSFERENCIA DE " + CajaAsignada.Caja.Denominacion;
-                        boveda_mov.Importe = Importe.Value;
-                        BovedaMovimientoBL.Crear(boveda_mov);
+                            BovedaMovimiento boveda_mov = new BovedaMovimiento();
+                            boveda_mov.BovedaId = BovedaId;
+                            boveda_mov.CajaDiarioId = CajaAsignada.Id;
+                            boveda_mov.OperacionId = movimiento_operacion_id;
+                            boveda_mov.Fecha = DateTime.Now;
+                            boveda_mov.Glosa = "TRANSFERENCIA DE " + CajaAsignada.Caja.Denominacion;
+                            boveda_mov.Importe = Importe.Value;
+                            BovedaMovimientoBL.Crear(boveda_mov);
 
-                        // WE UPDATE BALANCES FROM CURRENT BOX ASSIGNED AND SAVE CHANGES
-                        CajaDiario CajaActual = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
-                        decimal EntradasCaja = (CajaActual.Entradas).Value;
-                        decimal SalidasCaja = (CajaActual.Salidas + Importe).Value;
-                        decimal SaldoFinal = (CajaActual.SaldoInicial + CajaActual.Entradas - SalidasCaja).Value;
+                            // WE UPDATE BALANCES FROM CURRENT BOX ASSIGNED AND SAVE CHANGES
+                            CajaDiario CajaActual = (from ca in db.CajaDiario where ca.UsuarioId.Equals(UsuarioActualId) && ca.IndCierre.Equals(false) select ca).SingleOrDefault();
+                            decimal EntradasCaja = (CajaActual.Entradas).Value;
+                            decimal SalidasCaja = (CajaActual.Salidas + Importe).Value;
+                            decimal SaldoFinal = (CajaActual.SaldoInicial + CajaActual.Entradas - SalidasCaja).Value;
 
-                        CajaDiario diario = new CajaDiario();
-                        diario.Id = CajaActual.Id;
-                        diario.Salidas = SalidasCaja;
-                        diario.SaldoFinal = SaldoFinal;
+                            CajaDiario diario = new CajaDiario();
+                            diario.Id = CajaActual.Id;
+                            diario.Salidas = SalidasCaja;
+                            diario.SaldoFinal = SaldoFinal;
 
-                        CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
+                            CajaDiarioBL.ActualizarParcial(diario, x => x.Salidas, x => x.SaldoFinal);
 
-                        //WE UPDATE BALANCES FROM CURRENT BOVEDA AND SAVE CHANGES
+                            //WE UPDATE BALANCES FROM CURRENT BOVEDA AND SAVE CHANGES
 
-                        Boveda BovedaActual = (from ba in db.Boveda where ba.IndCierre.Equals(false) select ba).SingleOrDefault();
-                        decimal SaldoInicialBoveda = (BovedaActual.SaldoInicial);
-                        decimal EntradasBoveda = (BovedaActual.Entradas + Importe).Value;
-                        decimal SalidasBoveda = (BovedaActual.Salidas).Value;
-                        decimal SaldoFinalBoveda = SaldoInicialBoveda + EntradasBoveda - SalidasBoveda;
+                            Boveda BovedaActual = (from ba in db.Boveda where ba.IndCierre.Equals(false) select ba).SingleOrDefault();
+                            decimal SaldoInicialBoveda = (BovedaActual.SaldoInicial);
+                            decimal EntradasBoveda = (BovedaActual.Entradas + Importe).Value;
+                            decimal SalidasBoveda = (BovedaActual.Salidas).Value;
+                            decimal SaldoFinalBoveda = SaldoInicialBoveda + EntradasBoveda - SalidasBoveda;
 
-                        Boveda abierto = new Boveda();
-                        abierto.Id = BovedaActual.Id;
-                        abierto.Entradas = EntradasBoveda;
-                        abierto.SaldoFinal = SaldoFinalBoveda;
-                        BovedaBL.ActualizarParcial(abierto, x => x.Entradas, x => x.SaldoFinal);
+                            Boveda abierto = new Boveda();
+                            abierto.Id = BovedaActual.Id;
+                            abierto.Entradas = EntradasBoveda;
+                            abierto.SaldoFinal = SaldoFinalBoveda;
+                            BovedaBL.ActualizarParcial(abierto, x => x.Entradas, x => x.SaldoFinal);
 
-                        //WE SEND UPDATE DATA ON SIGHT
-                        var envio = new string[3];
-                        envio[0] = Convert.ToString(diario.Salidas);
-                        envio[1] = Convert.ToString(diario.SaldoFinal);
-                        envio[2] = Convert.ToString(EntradasCaja - diario.Salidas);
+                            //WE SEND UPDATE DATA ON SIGHT
+                            var envio = new string[3];
+                            envio[0] = Convert.ToString(diario.Salidas);
+                            envio[1] = Convert.ToString(diario.SaldoFinal);
+                            envio[2] = Convert.ToString(EntradasCaja - diario.Salidas);
 
 
-                        rm.message = "TRANSFERENCIA REALIZADA CON ÉXITO";
-                        rm.SetResponse(true, rm.message);
-                        rm.result = envio;
+                            rm.message = "TRANSFERENCIA REALIZADA CON ÉXITO";
+                            rm.SetResponse(true, rm.message);
+                            rm.result = envio;
+                        }
                     }
+                }
+                else
+                {
+                    rm.SetResponse(false,"CAJA NO ASIGNADA PARA ESTE USUARIO");
                 }
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message,true);
             }
 
             return Json(rm,JsonRequestBehavior.AllowGet);
@@ -1087,9 +1096,9 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message,true);
             }
-            return Json(rm,JsonRequestBehavior.AllowGet);
+            return Json(rm);
         }
 
 
@@ -1112,14 +1121,17 @@ namespace Web.Controllers
 
                              }).SingleOrDefault();
 
-            ViewBag.Alumno = cajamovimiento.PersonaNombres;
-            ViewBag.Dni = cajamovimiento.Dni;
-            ViewBag.Direccion = cajamovimiento.Direccion;
-            ViewBag.Fecha = cajamovimiento.Fecha;
-            ViewBag.Serie = cajamovimiento.Serie;
-            ViewBag.Numero = cajamovimiento.Numero;
-            ViewBag.Total = cajamovimiento.Total;
-            ViewBag.Observacion = cajamovimiento.Observacion;
+            if (cajamovimiento!=null)
+            {
+                ViewBag.Alumno = cajamovimiento.PersonaNombres;
+                ViewBag.Dni = cajamovimiento.Dni;
+                ViewBag.Direccion = cajamovimiento.Direccion;
+                ViewBag.Fecha = cajamovimiento.Fecha;
+                ViewBag.Serie = cajamovimiento.Serie;
+                ViewBag.Numero = cajamovimiento.Numero;
+                ViewBag.Total = cajamovimiento.Total;
+                ViewBag.Observacion = cajamovimiento.Observacion;
+            }
 
             var movimiento_detalles = db.CajaMovimientoDetalle.Where(x => x.CajaMovimientoId == id)
                                                         .OrderBy(x => x.Id)
@@ -1169,12 +1181,15 @@ namespace Web.Controllers
 
                                   }).SingleOrDefault();
 
-            ViewBag.Alumno = cajamovimiento.PersonaNombres;
-            ViewBag.Fecha = cajamovimiento.Fecha;
-            ViewBag.Serie = cajamovimiento.Serie;
-            ViewBag.Numero = cajamovimiento.Numero;
-            ViewBag.Total = cajamovimiento.Total;
-            ViewBag.Observacion = cajamovimiento.Observacion;
+            if (cajamovimiento!=null)
+            {
+                ViewBag.Alumno = cajamovimiento.PersonaNombres;
+                ViewBag.Fecha = cajamovimiento.Fecha;
+                ViewBag.Serie = cajamovimiento.Serie;
+                ViewBag.Numero = cajamovimiento.Numero;
+                ViewBag.Total = cajamovimiento.Total;
+                ViewBag.Observacion = cajamovimiento.Observacion;
+            }
 
             var movimiento_detalles = db.CajaMovimientoDetalle.Where(x => x.CajaMovimientoId == id)
                                                         .OrderBy(x => x.Id)

@@ -28,8 +28,8 @@ namespace Web.Controllers
 
             return View();
         }
-        [HttpPost]
-        public ActionResult Tabla(string nombres, int pagina)
+
+        public ActionResult Tabla(string nombres="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
 
@@ -776,7 +776,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                rm.SetResponse(false, ex.Message);
+                rm.SetResponse(false, ex.Message,true);
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }

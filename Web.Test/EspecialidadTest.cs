@@ -46,7 +46,7 @@ namespace Web.UnitTest
             var controller = new EspecialidadController();
             var result = controller.Guardar(especialidad) as JsonResult;
             var rm = result.Data as Comun.ResponseModel;
-            Assert.IsTrue(rm.response);
+            Assert.IsFalse(rm.isException);
         }
     }
 }

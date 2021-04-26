@@ -42,7 +42,7 @@ namespace Web.Controllers
                     Session["UsuarioRol"] = usuario.Nombre + " - " + usuario.Rol.Denominacion;
                     Session["mnu"] = Constante.Menu.Listar(usuario.Rol.Codigo);
                     rm.SetResponse(true);
-                    rm.href = Url.Action("Index", "Home");
+                    rm.href = Url?.Action("Index", "Home");
                 }
             }
             else

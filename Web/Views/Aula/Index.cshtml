@@ -123,7 +123,7 @@
         $.ajax({
             url: '@Url.Action("Tabla","Aula")',
             data: JSON.stringify(envio),
-            type: 'POST',
+            type: 'GET',
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',

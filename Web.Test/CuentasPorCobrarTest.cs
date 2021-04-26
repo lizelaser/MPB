@@ -57,7 +57,7 @@ namespace Web.UnitTest
             var controller = new CuentasPorCobrarController();
             var result = controller.Guardar(cuentasPorCobrar.AlumnoId,cuentasPorCobrar.Fecha.ToString("yyyy-MM-dd"), cuentasPorCobrar.Total,cuentasPorCobrar.Descripcion, detalles) as JsonResult;
             var rm = result.Data as Comun.ResponseModel;
-            Assert.IsTrue(rm.response);
+            Assert.IsFalse(rm.isException);
         }
     }
 }

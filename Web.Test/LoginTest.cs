@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Web.Mvc;
+using Web.Controllers;
 
 namespace Web.UnitTest
 {
@@ -7,8 +9,14 @@ namespace Web.UnitTest
     public class LoginTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void AutenticarTest()
         {
+            var controller = new LoginController();
+            var result = controller.Autenticar(new Models.UsuarioVm() {
+                Usuario = "ADMIN@GMAIL.COM",
+                Clave = "123456"
+            }) as JsonResult;
+            Assert.IsTrue(result.Data is Comun.ResponseModel);
         }
     }
 }

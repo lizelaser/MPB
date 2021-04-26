@@ -51,7 +51,7 @@ namespace Web.UnitTest
             var controller = new AlumnoController();
             var result = controller.Guardar(0,new List<int> {1}, cod.ToString(), "PRUEBA","PRUEBA","PRUEBA",$"{cod}000",null,null,null,null,true) as JsonResult;
             var rm = result.Data as Comun.ResponseModel;
-            Assert.IsTrue(rm.response);
+            Assert.IsFalse(rm.isException);
         }
 
 

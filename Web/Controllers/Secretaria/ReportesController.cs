@@ -54,10 +54,10 @@ namespace Web.Controllers.Secretaria
             ViewBag.NombreUsuario = (from u in db.Usuario where u.Id == id_usuario select u.Nombre).SingleOrDefault();
 
             var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == id_usuario && ca.IndBoveda == false select ca).SingleOrDefault();
-            ViewBag.SaldoInicial = caja_asignada.SaldoInicial;
-            ViewBag.SaldoFinal = caja_asignada.SaldoFinal;
-            ViewBag.PorcentajeEntradas = decimal.Round(((100 * caja_asignada.Entradas) / caja_asignada.SaldoFinal).Value, 2);
-            ViewBag.Fecha = caja_asignada.FechaInicio;
+            ViewBag.SaldoInicial = caja_asignada?.SaldoInicial??0;
+            ViewBag.SaldoFinal = caja_asignada?.SaldoFinal??0;
+            ViewBag.PorcentajeEntradas = caja_asignada!=null?decimal.Round(((100 * caja_asignada.Entradas) / caja_asignada.SaldoFinal).Value, 2):0;
+            ViewBag.Fecha = caja_asignada?.FechaInicio??DateTime.Now;
 
             var cajero = (from u in db.Usuario
                           join p in db.Personal
@@ -66,10 +66,10 @@ namespace Web.Controllers.Secretaria
                           select p.Paterno + " " + p.Materno + " " + p.Nombres).SingleOrDefault();
             ViewBag.Cajero = cajero;
 
-            var caja = (from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault();
+            var caja = caja_asignada!=null?(from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault():"CAJA NO DISPONIBLE";
             ViewBag.Caja = caja;
 
-            var estado_caja = (from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault();
+            var estado_caja = caja_asignada!=null?(from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault():false;
             ViewBag.Estado = estado_caja;
 
             return View("HeaderInputs");
@@ -83,10 +83,10 @@ namespace Web.Controllers.Secretaria
             ViewBag.NombreUsuario = (from u in db.Usuario where u.Id == usuario_id select u.Nombre).SingleOrDefault();
 
             var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == usuario_id && ca.IndBoveda == false select ca).SingleOrDefault();
-            ViewBag.SaldoInicial = caja_asignada.SaldoInicial;
-            ViewBag.SaldoFinal = caja_asignada.SaldoFinal;
-            ViewBag.PorcentajeSalidas = decimal.Round(((100 * caja_asignada.Salidas) / caja_asignada.SaldoFinal).Value, 2);
-            ViewBag.Fecha = caja_asignada.FechaInicio;
+            ViewBag.SaldoInicial = caja_asignada?.SaldoInicial??0;
+            ViewBag.SaldoFinal = caja_asignada?.SaldoFinal??0;
+            ViewBag.PorcentajeSalidas = caja_asignada != null ? decimal.Round(((100 * caja_asignada.Salidas) / caja_asignada.SaldoFinal).Value, 2):0;
+            ViewBag.Fecha = caja_asignada?.FechaInicio??DateTime.Now;
 
             var cajero = (from u in db.Usuario
                           join p in db.Personal
@@ -95,10 +95,10 @@ namespace Web.Controllers.Secretaria
                           select p.Paterno + " " + p.Materno + " " + p.Nombres).SingleOrDefault();
             ViewBag.Cajero = cajero;
 
-            var caja = (from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault();
+            var caja = caja_asignada != null ? (from c in db.Caja where c.Id == caja_asignada.CajaId select c.Denominacion).SingleOrDefault():"CAJA NO ASIGNADA";
             ViewBag.Caja = caja;
 
-            var estado_caja = (from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault();
+            var estado_caja = caja_asignada != null ? (from ec in db.CajaDiario where ec.Id == caja_asignada.Id select ec.IndCierre).SingleOrDefault():false;
             ViewBag.Estado = estado_caja;
 
             return View("HeaderOutputs");
@@ -110,9 +110,9 @@ namespace Web.Controllers.Secretaria
         public ActionResult ReportesAlumno()
         {
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            string _headerUrl = Url?.Action("HeaderPDF", "Reportes", null, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesAlumno", db.Alumno.ToList())
             {
@@ -133,9 +133,9 @@ namespace Web.Controllers.Secretaria
         public ActionResult ReportesPersonal()
         {
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            string _headerUrl = Url?.Action("HeaderPDF", "Reportes", null, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesPersonal", db.Personal.ToList())
             {
@@ -255,9 +255,9 @@ namespace Web.Controllers.Secretaria
 
 
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            string _headerUrl = Url?.Action("HeaderPDF", "Reportes", null, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesMatricula", Matriculas)
             {
@@ -316,9 +316,9 @@ namespace Web.Controllers.Secretaria
             }).ToList();
 
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderEnrollment", "Reportes", null, "http");
+            string _headerUrl = Url?.Action("HeaderEnrollment", "Reportes", null, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("FichaMatricula",subdetalles)
             {
@@ -446,9 +446,9 @@ namespace Web.Controllers.Secretaria
             }
 
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderPDF", "Reportes", null, "http");
+            string _headerUrl = Url?.Action("HeaderPDF", "Reportes", null, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesDeudas", SubCobranzas)
             {
@@ -483,13 +483,15 @@ namespace Web.Controllers.Secretaria
             var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == UsuarioActualId && ca.IndBoveda == false select ca).SingleOrDefault();
 
             var estado_anulado = (from e in db.Estado where e.Denominacion.Equals("ANULADO") select e).SingleOrDefault();
+
+
             // We get the 'records page' from the caja movimiento table
-            var Entradas = db.CajaMovimiento.Where(x => x.IndEntrada == true && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
+            var Entradas = caja_asignada!=null?db.CajaMovimiento.Where(x => x.IndEntrada == true && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
                                                 .Include(x => x.Alumno)
                                                 .Include(x => x.Personal)
                                                 .Include(x => x.Operacion)
                                                 .Include(x => x.Estado)
-                                                .ToList();
+                                                .ToList():new List<CajaMovimiento>();
 
             //We list 'caja movimientos' only with the required fields to avoid serialization problems
             var SubEntradas = new List<CajaMovimientoVm>();
@@ -543,9 +545,9 @@ namespace Web.Controllers.Secretaria
             }
 
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderInputs", "Reportes", new {id = UsuarioActualId}, "http");
+            string _headerUrl = Url?.Action("HeaderInputs", "Reportes", new {id = UsuarioActualId}, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesIngreso", SubEntradas)
             {
@@ -581,12 +583,12 @@ namespace Web.Controllers.Secretaria
 
             var estado_anulado = (from e in db.Estado where e.Denominacion.Equals("ANULADO") select e).SingleOrDefault();
             // We get the 'records page' from the caja movimiento table
-            var Salidas = db.CajaMovimiento.Where(x => x.IndEntrada == false && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
+            var Salidas = caja_asignada!=null?db.CajaMovimiento.Where(x => x.IndEntrada == false && x.CajaDiarioId.Equals(caja_asignada.Id) && x.EstadoId != estado_anulado.Id)
                                                 .Include(x => x.Alumno)
                                                 .Include(x => x.Personal)
                                                 .Include(x => x.Operacion)
                                                 .Include(x => x.Estado)
-                                                .ToList();
+                                                .ToList():new List<CajaMovimiento>();
 
             //We list 'caja movimientos' only with the required fields to avoid serialization problems
             var SubSalidas = new List<CajaMovimientoVm>();
@@ -640,9 +642,9 @@ namespace Web.Controllers.Secretaria
             }
 
             // Define la URL de la Cabecera 
-            string _headerUrl = Url.Action("HeaderOutputs", "Reportes", new {id = UsuarioActualId}, "http");
+            string _headerUrl = Url?.Action("HeaderOutputs", "Reportes", new {id = UsuarioActualId}, "http");
             // Define la URL del Pie de página
-            string _footerUrl = Url.Action("FooterPDF", "Reportes", null, "http");
+            string _footerUrl = Url?.Action("FooterPDF", "Reportes", null, "http");
 
             return new ViewAsPdf("ReportesEgreso", SubSalidas)
             {

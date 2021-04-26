@@ -24,8 +24,7 @@ namespace Web.Controllers.Secretaria
             return View();
         }
 
-        [HttpPost]
-        public ActionResult Tabla(string nombres, int pagina)
+        public ActionResult Tabla(string nombres="", int pagina=1)
         {
             var rm = new Comun.ResponseModel();
 
@@ -114,7 +113,7 @@ namespace Web.Controllers.Secretaria
         }
 
         [HttpPost]
-        public ActionResult Guardar(int AlumnoId, string Fecha, decimal Total, string Descripcion, List<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle)
+        public ActionResult Guardar(int? AlumnoId, string Fecha, decimal?Total, string Descripcion, List<CuentasPorCobrarDetalle> CuentasPorCobrarDetalle)
         {
             DAEntities db = new DAEntities();
             var rm = new Comun.ResponseModel();
@@ -124,47 +123,49 @@ namespace Web.Controllers.Secretaria
 
             try
             {
-
-                //Registramos la cuenta por cobrar
-
-                CuentasPorCobrar cobranzas = new CuentasPorCobrar();
-                cobranzas.AlumnoId = AlumnoId;
-                cobranzas.EstadoId = EstadoId;
-                cobranzas.Fecha = Convert.ToDateTime(Fecha);
-                cobranzas.Total = Total;
-                cobranzas.Descripcion = Descripcion;
-                cobranzas.FechaVencimiento = endofDay;
-
-                //Verify if exist any 'cuenta por cobrar' that already exist in BD
-
-                var existe_cobranza = (from cc in db.CuentasPorCobrar where cc.Id == cobranzas.Id select cc).Any();
-
-                if (!existe_cobranza)
+                if (AlumnoId != null && Fecha != "" && Total != null && CuentasPorCobrarDetalle != null)
                 {
-                    //Registramos los detalles de las cuentas por cobrar
-                    CuentasPorCobrarBL.Crear(cobranzas);
+                    //Registramos la cuenta por cobrar
 
-                    //Recuperamos id de la cuenta por cobrar
-                    int CuentaPorCobrarId = cobranzas.Id;
+                    CuentasPorCobrar cobranzas = new CuentasPorCobrar();
+                    cobranzas.AlumnoId = (int)AlumnoId;
+                    cobranzas.EstadoId = EstadoId;
+                    cobranzas.Fecha = Convert.ToDateTime(Fecha);
+                    cobranzas.Total = (decimal)Total;
+                    cobranzas.Descripcion = Descripcion;
+                    cobranzas.FechaVencimiento = endofDay;
 
-                    CuentasPorCobrarDetalle detalles = new CuentasPorCobrarDetalle();
-                    foreach (var item in CuentasPorCobrarDetalle)
+                    //Verify if exist any 'cuenta por cobrar' that already exist in BD
+
+                    var existe_cobranza = (from cc in db.CuentasPorCobrar where cc.Id == cobranzas.Id select cc).Any();
+
+                    if (!existe_cobranza)
                     {
-                        detalles.CuentasPorCobrarId = CuentaPorCobrarId;
-                        detalles.ConceptoPagoId = item.ConceptoPagoId;
-                        detalles.ItemId = item.ItemId;
-                        detalles.Cantidad = item.Cantidad;
-                        detalles.Descuento = item.Descuento;
-                        detalles.Importe = item.Importe;
-                        CuentasPorCobrarDetalleBL.Crear(detalles);
-                    }
+                        //Registramos los detalles de las cuentas por cobrar
+                        CuentasPorCobrarBL.Crear(cobranzas);
 
-                    rm.SetResponse(true);
-                    rm.href = Url?.Action("Index", "CuentasPorCobrar");
-                }
-                else
-                {
-                    rm.SetResponse(false, "Esta cuenta por cobrar ya fue registrada");
+                        //Recuperamos id de la cuenta por cobrar
+                        int CuentaPorCobrarId = cobranzas.Id;
+
+                        CuentasPorCobrarDetalle detalles = new CuentasPorCobrarDetalle();
+                        foreach (var item in CuentasPorCobrarDetalle)
+                        {
+                            detalles.CuentasPorCobrarId = CuentaPorCobrarId;
+                            detalles.ConceptoPagoId = item.ConceptoPagoId;
+                            detalles.ItemId = item.ItemId;
+                            detalles.Cantidad = item.Cantidad;
+                            detalles.Descuento = item.Descuento;
+                            detalles.Importe = item.Importe;
+                            CuentasPorCobrarDetalleBL.Crear(detalles);
+                        }
+
+                        rm.SetResponse(true);
+                        rm.href = Url?.Action("Index", "CuentasPorCobrar");
+                    }
+                    else
+                    {
+                        rm.SetResponse(false, "Esta cuenta por cobrar ya fue registrada");
+                    }
                 }
 
             }

@@ -48,7 +48,7 @@ namespace Web.UnitTest
             };
             var result = controller.Guardar(user, "true") as JsonResult;
             var rm = result.Data as Comun.ResponseModel;
-            Assert.IsTrue(rm.response);
+            Assert.IsFalse(rm.isException);
         }
     }
 }

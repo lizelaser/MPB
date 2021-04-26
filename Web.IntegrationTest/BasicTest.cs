@@ -16,59 +16,87 @@ using XUnitPriorityOrderer;
 namespace Web.IntegrationTest
 {
     [TestCaseOrderer(CasePriorityOrderer.TypeName, CasePriorityOrderer.AssembyName)]
-    public class BasicTest
+    public class BasicTest: IClassFixture<ClientFixture>
     {
         private static readonly string baseUrl = "http://localhost:19407";
-        private readonly HttpClient _client;
-        private readonly CookieContainer _cookies = new CookieContainer();
+        private readonly ClientFixture fixture;
 
-        public BasicTest()
+        public BasicTest(ClientFixture fixture)
         {
-            var handler = new HttpClientHandler();
-            handler.UseCookies = true;
-            handler.CookieContainer = _cookies;
-            _client = new HttpClient(handler);
+            this.fixture = fixture;
         }
 
-        [Theory]
-        [InlineData("/Login")]
-        [InlineData("/")]
-        public async Task TestEndPoint(string url)
+        [Fact, Order(0)]
+        public async Task TestLoginView()
         {
             // Act
-            var response = await _client.GetAsync(baseUrl + url);
+            var response = await fixture.client.GetAsync(baseUrl + "/Login");
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal("text/html; charset=utf-8", response.Content.Headers.ContentType.ToString());
         }
 
-        [Fact, Order(0)]
-        public async Task TestLogin()
+        [Fact, Order(1)]
+        public async Task TestAuthentication()
         {
             var data = JsonSerializer.Serialize(new { usuario = "ADMIN@GMAIL.COM", clave = "123456" });
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             // Act
-            var response = await _client.PostAsync(baseUrl + "/Login/Autenticar", content);
+            var response = await fixture.client.PostAsync(baseUrl + "/Login/Autenticar", content);
 
             var json = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<Comun.ResponseModel>(json);
 
+            var uri = new Uri("http://localhost");
+            var responseCookies = fixture.cookies.GetCookies(uri);
+
+            fixture.cookies.Add(responseCookies);
 
             Assert.True(result.response);
         }
 
-        [Theory,Order(1)]
-        [InlineData("/Notas")]
-        public async Task TestNotasAutorization(string url)
+        [Theory]
+        [InlineData("/Alumno/Tabla")]
+        [InlineData("/Personal/Tabla")]
+        [InlineData("/CuentasPorCobrar/Tabla")]
+        [InlineData("/Matricula/Tabla")]
+        [InlineData("/Especialidad/Tabla")]
+        [InlineData("/Curso/Tabla")]
+        [InlineData("/Periodo/Tabla")]
+        [InlineData("/Aula/Tabla")]
+        [InlineData("/Usuario/Tabla")]
+        [InlineData("/Horario/Tabla")]
+        [InlineData("/Notas/Tabla")]
+        public async Task TestTablas(string url)
         {
             // Act
-            var response = await _client.GetAsync(baseUrl + url);
-            
+            var response = await fixture.client.GetAsync(baseUrl + url);
+
             // Assert
-            //response.EnsureSuccessStatusCode();
-            Assert.Equal($"{baseUrl}/Login", response.RequestMessage.RequestUri.ToString());
+            response.EnsureSuccessStatusCode();
+            Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
         }
 
+    }
+
+    public class ClientFixture : IDisposable
+    {
+        public HttpClient client;
+        public HttpClientHandler handler;
+        public CookieContainer cookies;
+
+        public ClientFixture()
+        {
+            handler= new HttpClientHandler();
+            cookies = new CookieContainer();
+            handler.UseCookies = true;
+            handler.CookieContainer = this.cookies;
+            client = new HttpClient(handler);
+        }
+        public void Dispose()
+        {
+            client.Dispose();
+        }
     }
 }

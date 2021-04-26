@@ -50,7 +50,7 @@ namespace Web.UnitTest
             var controller = new CursoController();
             var result = controller.Guardar(curso) as JsonResult;
             var rm = result.Data as Comun.ResponseModel;
-            Assert.IsTrue(rm.response);
+            Assert.IsFalse(rm.isException);
         }
     }
 }
