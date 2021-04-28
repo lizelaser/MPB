@@ -37,8 +37,6 @@ namespace Web.Controllers.Secretaria
                 TotalRegistros = db.CuentasPorCobrar.Count();
                 // We get the 'records page' from the student table
                 Deudas = db.CuentasPorCobrar.OrderByDescending(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
                                                  .Include(x => x.Alumno)
                                                  .Include(X => X.Estado)
                                                  .ToList();
@@ -55,16 +53,20 @@ namespace Web.Controllers.Secretaria
                     EstadoDenominacion = S.Estado.Denominacion,
                     Descripcion = S.Descripcion
 
-                }).ToList();
+                });
 
                 if (!string.IsNullOrEmpty(nombres))
                 {
-                    var filtered = SubDeudas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
-                    SubDeudas = filtered.OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = filtered.Count();
+
+                    SubDeudas = SubDeudas.Where(x => 
+                        x.AlumnoNombres.ToLower().Contains(nombres.ToLower())
+                    );
                 }
+
+                SubDeudas = SubDeudas.OrderBy(x => x.Id)
+                            .Skip((pagina - 1) * RegistrosPorPagina)
+                            .Take(RegistrosPorPagina).ToList();
+                TotalRegistros = Deudas.Count();
 
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -76,7 +78,7 @@ namespace Web.Controllers.Secretaria
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = SubDeudas
+                    Listado = SubDeudas.ToList(),
                 };
 
                 rm.SetResponse(true);
