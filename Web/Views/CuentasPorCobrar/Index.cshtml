@@ -20,6 +20,9 @@
                                 <a class="btn btn-small blue right" href="@Url.Action("Registrar","CuentasPorCobrar")" style="margin-right:15px;margin-top:15px;">REGISTRAR NUEVO</a>
                             </div>
                             <div class="row">
+                                <input type="text" id="nombres" name="nombres" placeholder="BUSCAR CUENTAS POR COBRAR POR ALUMNO" />
+                            </div>
+                            <div class="row">
                                 <div class="col s12 m12">
                                     <table class="bordered">
                                         <thead>
@@ -37,9 +40,6 @@
 
                                     </table>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <input type="text" id="nombres" name="nombres" placeholder="BUSCAR CUENTAS POR COBRAR POR ALUMNO" />
                             </div>
                             <div class="row">
                                 <div class="col s12 m12 l12">
@@ -124,13 +124,13 @@
 
     //Filter Schedule denomination
     $("#nombres").on('input', function () {
-        paginadorFuncCobranzas($("#nombres").val(), 1)
+        paginadorFuncCobranzas(1)
     });
 
 
-    var paginadorFuncCobranzas = function (nombres, _pagina) {
+    var paginadorFuncCobranzas = function (_pagina) {
         var envio = {
-            nombres: nombres,
+            nombres: $("#nombres").val(),
             pagina: _pagina > 0 ? _pagina : 1
         }
         console.log(envio)
