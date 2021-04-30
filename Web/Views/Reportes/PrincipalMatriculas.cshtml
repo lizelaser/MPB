@@ -243,6 +243,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_creportes");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_rmatriculas").addClass("active");
+
 
         especialidadesListadoFunc();
         cursosReportesFunc();

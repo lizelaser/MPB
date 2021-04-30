@@ -81,11 +81,6 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <p style="color:transparent">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-    </div>
-
 }
 
 
@@ -102,6 +97,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cmantenimientos");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_curso").addClass("active");
+
         //START PAGINATION 'CURSO'
         paginadorFuncCursos($("#denominacion").val(),currentPage);
 
@@ -150,6 +154,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -171,7 +176,6 @@
         list.forEach(function (item, index) {
             const button = `<td style="padding:0">
                                 <a href="Curso/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
-                                <a href="Curso/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
                             </td>
                             `
             fillTable(id,

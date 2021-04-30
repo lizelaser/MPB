@@ -91,6 +91,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cadministracion");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_periodo").addClass("active");
+
         //START PAGINATION 'PERIODO'
         paginadorFuncPeriodos($("#denominacion").val(),currentPage);
 
@@ -139,6 +148,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -147,6 +157,8 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
+                    $("#tbd_periodos").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'periodos')

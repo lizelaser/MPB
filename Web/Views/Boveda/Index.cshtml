@@ -37,7 +37,7 @@
     .contenedor_mensaje{
         background-color:#F94040;
         color:white; 
-        height:50px;
+        height:75px;
     }
     .cabecera {
         margin-top:-10px;
@@ -109,7 +109,7 @@
                 </ul>
                 <ul>
                     <li>
-                        <div id="pie">
+                        <div id="pie" style="margin-bottom: 12px; height: 33px;">
                             <button id="btnTransferencia" data-target="modal3" class="btn modal-trigger btn-small blue left" href="@Url.Action("Transferencia","Boveda")">TRANSFERENCIA</button>
                             &nbsp;
                             <!-- Modal Trigger Apertura -->
@@ -358,7 +358,7 @@
                             </div>
                             <div class="row">
                                 <div class="col s12 m12 l12">
-                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                    <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                         <div class="col-md-12 center text-center">
                                             <div id="EncontradoBovedas">
                                                 <span>
@@ -442,7 +442,7 @@
                             </div>
                             <div class="row">
                                 <div class="col s12 m12 l12">
-                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                    <div id="bordered-table" class="card card card-default scrollspy  z-depth-0">
                                         <div class="col-md-12 center text-center">
                                             <div id="EncontradoMovimientos">
                                                 <span>
@@ -557,7 +557,7 @@
                             </div>
                             <div class="row">
                                 <div class="col s12 m12 l12">
-                                    <div id="bordered-table" class="card card card-default scrollspy">
+                                    <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                         <div class="col-md-12 center text-center">
                                             <div id="EncontradoCajas">
                                                 <span>
@@ -621,6 +621,14 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MEWNU
+        var menuEl = $("#menu_coperaciones");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_boveda").addClass("active");
 
         $("#apertura").click(aperturafunc);
         $("#cierre").click(cierreFunc);
@@ -703,7 +711,7 @@
                 success: function (rm) {
 
                     try{
-                        if (rm.response == false) {
+                        if (!rm.response) {
 
                             $("#div_mensaje_asignar").show();
                             $("#div_mensaje_asignar").css("background-color", "#F94040");
@@ -718,7 +726,6 @@
                             }, 2500);
                         }
                         else {
-
                             $("#div_mensaje_asignar").show();
                             $("#div_mensaje_asignar").css("background-color", "#27EF37");
                             $("#txt_mensaje_asignar").text(rm.message);
@@ -792,7 +799,7 @@
             success: function (rm) {
 
                 try {
-                    if (rm.response == false) {
+                    if (!rm.response) {
                         $("#div_mensaje_cierre").show();
                         $("#div_mensaje_cierre").css("background-color", "#F94040");
                         $("#txt_mensaje_cierre").text(rm.message);
@@ -1028,9 +1035,6 @@
             });
 
         }
-        else {
-            console.log("Input Output operation was alredy completed");
-        }
     }
 
     var limpiarModal = function () {
@@ -1076,6 +1080,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoBovedas").hide();
+                    $("#EncontradoBovedas").show();
                     $("#TotalRegistrosBovedas").html(TotalRegistros);
                     $("#PaginaActualBovedas").html(PaginaActual);
                     $("#TotalPaginasBovedas").html(TotalPaginas);
@@ -1084,6 +1089,8 @@
                 }
                 else {
                     $("#EncontradoBovedas").hide();
+                    $("#NoEncontradoBovedas").show();
+                    $("#tbd_bovedas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'bovedas')
@@ -1180,6 +1187,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoMovimientos").hide();
+                    $("#EncontradoMovimientos").show();
                     $("#TotalRegistrosMovimientos").html(TotalRegistros);
                     $("#PaginaActualMovimientos").html(PaginaActual);
                     $("#TotalPaginasMovimientos").html(TotalPaginas);
@@ -1188,6 +1196,8 @@
                 }
                 else {
                     $("#EncontradoMovimientos").hide();
+                    $("#NoEncontradoMovimientos").show();
+                    $("#tbd_movimientos").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'movimientos')
@@ -1253,6 +1263,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoCajas").hide();
+                    $("#EncontradoCajas").show();
                     $("#TotalRegistrosCajas").html(TotalRegistros);
                     $("#PaginaActualCajas").html(PaginaActual);
                     $("#TotalPaginasCajas").html(TotalPaginas);
@@ -1261,6 +1272,8 @@
                 }
                 else {
                     $("#EncontradoCajas").hide();
+                    $("#NoEncontradoCajas").show();
+                    $("#tbd_cajas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'cajas')
@@ -1322,3 +1335,8 @@
     }
 </script>
 
+<style>
+    #pie button {
+        margin-right: 8px;
+    }
+</style>

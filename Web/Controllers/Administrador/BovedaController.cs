@@ -267,8 +267,7 @@ namespace Web.Controllers
                 {
                     if (SaldoInicial == null || SaldoInicial < 0 || SaldoInicial == 0)
                     {
-                        rm.message = "EL SALDO INICIAL NO DEBE SER NULO, NEGATIVO NI CERO";
-                        rm.SetResponse(false, rm.message);
+                        rm.SetResponse(false, "EL SALDO INICIAL NO DEBE SER NULO, NEGATIVO NI CERO");
                     }
                     else
                     {
@@ -281,9 +280,7 @@ namespace Web.Controllers
                         boveda.FechaInicio = DateTime.Now;
                         BovedaBL.Crear(boveda);
 
-                        rm.message = "APERTURA EXITOSA";
-                        rm.SetResponse(true);
-
+                        rm.SetResponse(true, "APERTURA EXITOSA");
                     }
                 }
             }

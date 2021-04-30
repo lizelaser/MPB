@@ -124,7 +124,16 @@
 
 @section   scripts{
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
+            // MENU
+            var menuEl = $("#menu_cmantenimientos");
+            menuEl.collapsible();
+
+            var menu = M.Collapsible.getInstance(menuEl);
+            menu.open();
+
+            $("#menu_horario").addClass("active");
+
             $(".timepicker").timepicker({
                 twelveHour:false
             });

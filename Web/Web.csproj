@@ -569,6 +569,17 @@
     <Content Include="app-assets\fonts\material-design-icons\MaterialIcons-Regular.woff2" />
     <Content Include="app-assets\vendors\dropify\fonts\dropify.woff" />
     <Content Include="Headers\Encabezado.html" />
+    <Content Include="Images\dashboard\alumno.png" />
+    <Content Include="Images\dashboard\boveda.png" />
+    <Content Include="Images\dashboard\caja_diario.png" />
+    <Content Include="Images\dashboard\especialidad.png" />
+    <Content Include="Images\dashboard\cuentas_por_cobrar.png" />
+    <Content Include="Images\dashboard\curso.png" />
+    <Content Include="Images\dashboard\matricula.png" />
+    <Content Include="Images\dashboard\pagos.png" />
+    <Content Include="Images\dashboard\periodo_academico.png" />
+    <Content Include="Images\dashboard\personal.png" />
+    <Content Include="Images\dashboard\usuario.png" />
     <Content Include="Images\MPB Logo.png" />
     <Content Include="Images\MPB reporte.png" />
     <Content Include="Images\pageLoader.gif" />

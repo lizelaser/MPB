@@ -56,8 +56,7 @@ namespace Web.Controllers
                 SelectList listaCajas = new SelectList(CajasDisponibles, "Id", "Caja");
                 ViewBag.CajasDisponibles = listaCajas;
                 // MONTO TOTAL EN BÓVEDA
-                var montoTotal = (from b in db.Boveda where b.IndCierre == false select b.SaldoFinal).SingleOrDefault();
-                ViewBag.MontoTotal = montoTotal??0;
+                ViewBag.MontoTotal = (from b in db.Boveda where !b.IndCierre select b.SaldoFinal).SingleOrDefault();
             }
 
             return View();
@@ -203,17 +202,17 @@ namespace Web.Controllers
         {
             var rm = new Comun.ResponseModel();
 
-            var bovedaActual = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
+            var boveda = (from b in db.Boveda where !b.IndCierre select b).SingleOrDefault();
 
             try
             {
-                if (bovedaActual == null)
+                if (boveda == null)
                 {
                     rm.SetResponse(false, "LA BÓVEDA NO HA SIDO APERTURADA");
+                    return Json(rm, JsonRequestBehavior.AllowGet);
                 }
 
                 // -- Datos de la bóveda actual -- //
-                Boveda boveda = (from b in db.Boveda where b.IndCierre == false select b).SingleOrDefault();
                 int BovedaId = boveda.Id;
                 decimal BovedaSaldoInicial = boveda.SaldoInicial;
                 decimal BovedaEntradas = (boveda.Entradas).Value;

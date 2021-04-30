@@ -38,7 +38,7 @@
                     </div>
                     <div class="row">
                         <div class="col s12 m12 l12">
-                            <div id="bordered-table" class="card card card-default scrollspy">
+                            <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                 <div class="col-md-12 center text-center">
                                     <div id="Encontrado">
                                         <span>
@@ -86,6 +86,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MEWNU
+        var menuEl = $("#menu_cadministracion");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_caja").addClass("active");
+
         //START PAGINATION 'CAJAS'
         paginadorFuncCajas($("#denominacion").val(),currentPage);
 
@@ -134,6 +143,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -142,6 +152,8 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
+                    $("#tbd_cajas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'cajas')
@@ -154,7 +166,6 @@
         list.forEach(function (item, index) {
             const button = `<td style="padding:0">
                                 <a href="Caja/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
-                                <a href="Caja/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
                             </td>
                             `
 

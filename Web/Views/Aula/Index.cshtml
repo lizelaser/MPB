@@ -43,7 +43,7 @@
                     </div>
                     <div class="row">
                         <div class="col s12 m12 l12">
-                            <div id="bordered-table" class="card card card-default scrollspy">
+                            <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                 <div class="col-md-12 center text-center">
                                     <div id="Encontrado">
                                         <span>
@@ -62,11 +62,8 @@
                                     </div>
                                     <div>
                                         <button class="btn btn-small blue" id="inicio_aulas"><<</button>
-                                        <span></span>
                                         <button class="btn btn-small blue" id="anterior_aulas">Anterior</button>
-
                                         <button class="btn btn-small blue" id="siguiente_aulas">Siguiente</button>
-                                        <span></span>
                                         <button class="btn btn-small blue" id="ultimo_aulas">>></button>
                                     </div>
                                 </div>
@@ -92,38 +89,48 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cadministracion");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_aula").addClass("active");
+
         //START PAGINATION 'AULAS'
-        paginadorFuncAulas($("#denominacion").val(),currentPage);
+        paginadorFuncAulas(currentPage);
 
         $("#inicio_aulas").click(function () {
-            paginadorFuncAulas($("#denominacion").val(),1);
+            paginadorFuncAulas(1);
         });
         $("#siguiente_aulas").click(function () {
-            paginadorFuncAulas($("#denominacion").val(),currentPage + 1);
+            paginadorFuncAulas(currentPage + 1);
         });
         $("#ultimo_aulas").click(function () {
-            paginadorFuncAulas($("#denominacion").val(),pageCount);
+            paginadorFuncAulas(pageCount);
         });
         $("#anterior_aulas").click(function () {
-            paginadorFuncAulas($("#denominacion").val(),currentPage - 1)
+            paginadorFuncAulas(currentPage - 1);
         });
     });
 
     //Filter Speciality denomination
     $("#denominacion").on('input', function () {
-        paginadorFuncAulas($("#denominacion").val(), 1)
+        paginadorFuncAulas(1)
     });
 
     //PAGINATION 'AULAS'
-    var paginadorFuncAulas = function (denominacion, pagina) {
+    var paginadorFuncAulas = function (pagina) {
         var envio = {
-            denominacion: denominacion,
+            denominacion: $("#denominacion").val(),
             pagina: pagina > 0 ? pagina : 1
         }
+
         $.ajax({
             url: '@Url.Action("Tabla","Aula")',
             data: JSON.stringify(envio),
-            type: 'GET',
+            type: 'POST',
             async: false,//this makes the ajax-call blocking
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
@@ -140,6 +147,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -148,6 +156,8 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
+                    $("#tbd_aulas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'aulas')
@@ -160,7 +170,6 @@
         list.forEach(function (item, index) {
             const button = `<td style="padding:0">
                                 <a href="Aula/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
-                                <a href="Aula/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
                             </td>
                             `
 

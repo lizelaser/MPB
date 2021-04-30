@@ -120,11 +120,12 @@ namespace Web.Controllers
 
                 if (!string.IsNullOrEmpty(nombres))
                 {
-
-                    SubCobranzas = SubCobranzas.Where(x => x.AlumnoNombres.Contains(nombres)).OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
+                    var filtrado = SubCobranzas.Where(x => x.AlumnoNombres.ToLower()
+                        .Contains(nombres.ToLower()))
+                        .OrderBy(x => x.Id);
+                    SubCobranzas = filtrado.Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = SubCobranzas.Where(x => x.AlumnoNombres.Contains(nombres)).Count();
+                    TotalRegistros = filtrado.Count();
                 }
                 // Total number of pages in the Cuentas por Cobrar table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -230,11 +231,10 @@ namespace Web.Controllers
 
                 if (!string.IsNullOrEmpty(nombres))
                 {
-
-                    SubPagos = SubPagos.Where(x => x.PersonaNombres.Contains(nombres)).OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
+                    var filtrado = SubPagos.Where(x => x.PersonaNombres.ToLower().Contains(nombres.ToLower())).OrderBy(x => x.Id);
+                    SubPagos = filtrado.Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = SubPagos.Where(x => x.PersonaNombres.Contains(nombres)).Count();
+                    TotalRegistros = filtrado.Count();
                 }
 
                 // Total number of pages in the caja movimiento table

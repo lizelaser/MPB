@@ -104,6 +104,15 @@
 <script>
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cadministracion");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_periodo").addClass("active");
+
         $("#guardar").click(guardarPeriodoFunc)
     })
 

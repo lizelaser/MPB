@@ -208,6 +208,15 @@
 <script>
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cmantenimientos");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_notas").addClass("active");
+
         cursosListadoFunc();
         cursoSeleccionadoFunc();
         guardarNotaFunc();

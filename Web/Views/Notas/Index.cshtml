@@ -105,6 +105,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cmantenimientos");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_notas").addClass("active");
+
         //START PAGINATION 'HORARIOS'
         paginadorFuncNotas($("#nombres").val(),currentPage);
 
@@ -153,6 +162,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);

@@ -1,7 +1,7 @@
 ﻿
 @{
 
-    decimal monto = ViewBag.MontoTotal;
+    decimal? monto = ViewBag.MontoTotal;
 }
 
 <style>
@@ -112,7 +112,7 @@
                         </ul>
                         <ul>
                             <li>
-                                <div>
+                                <div style="margin-bottom: 24px;">
                                     <button data-target="modal1" class="btn modal-trigger btn-small blue left" id="asignar_caja">ASIGNAR CAJA</button>
                                     &nbsp;
                                     <button data-target="modal2" class="btn modal-trigger btn-small blue right" id="cerrar_caja">CERRAR CAJAS</button>
@@ -140,30 +140,36 @@
                                 <p id="txt_mensaje_asignar" style="margin-top:-10px;"></p>
                             </div>
                             <div class="card-content">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="input-field col s12 m6">
-                                            @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
-                                        </div>
-                                        <div class="input-field col s12 m6">
-                                            @Html.DropDownList("UsuariosDisponibles", ViewBag.UsuariosDisponibles as SelectList, "SELECCIONE USUARIO", htmlAttributes: new { @class = "browser-default" })
-                                        </div>
-                                        <div class="input-field col s12 m6">
-                                            <label for="inicial" style="font-weight:bold">SALDO INICIAL*</label>
-                                            <input type="number" step="0.01" min="0" name="inicial" id="inicial" value="0.00" required />
-                                        </div>
-                                        <div class="input-field col s12 m6">
-                                            <label for="monto" style="font-weight:bold">MONTO TOTAL DE BÓVEDA:</label>
-                                            <input type="text" name="monto" id="monto" value="@monto" readonly />
+                                @if (monto != null)
+                                {
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="input-field col s12 m6">
+                                                @Html.DropDownList("CajasDisponibles", ViewBag.CajasDisponibles as SelectList, "SELECCIONE CAJA", htmlAttributes: new { @class = "browser-default" })
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                @Html.DropDownList("UsuariosDisponibles", ViewBag.UsuariosDisponibles as SelectList, "SELECCIONE USUARIO", htmlAttributes: new { @class = "browser-default" })
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="inicial" style="font-weight:bold">SALDO INICIAL*</label>
+                                                <input type="number" step="0.01" min="0" name="inicial" id="inicial" value="0.00" required />
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <label for="monto" style="font-weight:bold">MONTO TOTAL DE BÓVEDA:</label>
+                                                <input type="text" name="monto" id="monto" value="@monto" readonly />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                } else
+                                {
+                                    <div style="font-size: 18px;">Aún no ha aperturado la bóveda.</div>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#principal" class="btn-small blue right" style="margin-right:30px;" id="asignar">Guardar</a>
+                    <a @(monto != null ? "" : "disabled") href="#principal" class="btn-small blue right" style="margin-right:30px;" id="asignar">Guardar</a>
                     &nbsp;
                     <a href="#principal" class="modal-close btn-small blue-grey left" style="margin-left:30px;" id="cancelar">Cancelar</a>
                 </div>
@@ -417,7 +423,16 @@
 var currentPage = 1;
 var pageCount = 0;
 
-$(document).ready(function () {
+    $(document).ready(function () {
+    // MENU
+    var menuEl = $("#menu_coperaciones");
+    menuEl.collapsible();
+
+    var menu = M.Collapsible.getInstance(menuEl);
+    menu.open();
+
+    $("#menu_cajadiario").addClass("active");
+
     $("#asignar").click(asignarfunc);
     $("#cancelar").click(limpiarModal);
     $("#cerrar_caja").click(moduloCierreFun);
@@ -761,6 +776,7 @@ var paginadorFuncAsignadas = function (pagina) {
 
             if (Listado.length > 0) {
                 $("#NoEncontradoAsignadas").hide();
+                $("#EncontradoAsignadas").show();
                 $("#TotalRegistrosAsignadas").html(TotalRegistros);
                 $("#PaginaActualAsignadas").html(PaginaActual);
                 $("#TotalPaginasAsignadas").html(TotalPaginas);
@@ -769,6 +785,8 @@ var paginadorFuncAsignadas = function (pagina) {
             }
             else {
                 $("#EncontradoAsignadas").hide();
+                $("#NoEncontradoAsignadas").show();
+                $("#tbd_asignadas").empty();
             }
 
             deshabilitarBotones(rm.result, 'asignadas')
@@ -865,6 +883,7 @@ var paginadorFuncCajasDiario = function (pagina) {
 
             if (Listado.length > 0) {
                 $("#NoEncontradoCajasDiario").hide();
+                $("#EncontradoCajasDiario").show();
                 $("#TotalRegistrosCajasDiario").html(TotalRegistros);
                 $("#PaginaActualCajasDiario").html(PaginaActual);
                 $("#TotalPaginasCajasDiario").html(TotalPaginas);
@@ -873,6 +892,8 @@ var paginadorFuncCajasDiario = function (pagina) {
             }
             else {
                 $("#EncontradoCajasDiario").hide();
+                $("#NoEncontradoCajasDiario").show();
+                $("#tbd_cajasdiario").empty();
             }
 
             deshabilitarBotones(rm.result, 'diarios')

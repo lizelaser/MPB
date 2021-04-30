@@ -34,14 +34,13 @@ namespace Comun
         }
         public static void AddUserToSession(string id)
         {
-            bool persist = true;
-            var cookie = FormsAuthentication.GetAuthCookie("usuario", persist);
+            var cookie = FormsAuthentication.GetAuthCookie("usuario", true);
 
             cookie.Name = FormsAuthentication.FormsCookieName;
             cookie.Expires = DateTime.Now.AddMonths(3);
 
             var ticket = FormsAuthentication.Decrypt(cookie.Value);
-            var newTicket = new FormsAuthenticationTicket(ticket.Version, ticket.Name, ticket.IssueDate, ticket.Expiration, ticket.IsPersistent, id);
+            var newTicket = new FormsAuthenticationTicket(ticket.Version, ticket.Name, ticket.IssueDate, cookie.Expires, ticket.IsPersistent, id);
 
             cookie.Value = FormsAuthentication.Encrypt(newTicket);
             HttpContext.Current.Response.Cookies.Add(cookie);

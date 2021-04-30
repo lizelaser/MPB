@@ -212,6 +212,15 @@
 <script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_coperaciones");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_cuentasporcobrar").addClass("active");
+
         //disabled buttons add concept and save
         fn_deshabilitar_botones();
         //disabled inputs quantity and discount

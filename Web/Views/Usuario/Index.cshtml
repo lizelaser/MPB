@@ -93,7 +93,16 @@
     var pageCount = 0;
 
     $(document).ready(function () {
-        //START PAGINATION 'AULAS'
+        // MENU
+        var menuEl = $("#menu_cadministracion");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_usuario").addClass("active");
+
+        //START PAGINATION 'USUARIOS'
         paginadorFuncUsuarios($("#nombre").val(),currentPage);
 
         $("#inicio_usuarios").click(function () {
@@ -141,6 +150,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -163,7 +173,6 @@
         list.forEach(function (item, index) {
             const button = `<td style="padding:0">
                                 <a href="Usuario/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
-                                <a href="Usuario/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
                             </td>
                             `
             var activo = '';

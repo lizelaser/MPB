@@ -92,6 +92,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_cmantenimientos");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_personal").addClass("active");
+
         //START PAGINATION 'PERSONAL'
         paginadorFuncPersonal($("#dni").val(),currentPage);
 
@@ -140,6 +149,7 @@
 
                 if (Listado.length > 0) {
                     $("#NoEncontrado").hide();
+                    $("#Encontrado").show();
                     $("#TotalRegistros").html(TotalRegistros);
                     $("#PaginaActual").html(PaginaActual);
                     $("#TotalPaginas").html(TotalPaginas);
@@ -161,7 +171,6 @@
         list.forEach(function (item, index) {
             const button = `<td style="padding:0">
                                 <a href="Personal/Mantener/${item.Id}"><i class="material-icons">edit</i></a>
-                                <a href="Personal/Eliminar/${item.Id}"><i class="material-icons">delete</i></a>
                             </td>
                             `
             var estado = '';

@@ -480,6 +480,14 @@
 
         //SCRIPTS MODO ESPECIALIDAD
         $(document).ready(function () {
+            // MENU
+            var menuEl = $("#menu_coperaciones");
+            menuEl.collapsible();
+
+            var menu = M.Collapsible.getInstance(menuEl);
+            menu.open();
+
+            $("#menu_matricula").addClass("active");
 
             // Invocamos a la función para ocultar en un comienzo las secciones de especialidad, cursos por especialidad y cursos seleccionados
             fn_ocultar();

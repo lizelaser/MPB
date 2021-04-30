@@ -326,7 +326,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col s12 m12 l12">
-                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                        <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                                             <div class="col-md-12 center text-center">
 
                                                                 <div id="EncontradoCobranzas">
@@ -390,7 +390,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col s12 m12 l12">
-                                                        <div id="bordered-table" class="card card card-default scrollspy">
+                                                        <div id="bordered-table" class="card card card-default scrollspy z-depth-0">
                                                             <div class="col-md-12 center text-center">
                                                                 <div id="EncontradoPagos">
                                                                     <span>
@@ -738,6 +738,14 @@ else
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_coperaciones");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_pagos").addClass("active");
 
         $("#no_asignado_front").hide();
 
@@ -1208,6 +1216,7 @@ else
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoCobranzas").hide();
+                    $("#EncontradoCobranzas").show();
                     $("#TotalRegistrosCobranzas").html(TotalRegistros);
                     $("#PaginaActualCobranzas").html(PaginaActual);
                     $("#TotalPaginasCobranzas").html(TotalPaginas);
@@ -1216,6 +1225,8 @@ else
                 }
                 else {
                     $("#EncontradoCobranzas").hide();
+                    $("#NoEncontradoCobranzas").show();
+                    $("#tbd_cobranzas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'cobranzas')
@@ -1316,6 +1327,7 @@ else
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoPagos").hide();
+                    $("#EncontradoPagos").show();
                     $("#TotalRegistrosPagos").html(TotalRegistros);
                     $("#PaginaActualPagos").html(PaginaActual);
                     $("#TotalPaginasPagos").html(TotalPaginas);
@@ -1324,6 +1336,8 @@ else
                 }
                 else {
                     $("#EncontradoPagos").hide();
+                    $("#NoEncontradoPagos").show();
+                    $("#tbd_pagos").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'pagos')
@@ -1434,6 +1448,7 @@ else
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoEntradas").hide();
+                    $("#EncontradoEntradas").show();
                     $("#TotalRegistrosEntradas").html(TotalRegistros);
                     $("#PaginaActualEntradas").html(PaginaActual);
                     $("#TotalPaginasEntradas").html(TotalPaginas);
@@ -1442,6 +1457,8 @@ else
                 }
                 else {
                     $("#EncontradoEntradas").hide();
+                    $("#NoEncontradoEntradas").show();
+                    $("#tbd_entradas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'entradas')
@@ -1503,6 +1520,7 @@ else
 
                 if (Listado.length > 0) {
                     $("#NoEncontradoSalidas").hide();
+                    $("#EncontradoSalidas").show();
                     $("#TotalRegistrosSalidas").html(TotalRegistros);
                     $("#PaginaActualSalidas").html(PaginaActual);
                     $("#TotalPaginasSalidas").html(TotalPaginas);
@@ -1511,6 +1529,8 @@ else
                 }
                 else {
                     $("#EncontradoSalidas").hide();
+                    $("#NoEncontradoSalidas").show();
+                    $("#tbd_salidas").empty();
                 }
 
                 deshabilitarBotones(rm.result, 'salidas')

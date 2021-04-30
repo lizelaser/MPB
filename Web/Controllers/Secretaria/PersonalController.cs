@@ -48,10 +48,11 @@ namespace Web.Controllers
 
                 if (!string.IsNullOrEmpty(dni))
                 {
-                    Trabajadores = db.Personal.Where(x => x.Dni.Contains(dni)).OrderBy(x => x.Id)
+                    var filtered = db.Personal.Where(x => x.Dni.Contains(dni));
+                    Trabajadores = filtered.OrderBy(x => x.Id)
                         .Skip((pagina - 1) * RegistrosPorPagina)
                         .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = db.Personal.Where(x => x.Dni.Contains(dni)).Count();
+                    TotalRegistros = filtered.Count();
                 }
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);

@@ -108,6 +108,15 @@
     var pageCount = 0;
 
     $(document).ready(function () {
+        // MENU
+        var menuEl = $("#menu_coperaciones");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_matricula").addClass("active");
+
         //START PAGINATION 'MATRICULAS'
         paginadorFunc(currentPage);
 
@@ -166,6 +175,7 @@
                 }
                 else {
                     $("#Encontrado").hide();
+                    $("#NoEncontrado").show();
                     $("#NoEncontrado").show();
                     $("#tbd_matriculas").empty();
                 }

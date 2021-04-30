@@ -48,8 +48,7 @@
                                         <ul>
                                             @foreach (var bl in seriesBoleta)
                                             {
-                                                <li>@bl</li>
-                                            }
+                                <li>@bl</li>}
                                         </ul>
                                     </div>
                                 </li>
@@ -62,8 +61,7 @@
                                         <ul>
                                             @foreach (var ft in seriesFactura)
                                             {
-                                                <li>@ft</li>
-                                            }
+                                <li>@ft</li>}
                                         </ul>
                                     </div>
                                 </li>
@@ -75,6 +73,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("menu_institucion").classList.add("active");
+    }, false);
+</script>
 
 <style>
     .institucion > div {

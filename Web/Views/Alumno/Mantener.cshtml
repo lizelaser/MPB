@@ -144,6 +144,15 @@
 <script>
 
     $(document).ready(function () {
+        // MEWNU
+        var menuEl = $("#menu_cmantenimientos");
+        menuEl.collapsible();
+
+        var menu = M.Collapsible.getInstance(menuEl);
+        menu.open();
+
+        $("#menu_alumno").addClass("active");
+
         $("#guardar").click(guardarAlumnoFunc)
         $("select").formSelect();
     })

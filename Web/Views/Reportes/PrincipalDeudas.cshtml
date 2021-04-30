@@ -72,6 +72,15 @@
         $.fn.tabs2 = $.fn.tabs;
         delete $.fn.tabs;
         $(document).ready(function () {
+            // MENU
+            var menuEl = $("#menu_creportes");
+            menuEl.collapsible();
+
+            var menu = M.Collapsible.getInstance(menuEl);
+            menu.open();
+
+            $("#menu_rcuentas").addClass("active");
+
             $('.tabs').tabs2();
         });
     </script>

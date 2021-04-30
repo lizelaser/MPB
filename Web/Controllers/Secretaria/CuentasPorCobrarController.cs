@@ -60,12 +60,12 @@ namespace Web.Controllers.Secretaria
                     SubDeudas = SubDeudas.Where(x => 
                         x.AlumnoNombres.ToLower().Contains(nombres.ToLower())
                     );
+                    TotalRegistros = SubDeudas.Count();
                 }
 
                 SubDeudas = SubDeudas.OrderBy(x => x.Id)
                             .Skip((pagina - 1) * RegistrosPorPagina)
                             .Take(RegistrosPorPagina).ToList();
-                TotalRegistros = Deudas.Count();
 
                 // Total number of pages in the student table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
