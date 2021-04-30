@@ -344,17 +344,23 @@ namespace Web.Controllers.Secretaria
 
                 int TotalRegistros = 0;
 
-                var condicion_especialidad = (from ce in db.CondicionEstudio where ce.Denominacion.Equals("ESPECIALIDAD") select ce.Id).SingleOrDefault();
+                int EstadoId = (from e in db.Estado where e.Denominacion.Equals("PAGADO") select e.Id).SingleOrDefault();
+                var condicion_especialidad = (from ce in db.CondicionEstudio where ce.Denominacion.Equals("ESPECIALIDAD") select ce.Id)
+                    .SingleOrDefault();
 
                 // Total number of records in Matricula table with pending status
                 TotalRegistros = db.Matricula.Where(x => x.CondicionEstudioId == condicion_especialidad).Count();
                 // We get the 'records page' from the Cuentas Por Cobrar table
-                Matriculas = db.Matricula.Where(x=>x.CondicionEstudioId == condicion_especialidad).OrderByDescending(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .Include(x => x.Periodo)
+                Matriculas = db.Matricula.Include(x => x.Periodo)
                                                  .Include(x => x.CondicionEstudio)
                                                  .Include(x => x.Alumno)
+                                                 .Include(x => x.CuentasPorCobrar)
+                                                 .Where(x => x.CondicionEstudioId == condicion_especialidad)
+                                                 .OrderByDescending(x => x.Id)
+                                                 .Skip((pagina - 1) * RegistrosPorPagina)
+                                                 .Take(RegistrosPorPagina)
+                                                 .ToList()
+                                                 .Where(x=> x.CuentasPorCobrar.All(y => y.EstadoId == EstadoId))
                                                  .ToList();
 
                 //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
