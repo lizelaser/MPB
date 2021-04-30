@@ -609,11 +609,11 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
-                                    if (cuenta_ingresante.Fecha > cuenta_ingresante.FechaVencimiento)
+                                    /*if (cuenta_ingresante.Fecha > cuenta_ingresante.FechaVencimiento)
                                     {
                                         rm.message = "PLAZO VENCIDO DE LA CUENTA POR COBRAR";
                                         rm.SetResponse(false, rm.message);
-                                    }
+                                    }*/
                                     else
                                     {
                                         var existen_series = (from tc in db.TipoComprobante where tc.CajaId == CajaAsignada.CajaId && tc.Descripcion.Equals(TipoComprobante) && tc.Estado == false select tc).Any();
