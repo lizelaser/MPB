@@ -89,7 +89,6 @@
     <Compile Include="CursoTest.cs" />
     <Compile Include="PeriodoTest.cs" />
     <Compile Include="AulaTest.cs" />
-    <Compile Include="LoginTest.cs" />
     <Compile Include="MatriculaTest.cs" />
     <Compile Include="CuentasPorCobrarTest.cs" />
     <Compile Include="PagosTest.cs" />

@@ -1142,7 +1142,7 @@ namespace Web.Controllers
                 Id = S.Id,
                 Cantidad = S.Cantidad,
                 Descripcion = S.ConceptoPago.Concepto,
-                ValorUnitario = (S.Importe + S.Descuento) / S.Cantidad,
+                ValorUnitario = (S.Importe + S.Descuento) / (S.Cantidad == 0 ? 1 : S.Cantidad),
                 Descuento = S.Descuento,
                 Importe = S.Importe
 
@@ -1200,7 +1200,7 @@ namespace Web.Controllers
                 Id = S.Id,
                 Cantidad = S.Cantidad,
                 Descripcion = S.ConceptoPago.Concepto,
-                ValorUnitario = (S.Importe + S.Descuento) / S.Cantidad,
+                ValorUnitario = (S.Importe + S.Descuento) / (S.Cantidad  == 0 ? 1 : S.Cantidad),
                 Descuento = S.Descuento,
                 Importe = S.Importe
 
