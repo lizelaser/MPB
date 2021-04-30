@@ -385,14 +385,14 @@
 
 
     $("#nombres").on('input', function () {
-        paginadorFunc($("#nombres").val(), 1)
+        paginadorFunc(1)
     });
 
 
     //PAGINATION MATRICULA TABLE
-    var paginadorFunc = function (nombres, pagina) {
+    var paginadorFunc = function (pagina) {
         var envio = {
-            nombres: nombres,
+            nombres: $("#nombres").val(),
             pagina: pagina > 0 ? pagina : 1
         }
         $.ajax({
