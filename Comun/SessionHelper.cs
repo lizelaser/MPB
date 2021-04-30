@@ -13,14 +13,7 @@ namespace Comun
     {
         public static bool ExistUserInSession()
         {
-            var result =  HttpContext.Current.Session["UsuarioId"] != null || HttpContext.Current.User.Identity.IsAuthenticated;
-
-            if(!result)
-            {
-                return false;
-            }
-
-            return true;
+            return HttpContext.Current.User.Identity.IsAuthenticated;
         }
         public static void DestroyUserSession()
         {

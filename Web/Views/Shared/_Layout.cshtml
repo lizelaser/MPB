@@ -265,17 +265,15 @@
         <div class="navigation-background"></div><a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
     </aside>
 
-    <div class="main-container">
-        <div id="main">
-            @RenderBody()
-        </div>
-
-        <footer class="page-footer footer footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow" style="background-color:#308bd1 !important; background-image:none !important">
-            <div class="footer-copyright" style="background-color:#308bd1 !important">
-                <div class="container"><span>Todos los Derechos Reservados</span><span class="right hide-on-small-only"><a href="https://codeaperu.com">@empresa</a></span></div>
-            </div>
-        </footer>
+    <div id="main">
+        @RenderBody()
     </div>
+
+    <footer class="page-footer footer footer-dark gradient-45deg-indigo-purple gradient-shadow navbar-border navbar-shadow" style="background-color:#308bd1 !important; background-image:none !important">
+        <div class="footer-copyright" style="background-color:#308bd1 !important">
+            <div class="container"><span>Todos los Derechos Reservados</span><span class="right hide-on-small-only"><a href="https://codeaperu.com">@empresa</a></span></div>
+        </div>
+    </footer>
 
     @*<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>*@
     @*<script src="https://unpkg.com/axios/dist/axios.min.js"></script>*@
@@ -300,11 +298,8 @@
 </html>
 
 <style>
-    .main-container {
-        height: calc(100% - 64px);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+    #main {
+        min-height: calc(100% - 115px);
     }
 
     .card.card-tabs {

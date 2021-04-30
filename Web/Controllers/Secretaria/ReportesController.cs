@@ -85,7 +85,7 @@ namespace Web.Controllers.Secretaria
             var caja_asignada = (from ca in db.CajaDiario where ca.UsuarioId == usuario_id && ca.IndBoveda == false select ca).SingleOrDefault();
             ViewBag.SaldoInicial = caja_asignada?.SaldoInicial??0;
             ViewBag.SaldoFinal = caja_asignada?.SaldoFinal??0;
-            ViewBag.PorcentajeSalidas = caja_asignada != null ? decimal.Round(((100 * caja_asignada.Salidas) / caja_asignada.SaldoFinal).Value, 2):0;
+            ViewBag.PorcentajeSalidas = caja_asignada != null ? decimal.Round(((100 * caja_asignada.Salidas??1m) / caja_asignada.SaldoFinal??1m), 2):0;
             ViewBag.Fecha = caja_asignada?.FechaInicio??DateTime.Now;
 
             var cajero = (from u in db.Usuario
@@ -308,10 +308,10 @@ namespace Web.Controllers.Secretaria
                 Id = S.Id,
                 CodigoCurso = S.Curso.Codigo,
                 CursoDenominacion = S.Curso.Denominacion,
-                HorasTeoria = (S.Curso.HorasTeoria).Value,
-                HorasPractica = (S.Curso.HorasPractica).Value,
-                TotalHoras = (S.Curso.TotalHoras).Value,
-                Creditos = (S.Curso.Credito).Value
+                HorasTeoria = S.Curso.HorasTeoria ?? 1,
+                HorasPractica = S.Curso.HorasPractica ?? 1,
+                TotalHoras = S.Curso.TotalHoras ?? 1,
+                Creditos = S.Curso.Credito ?? 1
 
             }).ToList();
 
