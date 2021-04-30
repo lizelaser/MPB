@@ -101,7 +101,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    EspecialidadBL.ActualizarParcial(obj, x => x.Denominacion, x => x.Matricula, x => x.Mensualidad, x => x.Cuotas);
+                    EspecialidadBL.ActualizarParcial(obj, x => x.Denominacion, x => x.Matricula, x => x.Mensualidad, x => x.Cuotas, x => x.Duracion);
                 }
                 rm.SetResponse(true);
                 rm.href = Url?.Action("Index", "Especialidad");

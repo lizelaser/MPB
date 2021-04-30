@@ -118,8 +118,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    CursoBL.ActualizarParcial(obj, x => x.Denominacion, x => x.Matricula, x => x.Mensualidad, x => x.Cuotas, x => x.EspecialidadId
-                        );
+                    CursoBL.Actualizar(obj);
                 }
                 rm.SetResponse(true);
                 rm.href = Url?.Action("Index", "Curso");

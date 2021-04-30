@@ -175,8 +175,8 @@ namespace Web.Controllers
                                             alumno.Dni = Dni;
                                             alumno.Nacimiento = nacimiento;
                                             alumno.Direccion = direccion;
-                                            alumno.Celular = correo;
-                                            alumno.Correo = celular;
+                                            alumno.Celular = celular;
+                                            alumno.Correo = correo;
                                             alumno.Codigo = Codigo;
                                             alumno.FechaReg = DateTime.Now;
                                             alumno.Estado = true;
