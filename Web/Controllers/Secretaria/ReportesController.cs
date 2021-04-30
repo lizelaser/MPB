@@ -348,23 +348,21 @@ namespace Web.Controllers.Secretaria
                 var condicion_especialidad = (from ce in db.CondicionEstudio where ce.Denominacion.Equals("ESPECIALIDAD") select ce.Id)
                     .SingleOrDefault();
 
-                // Total number of records in Matricula table with pending status
-                TotalRegistros = db.Matricula.Where(x => x.CondicionEstudioId == condicion_especialidad).Count();
-                // We get the 'records page' from the Cuentas Por Cobrar table
-                Matriculas = db.Matricula.Include(x => x.Periodo)
+
+                var matriculasPagadas = db.Matricula.Include(x => x.Periodo)
                                                  .Include(x => x.CondicionEstudio)
                                                  .Include(x => x.Alumno)
                                                  .Include(x => x.CuentasPorCobrar)
-                                                 .Where(x => x.CondicionEstudioId == condicion_especialidad)
                                                  .OrderByDescending(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
                                                  .ToList()
-                                                 .Where(x=> x.CuentasPorCobrar.All(y => y.EstadoId == EstadoId))
-                                                 .ToList();
+                                                 .Where(x => x.CondicionEstudioId == condicion_especialidad 
+                                                    && x.CuentasPorCobrar.All(y => y.EstadoId == EstadoId));
+
+                // Total number of records in Matricula table with pending status
+                TotalRegistros = matriculasPagadas.Count();
 
                 //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
-                var SubMatriculas = Matriculas.Select(S => new MatriculaVm
+                var SubMatriculas = matriculasPagadas.Select(S => new MatriculaVm
                 {
                     Id = S.Id,
                     PeriodoDenominacion = S.Periodo.Denominacion,
@@ -373,16 +371,18 @@ namespace Web.Controllers.Secretaria
                     CondicionEstudioDenominacion = S.CondicionEstudio.Denominacion,
                     Monto = S.Monto,
                     Observacion = S.Observacion
-                }).ToList();
+                });
 
                 if (!string.IsNullOrEmpty(nombres))
                 {
-                    var filtered = SubMatriculas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
-                    SubMatriculas = filtered.OrderBy(x => x.Id)
-                        .Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = filtered.Count();
+                    SubMatriculas = SubMatriculas.Where(x => x.AlumnoNombres.ToLower().Contains(nombres.ToLower()));
+                    TotalRegistros = SubMatriculas.Count();
                 }
+
+                SubMatriculas = SubMatriculas
+                        .Skip((pagina - 1) * RegistrosPorPagina)
+                        .Take(RegistrosPorPagina)
+                        .ToList();
 
                 // Total number of pages in the Cuentas por Cobrar table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
@@ -395,7 +395,7 @@ namespace Web.Controllers.Secretaria
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = SubMatriculas
+                    Listado = SubMatriculas.ToList()
                 };
 
                 rm.SetResponse(true);
