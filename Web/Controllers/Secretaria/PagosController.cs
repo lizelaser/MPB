@@ -95,18 +95,16 @@ namespace Web.Controllers
 
                 var EstadoPendiente = (from e in db.Estado where e.Denominacion.Equals("PENDIENTE") select e).SingleOrDefault();
 
+                var cuentas = db.CuentasPorCobrar
+                    .Where(x => x.EstadoId.Equals(EstadoPendiente.Id))
+                    .Include(x => x.Alumno)
+                    .Include(x => x.Estado)
+                    .OrderBy(x => x.Id);
                 // Total number of records in the Cuentas Por Cobrar table with pending status
-                TotalRegistros = db.CuentasPorCobrar.Where(x=>x.EstadoId.Equals(EstadoPendiente.Id)).Count();
-                // We get the 'records page' from the Cuentas Por Cobrar table
-                Cobranzas = db.CuentasPorCobrar.Where(x=>x.EstadoId.Equals(EstadoPendiente.Id)).OrderByDescending(x => x.Id)
-                                                 .Skip((pagina - 1) * RegistrosPorPagina)
-                                                 .Take(RegistrosPorPagina)
-                                                 .Include(x => x.Alumno)
-                                                 .Include(x => x.Estado)
-                                                 .ToList();
-
+                TotalRegistros = cuentas.Count();
+                
                 //We list "Cuentas Por Cobrar" only with the required fields to avoid serialization problems
-                var SubCobranzas = Cobranzas.Select(S => new CuentasPorCobrarVm
+                var SubCobranzas = cuentas.Select(S => new CuentasPorCobrarVm
                 {
                     Id = S.Id,
                     MatriculaId = S.MatriculaId,
@@ -116,17 +114,18 @@ namespace Web.Controllers
                     EstadoDenominacion = S.Estado.Denominacion,
                     Descripcion = S.Descripcion
 
-                }).ToList();
+                });
 
                 if (!string.IsNullOrEmpty(nombres))
                 {
-                    var filtrado = SubCobranzas.Where(x => x.AlumnoNombres.ToLower()
-                        .Contains(nombres.ToLower()))
-                        .OrderBy(x => x.Id);
-                    SubCobranzas = filtrado.Skip((pagina - 1) * RegistrosPorPagina)
-                        .Take(RegistrosPorPagina).ToList();
-                    TotalRegistros = filtrado.Count();
+                    SubCobranzas = SubCobranzas.Where(x => x.AlumnoNombres.ToLower()
+                        .Contains(nombres.ToLower()));
+                    TotalRegistros = SubCobranzas.Count();
                 }
+
+                SubCobranzas = SubCobranzas.Skip((pagina - 1) * RegistrosPorPagina)
+                        .Take(RegistrosPorPagina);
+
                 // Total number of pages in the Cuentas por Cobrar table
                 var TotalPaginas = (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina);
 
@@ -137,7 +136,7 @@ namespace Web.Controllers
                     TotalRegistros = TotalRegistros,
                     TotalPaginas = TotalPaginas,
                     PaginaActual = pagina,
-                    Listado = SubCobranzas
+                    Listado = SubCobranzas.ToList()
                 };
 
                 rm.SetResponse(true);
@@ -1118,7 +1117,6 @@ namespace Web.Controllers
                                  Fecha = m.Fecha,
                                  Total = m.Total,
                                  Observacion = m.Descripcion
-
                              }).SingleOrDefault();
 
             if (cajamovimiento!=null)
