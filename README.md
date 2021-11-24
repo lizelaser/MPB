@@ -141,7 +141,7 @@ cd <path_to_project>
 
 ## Usage
 
-Start a development server with IISExpress for development and launch the project on localhost:55756
+Start a development server with IIS Express for development and launch the project on localhost:55756
 
 
 ## Interfaces
@@ -173,13 +173,14 @@ Start a development server with IISExpress for development and launch the projec
 
 
 ## Room for Improvement
-----
+
 Room for improvement:
-- Serve to production on live environment
+- Publish the project in a cloud environment.
+- Support the project on other operating systems using net core technology.
 
 To do:
-- Automating tests that include other influential variables in vocational guidance
-
+- Extend the web system by implementing a module for students, allowing them to manage their information, enroll and make payments directly in the system.
+- Conduct comprehensive system planning to support the implementation of other processes such as attendance, grades and degrees, remote classes, assessments, library.
 
 
 ## Contact
