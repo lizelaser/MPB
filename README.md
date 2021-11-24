@@ -6,6 +6,8 @@
 * [HTTP API](#http-api)
 * [Interfaces](#interfaces)
 * [Setup](#setup)
+* [Usage](#usage)
+* [Contribution](#contribution)
 * [Project Status](#project-status)
 * [Room for Improvement](#room-for-improvement)
 * [Contact](#contact)
@@ -145,6 +147,18 @@ cd <path_to_project>
 ## Usage
 
 Start a development server with IIS Express for development and launch the project on localhost:55756
+
+
+## Contribution
+To contribute to MPB, follow these steps:
+
+1. Fork this repository.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`
+4. Push to the original branch: `git push origin <project_name>/<location>`
+5. Create the pull request.
+
+Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
 
 ## Interfaces
