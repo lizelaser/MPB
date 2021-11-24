@@ -2,7 +2,6 @@
 
 ## Table of Contents
 * [General Info](#general-information)
-* [Requirements](#requirements)
 * [Technologies Used](#technologies-used)
 * [HTTP API](#http-api)
 * [Interfaces](#interfaces)
@@ -24,21 +23,21 @@
 - Automate processes related to enrollment, pensions, schedules, grades, academic resources, cash receipts and disbursements, payments and reports.
 - Provide tools to administrative staff as a complement to their workflow.
 
-## Requirements
+### **Requirements**
 
 
-| **N°** |          **User Story**          |
-| ------ | -------------------------------- |
-|    1   |         Manage students          |
-|    2   |         Manage staff             |
-|    3   |         Register enrollment      |
-|    4   |         Generate enrollment form |
-|    5   |         Assign Cashier           |
-|    6   |         Register payment         |
-|    7   |         Print payment voucher    |
-|    8   |         Manage Vault             |
-|    9   |         Register student grades  |
-|    10  |         Manage users             |
+| **N°** |    **User Story**          | **N°** |   **User Story**           |
+| ------ | -------------------------- | ------ | -------------------------- |
+|    1   |   Manage students          |   11   |   Cash Report
+|    2   |   Manage staff             |   12   |   Manage specialties
+|    3   |   Register enrollment      |   13   |   Manage courses
+|    4   |   Generate enrollment form |   14   |   Register student grades
+|    5   |   Assign Cashier           |   15   |   Manage academic period
+|    6   |   Register payment         |   16   |   Manage schedules
+|    7   |   Print payment voucher    |   17   |   Manage classrooms
+|    8   |   Manage Vault             |   18   |   Manage roles
+|    9   |   Cash count               |   19   |   Manage users
+|    10  |   Close Cashier            |   20   |   Login
 
 
 
@@ -52,6 +51,10 @@
 - Xunit - version  2.4.1
 - Sql Server - version 2019
 
+## Features
+
+### **Modules**
+![dashboard](./Images/features.png)
 
 ## HTTP API
 
