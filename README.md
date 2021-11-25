@@ -193,13 +193,12 @@ Alternatively see the GitHub documentation on [creating a pull request](https://
 ## Room for Improvement
 
 Room for improvement:
-- Publish the project in a cloud environment.
-- Support the project on other operating systems using net core technology.
-
-To do:
 - Extend the web system by implementing a module for students, allowing them to manage their information, enroll and make payments directly in the system.
 - Conduct comprehensive system planning to support the implementation of other processes such as attendance, grades and degrees, remote classes, assessments, library.
 
+To do:
+- Publish the project in a cloud environment.
+- Support the project on other operating systems using net core technology.
 
 ## Contact
 
