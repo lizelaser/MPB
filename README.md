@@ -3,6 +3,7 @@
 ## Table of Contents
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
+* [Features](#features)
 * [HTTP API](#http-api)
 * [Interfaces](#interfaces)
 * [Setup](#setup)
