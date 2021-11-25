@@ -197,7 +197,7 @@ Room for improvement:
 - Conduct comprehensive system planning to support the implementation of other processes such as attendance, grades and degrees, remote classes, assessments, library.
 
 To do:
-- Publish the project in a cloud environment.
+- Publish the project in a live environment.
 - Support the project on other operating systems using net core technology.
 
 ## Contact
